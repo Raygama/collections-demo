@@ -1,0 +1,46 @@
+name: Build and Analyze with Maven
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build and Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # SonarCloud needs the full history
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          # Using a modern JDK that can run the scanner and compile old code
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Build and analyze with Maven
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Your secret token
+        run: mvn -B compile sonar:sonar -Dsonar.projectKey=Raygama_collections-demo -Dsonar.organization=raygama -Drat.skip=true -Dsonar.host.url=https://sonarcloud.io -DskipTests
+
+      # This new step runs after the analysis and notifies your AI agent
+      - name: Notify AI Agent
+        if: success() # Only run if the build and scan succeeded
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{"projectKey": "Raygama_collections-demo", "message": "A new SonarCloud scan is complete and ready for analysis."}' \
+          YOUR_FLOWISE_WEBHOOK_URL
