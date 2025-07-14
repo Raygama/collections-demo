@@ -29,18 +29,16 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       
-      # New, robust step to remove the problematic plugin using xmlstarlet
-      - name: Install xmlstarlet and remove felix-bundle-plugin from POM
-        run: |
-          sudo apt-get update && sudo apt-get install -y xmlstarlet
-          xmlstarlet ed -L -N pom="http://maven.apache.org/POM/4.0.0" -d "/pom:project/pom:build/pom:plugins/pom:plugin[pom:groupId='org.apache.felix' and pom:artifactId='maven-bundle-plugin']" pom.xml
+      # Step 1: Compile the code without running tests or packaging
+      - name: Compile project
+        run: mvn -B compile -Drat.skip=true -DskipTests
 
-      - name: Build and analyze with Maven
+      # Step 2: Run the SonarCloud analysis on the compiled code
+      - name: Analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Using 'verify' to ensure code is compiled before analysis
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Raygama_collections-demo -Dsonar.organization=raygama -Drat.skip=true -Dsonar.host.url=https://sonarcloud.io -DskipTests
+        run: mvn -B sonar:sonar -Dsonar.projectKey=Raygama_collections-demo -Dsonar.organization=raygama -Dsonar.host.url=https://sonarcloud.io
 
       - name: Get changed files
         id: changed-files
