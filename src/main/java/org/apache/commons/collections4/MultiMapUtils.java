@@ -108,7 +108,6 @@ public class MultiMapUtils {
      * @return the Collection in the {@link MultiValuedMap}, or null if input map is null
      */
     public static <K, V> Collection<V> getCollection(final MultiValuedMap<K, V> map, final K key) {
-        System.out.println("TEST!");
         if (map != null) {
             return map.get(key);
         }
