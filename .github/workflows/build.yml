@@ -19,7 +19,6 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          # Using a modern JDK that can run the scanner and compile old code
           java-version: 17
           distribution: 'temurin'
 
@@ -32,15 +31,31 @@ jobs:
 
       - name: Build and analyze with Maven
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Your secret token
-        run: mvn -B compile sonar:sonar -Dsonar.projectKey=Raygama_collections-demo -Dsonar.organization=raygama -Drat.skip=true -Dsonar.host.url=https://sonarcloud.io -DskipTests
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        # Using 'verify' to ensure code is compiled before analysis
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Raygama_collections-demo -Dsonar.organization=raygama -Drat.skip=true -Dsonar.host.url=https://sonarcloud.io -DskipTests
 
-      # This new step runs after the analysis and notifies your AI agent
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+
       - name: Notify AI Agent
-        if: success() # Only run if the build and scan succeeded
+        if: success()
+        env:
+          FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          curl -X POST \
-          -H "Content-Type: application/json" \
-          -d '{"projectKey": "Raygama_collections-demo", "message": "A new SonarCloud scan is complete and ready for analysis."}' \
-          YOUR_FLOWISE_WEBHOOK_URL
+          # Construct the final JSON body for the API call
+          JSON_BODY=$(printf '{
+            "question": "Analyze a sonar issue using your knowledge!",
+            "projectKey": "%s",
+            "prNumber": "%s"
+          }' "Raygama_collections-demo" "${{ github.event.pull_request.number }}")
+
+          # Make the API call to Flowise
+          curl https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6 \
+               -X POST \
+               -d "$JSON_BODY" \
+               -H "Content-Type: application/json" \
+               -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN"
+
