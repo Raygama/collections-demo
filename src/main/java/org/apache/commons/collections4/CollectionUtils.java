@@ -1438,7 +1438,7 @@ public class CollectionUtils {
      * @since 3.2
      */
     public static boolean sizeIsEmpty(final Object object) {
-        System.out.println("Simple TD Test!");
+        System.out.println("Simple TD Test! No. 2");
         if (object == null) {
             return true;
         } else if (object instanceof Collection<?>) {
