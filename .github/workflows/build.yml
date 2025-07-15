@@ -112,15 +112,15 @@ jobs:
           echo "Flowise JSON output:"
           cat flow.json || echo "[empty]"
 
-      - name: Comment on PR
+            - name: Comment on PR
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = `${{ steps.flowise.outputs.analysis }}`.trim();
+            const raw = String.raw`${{ steps.flowise.outputs.analysis }}`.trim();
 
             if (!raw) {
-              core.warning('Flowise returned an empty response. Skipping comment.');
+              core.warning('Flowise returned an empty response. Skipping PR comment.');
               return;
             }
 
