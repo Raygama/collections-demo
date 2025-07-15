@@ -81,10 +81,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "$GITHUB_TOKEN" | gh auth login --with-token
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           gh pr comment "$PR_URL" --body "${{ steps.pr_analysis.outputs.response }}"
-
 
       - name: Get latest merged PR number
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
