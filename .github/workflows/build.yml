@@ -113,31 +113,37 @@ jobs:
           echo "analysis=$(cat flowise_output.json | jq -c . 2>/dev/null || echo '{}')" >> "$GITHUB_OUTPUT"
       
       - name: Comment on PR
+        if: steps.flowise.outputs.analysis != '' 
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = String.raw`${{ steps.read-analysis.outputs.analysis }}`;
+            // Use toJSON() to safely embed the output from the previous step as a valid JSON string.
+            // This prevents syntax errors caused by special characters in the Flowise response.
+            const rawJsonString = ${{ toJSON(steps.flowise.outputs.analysis) }};
 
-            if (!raw || raw.trim() === '{}' || raw.trim() === '') {
+            if (!rawJsonString || rawJsonString.trim() === '{}' || rawJsonString.trim() === '') {
               core.warning('Flowise returned an empty or invalid response. Skipping PR comment.');
               return;
             }
 
             let parsed;
             try {
-              parsed = JSON.parse(raw.trim());
+              // The output from the previous step is already a JSON string, so we just parse it.
+              parsed = JSON.parse(rawJsonString);
             } catch (e) {
-              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${raw}`);
+              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${rawJsonString}`);
               return;
             }
 
-            const text = parsed.text || 'Flowise returned:\n```json\n' +
-                          JSON.stringify(parsed, null, 2) + '\n```';
+            // The 'text' property contains the actual analysis from Flowise
+            const text = parsed.text || 'Flowise returned an unexpected response format.';
+
+            const body = `### AI Technical Debt Analysis\n\n---\n\n${text}`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `### 🧠 AI Technical Debt Analysis\n\n${text}`
+              body: body
             });
