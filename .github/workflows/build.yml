@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 17
-          distribution: temurin
+          distribution: 'temurin'
 
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -47,97 +47,101 @@ jobs:
             -Dsonar.organization=raygama \
             -Dsonar.host.url=${{ env.SONAR_URL }}
 
-      - name: Install CLI tools
-        run: sudo apt-get update && sudo apt-get install -y jq gh
-
-      - name: Get PR changed files
-        id: files
-        env:
-          GH_TOKEN : ${{ github.token }}
-        run: |
-          gh pr diff --name-only > changed.txt
-          jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
-          echo "::set-output name=list::$(cat changed.json)"
-
       - name: Fetch Sonar issues with context
         id: sonar-issues
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
+          # Fetch all issues for the pull request
+          all_issues_json=$(curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
+            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
+          
+          # Check if issues were found
+          if [ "$(echo "$all_issues_json" | jq '.issues | length')" -eq 0 ]; then
+            echo "No Sonar issues found."
+            echo "data=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
-          jq -c '.issues[]' all-issues.json > issue-lines.txt
-
-          echo '[]' > issues.json
-          while IFS= read -r issue; do
-            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line' <<<"$issue")
-            raw=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/raw" \
-              --data-urlencode "key=${{ env.PROJECT_KEY }}:$comp" \
+          # Process each issue to get the source snippet
+          enriched_issues=$(echo "$all_issues_json" | jq -c '.issues[]' | while IFS= read -r issue; do
+            comp=$(echo "$issue" | jq -r '.component')
+            line=$(echo "$issue" | jq -r '.line')
+            
+            # Fetch source code lines around the issue
+            raw_source=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/lines" \
+              --data-urlencode "key=$comp" \
+              --data-urlencode "from=$((line-5))" \
+              --data-urlencode "to=$((line+5))" \
               -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
-            snippet=$(echo "$raw" | sed -n "$((ln-5)),$((ln+5))p" \
-              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            jq -n \
-              --arg issue "$issue" --arg snippet "$snippet" \
-              '($issue|fromjson) + { snippet: $snippet }' >> issues.json
-          done < issue-lines.txt
-
-          echo "::set-output name=data::$(jq -c . issues.json)"
+            
+            # Extract and format the snippet
+            snippet=$(echo "$raw_source" | jq -r '.lines | .[] | .code' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            
+            # Add the snippet to the original issue object
+            echo "$issue" | jq --arg snippet "$snippet" '. + {sourceSnippet: $snippet}'
+          done | jq -s '.')
+          
+          echo "data=$enriched_issues" >> "$GITHUB_OUTPUT"
 
       - name: Send to Flowise AI
         id: flowise
+        if: steps.sonar-issues.outputs.data != '[]' # Only run if there are issues
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          ISS=$(cat <<< "${{ steps.sonar-issues.outputs.data }}")
-          PAYLOAD=$(jq -cn \
-            --arg pr "${{ github.event.pull_request.number }}" \
-            --arg proj "${{ env.PROJECT_KEY }}" \
-            --argjson iss "$ISS" \
-            '{ projectKey: $proj, prNumber: $pr, issues: $iss }')
+          # Prepare the payload for Flowise, including the enriched issues
+          JSON_BODY=$(printf '{
+            "question": "Analyze these sonar issues using your knowledge!",
+            "overrideConfig": {
+              "sonarData": %s
+            }
+          }' '${{ steps.sonar-issues.outputs.data }}')
 
-          # call Flowise
-          reply=$(curl -s -X POST \
-                     -H "Content-Type: application/json" \
-                     -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-                     -d "$PAYLOAD" \
-                     https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+          ANALYSIS_RESULT=$(curl -s -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
+            -d "$JSON_BODY" \
+            https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+            
+          # Safely output the result for the next step
+          EOF=$(openssl rand -hex 16)
+          echo "analysis<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$ANALYSIS_RESULT" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
 
-          # expose as a clean single-line output
-          echo "$reply" > flowise_output.json
-
-      - name: Read Flowise result as input
-        id: read-analysis
-        run: |
-          echo "analysis=$(cat flowise_output.json | jq -c . 2>/dev/null || echo '{}')" >> "$GITHUB_OUTPUT"
-      
       - name: Comment on PR
+        if: steps.flowise.outputs.analysis != '' # Only run if Flowise returned a response
         uses: actions/github-script@v6
+        env:
+          ANALYSIS_JSON: ${{ steps.flowise.outputs.analysis }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = String.raw`${{ steps.read-analysis.outputs.analysis }}`;
+            const rawJson = process.env.ANALYSIS_JSON;
 
-            if (!raw || raw.trim() === '{}' || raw.trim() === '') {
+            if (!rawJson || rawJson.trim() === '{}' || rawJson.trim() === '') {
               core.warning('Flowise returned an empty or invalid response. Skipping PR comment.');
               return;
             }
 
             let parsed;
             try {
-              parsed = JSON.parse(raw.trim());
+              parsed = JSON.parse(rawJson);
             } catch (e) {
-              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${raw}`);
+              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${rawJson}`);
               return;
             }
 
-            const text = parsed.text || 'Flowise returned:\n```json\n' +
-                          JSON.stringify(parsed, null, 2) + '\n```';
+            const text = parsed.text || 'Flowise returned an unexpected response format.';
+
+            const body = `### AI Technical Debt Analysis\n\n---\n\n${text}`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `### AI Technical Debt Analysis\n\n${text}`
+              body: body
             });
