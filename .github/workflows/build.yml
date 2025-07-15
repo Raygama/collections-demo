@@ -26,9 +26,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       
+      # Step 1: Compile the code without running tests or packaging
       - name: Compile project
-        run: mvn -B compile -DskipTests -Drat.skip=true
+        run: mvn -B compile -Drat.skip=true -DskipTests
 
+      # Step 2: Run the SonarCloud analysis on the compiled code
       - name: Analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
