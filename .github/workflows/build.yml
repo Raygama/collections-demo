@@ -53,13 +53,13 @@ jobs:
       - name: Get PR changed files
         id: files
         env:
-          GH_TOKEN : ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh pr diff --name-only > changed.txt
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
           echo "::set-output name=list::$(cat changed.json)"
 
-      - name: Fetch Sonar issues with context
+      - name: Fetch Sonar issues + code snippets
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
@@ -67,83 +67,84 @@ jobs:
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
             -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
-          jq -c '.issues[]' all-issues.json > issue-lines.txt
-
+          jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
           echo '[]' > issues.json
+
           while IFS= read -r issue; do
             comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line' <<<"$issue")
+            ln=$(jq -r '.line // 1' <<<"$issue")
             raw=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/raw" \
               --data-urlencode "key=${{ env.PROJECT_KEY }}:$comp" \
               -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
-            snippet=$(echo "$raw" | sed -n "$((ln-5)),$((ln+5))p" \
-              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            snippet=$(echo "$raw" | sed -n "$((ln-3)),$((ln+3))p" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
             jq -n \
-              --arg issue "$issue" --arg snippet "$snippet" \
+              --arg issue "$issue" \
+              --arg snippet "$snippet" \
               '($issue|fromjson) + { snippet: $snippet }' >> issues.json
           done < issue-lines.txt
 
           echo "::set-output name=data::$(jq -c . issues.json)"
 
-      - name: Send to Flowise AI
-        id: flowise
+      - name: Send issues to Flowise AI
+        id: flowise-analysis
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          ISS=$(cat <<< "${{ steps.sonar-issues.outputs.data }}")
+          ISSUES_JSON=$(cat issues.json)
+
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
-            --argjson iss "$ISS" \
-            '{ projectKey: $proj, prNumber: $pr, issues: $iss }')
+            --arg question "Analyze the following SonarCloud issues from PR #${{ github.event.pull_request.number }}." \
+            --argjson issues "$ISSUES_JSON" \
+            '{
+              question: $question,
+              overrideConfig: {
+                projectKey: $proj,
+                prNumber: $pr
+              },
+              issues: $issues
+            }')
 
-          # call Flowise
-          reply=$(curl -s -X POST \
-                     -H "Content-Type: application/json" \
-                     -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-                     -d "$PAYLOAD" \
-                     https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
 
-          # expose as a clean single-line output
-          echo "$reply" > flowise_output.json
+          echo "$RESPONSE" > flowise_output.json
+          DELIM=$(openssl rand -hex 8)
+          echo "analysis<<$DELIM" >> "$GITHUB_OUTPUT"
+          echo "$RESPONSE" >> "$GITHUB_OUTPUT"
+          echo "$DELIM" >> "$GITHUB_OUTPUT"
 
-      - name: Read Flowise result as input
-        id: read-analysis
-        run: |
-          echo "analysis=$(cat flowise_output.json | jq -c . 2>/dev/null || echo '{}')" >> "$GITHUB_OUTPUT"
-      
       - name: Comment on PR
-        if: steps.flowise.outputs.analysis != '' 
         uses: actions/github-script@v6
+        if: success()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Use toJSON() to safely embed the output from the previous step as a valid JSON string.
-            // This prevents syntax errors caused by special characters in the Flowise response.
-            const rawJsonString = ${{ toJSON(steps.flowise.outputs.analysis) }};
+            const raw = `${{ steps.flowise-analysis.outputs.analysis }}`.trim();
 
-            if (!rawJsonString || rawJsonString.trim() === '{}' || rawJsonString.trim() === '') {
+            if (!raw || raw === "{}") {
               core.warning('Flowise returned an empty or invalid response. Skipping PR comment.');
               return;
             }
 
             let parsed;
             try {
-              // The output from the previous step is already a JSON string, so we just parse it.
-              parsed = JSON.parse(rawJsonString);
+              parsed = JSON.parse(raw);
             } catch (e) {
-              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${rawJsonString}`);
+              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${raw}`);
               return;
             }
 
-            // The 'text' property contains the actual analysis from Flowise
-            const text = parsed.text || 'Flowise returned an unexpected response format.';
-
-            const body = `### AI Technical Debt Analysis\n\n---\n\n${text}`;
+            const message = parsed.text || 'Flowise returned:\n```json\n' +
+                              JSON.stringify(parsed, null, 2) + '\n```';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: body
+              body: `### 🤖 AI Technical Debt Analysis\n\n${message}`
             });
