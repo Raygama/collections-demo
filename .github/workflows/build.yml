@@ -73,13 +73,18 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const analysisOutput = `${{ steps.flowise-analysis.outputs.analysis }}`;
-            // Extract the text content from the Flowise JSON response
-            const analysisText = JSON.parse(analysisOutput).text;
+            // Use toJSON() to safely embed the output from the previous step into the script
+            const analysisOutputString = ${{ toJSON(steps.flowise-analysis.outputs.analysis) }};
+
+            // The output from Flowise is a JSON object represented as a string, so we parse it.
+            const flowiseResponse = JSON.parse(analysisOutputString);
+
+            // Extract the actual analysis text from the 'text' property of the Flowise response.
+            const analysisText = flowiseResponse.text;
 
             const body = `### 🤖 AI Technical Debt Analysis\n\n---\n\n${analysisText}`;
             
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
