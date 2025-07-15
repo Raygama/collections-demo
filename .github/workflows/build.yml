@@ -117,29 +117,27 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const core   = require('@actions/core');
-            const raw    = (process.env.ANALYSIS || '') + '${{ steps.flowise.outputs.analysis }}';
-            const trimmed = raw.trim();
+            const raw = `${{ steps.flowise.outputs.analysis }}`.trim();
 
-            if (!trimmed) {
-              core.warning('Flowise returned empty response - skipping comment.');
+            if (!raw) {
+              core.warning('Flowise returned an empty response. Skipping comment.');
               return;
             }
 
             let parsed;
             try {
-              parsed = JSON.parse(trimmed);
+              parsed = JSON.parse(raw);
             } catch (e) {
-              core.setFailed(`Invalid JSON from Flowise: ${e.message}\nRAW:\n${trimmed}`);
+              core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${raw}`);
               return;
             }
 
-            const bodyText = parsed.text ?? 'Flowise returned:\n```json\n' +
-                             JSON.stringify(parsed, null, 2) + '\n```';
+            const text = parsed.text || 'Flowise returned:\n```json\n' +
+                          JSON.stringify(parsed, null, 2) + '\n```';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
-              repo:  context.repo.repo,
+              repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `### AI Technical Debt Analysis\n\n${bodyText}`
+              body: `### AI Technical Debt Analysis\n\n${text}`
             });
