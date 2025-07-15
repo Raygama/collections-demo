@@ -117,16 +117,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = `${{ steps.read-analysis.outputs.analysis }}`.trim();
+            const raw = String.raw`${{ steps.read-analysis.outputs.analysis }}`;
 
-            if (!raw || raw === "{}") {
+            if (!raw || raw.trim() === '{}' || raw.trim() === '') {
               core.warning('Flowise returned an empty or invalid response. Skipping PR comment.');
               return;
             }
 
             let parsed;
             try {
-              parsed = JSON.parse(raw);
+              parsed = JSON.parse(raw.trim());
             } catch (e) {
               core.setFailed(`Invalid JSON from Flowise: ${e.message}\n\nRaw:\n${raw}`);
               return;
