@@ -49,13 +49,12 @@ jobs:
       - name: Install CLI tools
         run: sudo apt-get update && sudo apt-get install -y jq gh
 
-      - name: Get changed PR files
+      - name: Get PR changed files
         id: files
         run: |
-          gh auth setup-git
-          gh pr diff --name-only > paths.txt
-          jq -R -s -c 'split("\n")[:-1]' paths.txt > paths.json
-          echo "::set-output name=list::$(cat paths.json)"
+          gh pr diff --name-only > changed.txt
+          jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
+          echo "::set-output name=list::$(cat changed.json)"
 
       - name: Fetch Sonar issues with context
         id: sonar-issues
