@@ -91,20 +91,21 @@ jobs:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
           ISS=$(cat <<< "${{ steps.sonar-issues.outputs.data }}")
-          PAYLOAD=$(jq -n \
+          PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
             --argjson iss "$ISS" \
             '{ projectKey: $proj, prNumber: $pr, issues: $iss }')
-          curl -s -X POST \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-            -d "$PAYLOAD" \
-            https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6 \
-            > flow.json
-          echo "::set-output name=analysis<<EOF" >> "$GITHUB_OUTPUT"
-          cat flow.json >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          # call Flowise
+          reply=$(curl -s -X POST \
+                     -H "Content-Type: application/json" \
+                     -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
+                     -d "$PAYLOAD" \
+                     https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+
+          # expose as a clean single-line output
+          echo "analysis=$(echo "$reply" | jq -c . 2>/dev/null || echo "")" >> "$GITHUB_OUTPUT"
 
       - name: Debug flow.json
         run: |
@@ -116,18 +117,29 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = ` ${{ steps.flowise.outputs.analysis }} `;
-            let resp;
-            try {
-              resp = JSON.parse(raw);
-            } catch (e) {
-              core.setFailed(`Invalid JSON from Flowise: ${e.message}`);
+            const core   = require('@actions/core');
+            const raw    = (process.env.ANALYSIS || '') + '${{ steps.flowise.outputs.analysis }}';
+            const trimmed = raw.trim();
+
+            if (!trimmed) {
+              core.warning('Flowise returned empty response - skipping comment.');
+              return;
             }
-            const text = resp.text || JSON.stringify(resp, null, 2);
+
+            let parsed;
+            try {
+              parsed = JSON.parse(trimmed);
+            } catch (e) {
+              core.setFailed(`Invalid JSON from Flowise: ${e.message}\nRAW:\n${trimmed}`);
+              return;
+            }
+
+            const bodyText = parsed.text ?? 'Flowise returned:\n```json\n' +
+                             JSON.stringify(parsed, null, 2) + '\n```';
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
-              repo: context.repo.repo,
+              repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: `### AI Sonar Analysis\n\n${text}`
+              body: `### AI Technical Debt Analysis\n\n${bodyText}`
             });
-
