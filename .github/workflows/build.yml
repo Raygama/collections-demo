@@ -8,6 +8,12 @@ jobs:
   build:
     name: Build and Analyze
     runs-on: ubuntu-latest
+    
+    # Add this permissions block to grant write access to the token
+    permissions:
+      issues: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v3
         with:
