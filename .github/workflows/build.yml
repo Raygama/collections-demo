@@ -1,4 +1,4 @@
-name: Build, Analyze & AI Sonar Review
+name: Build, Sonar + AI Analysis
 
 on:
   pull_request:
@@ -20,107 +20,100 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 17
+      - name: Set up Maven & JDK17
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: temurin
 
-      - name: Cache Maven & Sonar caches
+      - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.m2/repository
-            ~/.sonar/cache
-          key: ${{ runner.os }}-maven-sonar-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
 
-      - name: Compile and SonarCloud Scan
+      - name: Compile
+        run: mvn -B compile -Drat.skip=true -DskipTests
+
+      - name: SonarCloud scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn -B compile -Drat.skip=true -DskipTests
-          mvn -B verify sonar:sonar \
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=${{ env.PROJECT_KEY }} \
             -Dsonar.organization=raygama \
-            -Dsonar.host.url=${{ env.SONAR_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
-            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
+            -Dsonar.host.url=${{ env.SONAR_URL }}
 
-      - name: Install jq & GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq gh
+      - name: Install CLI tools
+        run: sudo apt-get update && sudo apt-get install -y jq gh
 
-      - name: Get PR Changed Files
+      - name: Get changed PR files
         id: files
         run: |
           gh auth setup-git
-          gh pr diff --name-only > files.txt
-          jq -R -s -c 'split("\n")[:-1]' files.txt > files.json
-          echo "::set-output name=list::$(cat files.json)"
+          gh pr diff --name-only > paths.txt
+          jq -R -s -c 'split("\n")[:-1]' paths.txt > paths.json
+          echo "::set-output name=list::$(cat paths.json)"
 
-      - name: Get Sonar Issues for PR
-        id: sonar
+      - name: Fetch Sonar issues with context
+        id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" \
-          > issues.json
-          echo "::set-output name=data::$(jq -c '.issues' issues.json)"
+            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
-      - name: Build Context Snippets
-        id: snippets
-        run: |
-          echo "[]" > all.json
-          for issue in $(echo "${{ steps.sonar.outputs.data }}" | jq -c '.[]'); do
-            fp=$(echo "$issue" | jq -r '.component' | sed 's/^[^:]*://')
-            ln=$(echo "$issue" | jq -r '.line')
-            snip=""
-            if [ -f "$fp" ] && [ "$ln" != "null" ]; then
-              start=$((ln - 5)); [ $start -lt 1 ] && start=1
-              end=$((ln + 5))
-              snip=$(sed -n "${start},${end}p" "$fp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            fi
-            entry=$(jq -n \
-              --arg key "$(echo $issue | jq -r '.key')" \
-              --arg file "$fp" \
-              --arg line "$ln" \
-              --arg snip "$snip" \
-              '{key,file,line,snippet: $snip}')
-            jq ". += [ $entry ]" all.json > a2 && mv a2 all.json
-          done
-          echo "::set-output name=data::$(cat all.json)"
+          jq -c '.issues[]' all-issues.json > issue-lines.txt
+
+          echo '[]' > issues.json
+          while IFS= read -r issue; do
+            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line' <<<"$issue")
+            raw=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/raw" \
+              --data-urlencode "key=${{ env.PROJECT_KEY }}:$comp" \
+              -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
+            snippet=$(echo "$raw" | sed -n "$((ln-5)),$((ln+5))p" \
+              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            jq -n \
+              --arg issue "$issue" --arg snippet "$snippet" \
+              '($issue|fromjson) + { snippet: $snippet }' >> issues.json
+          done < issue-lines.txt
+
+          echo "::set-output name=data::$(jq -c . issues.json)"
 
       - name: Send to Flowise AI
         id: flowise
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          ISSUES=$(cat <<<"${{ steps.snippets.outputs.data }}")
-          JSON=$(jq -n \
+          ISS=$(cat <<< "${{ steps.sonar-issues.outputs.data }}")
+          PAYLOAD=$(jq -n \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
-            --argjson iss "$ISSUES" \
-            '{question:"Please analyze these Sonar issues and their code context:",prNumber:$pr,projectKey:$proj,issues:$iss}')
-          curl -s \
+            --argjson iss "$ISS" \
+            '{ projectKey: $proj, prNumber: $pr, issues: $iss }')
+          curl -s -X POST \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-            -d "$JSON" \
+            -d "$PAYLOAD" \
             https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6 \
-            > result.json
-          echo "::set-output name=analysis<<EOF"
-          cat result.json
-          echo "EOF"
+            > flow.json
+          echo "::set-output name=analysis<<EOF" >> "$GITHUB_OUTPUT"
+          cat flow.json >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Comment Back on PR
+      - name: Comment on PR
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const res = JSON.parse(steps.flowise.outputs.analysis);
-            const text = res.text || JSON.stringify(res, null, 2);
+            const resp = JSON.parse(steps.flowise.outputs.analysis);
+            const text = resp.text || JSON.stringify(resp, null, 2);
             await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               issue_number: context.issue.number,
               body: `### 🔍 AI Sonar Analysis\n\n${text}`
             });
