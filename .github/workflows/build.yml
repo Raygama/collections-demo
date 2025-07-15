@@ -111,7 +111,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const resp = JSON.parse(steps.flowise.outputs.analysis);
+            const analysisJson = `${{ steps.flowise.outputs.analysis }}`;
+            const resp = JSON.parse(analysisJson);
             const text = resp.text || JSON.stringify(resp, null, 2);
             await github.rest.issues.createComment({
               owner: context.repo.owner,
