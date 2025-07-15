@@ -1438,7 +1438,8 @@ public class CollectionUtils {
      * @since 3.2
      */
     public static boolean sizeIsEmpty(final Object object) {
-        System.out.println("Simple TD Test! No. 9");
+        // add a small technical debt
+        String methodName = "sizeIsEmpty";
         if (object == null) {
             return true;
         } else if (object instanceof Collection<?>) {
