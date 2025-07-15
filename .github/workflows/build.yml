@@ -105,23 +105,22 @@ jobs:
                      https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
 
           # expose as a clean single-line output
-          echo "analysis=$(echo "$reply" | jq -c . 2>/dev/null || echo "")" >> "$GITHUB_OUTPUT"
+          echo "$reply" > flowise_output.json
 
-      - name: Debug flow.json
+      - name: Read Flowise result as input
+        id: read-analysis
         run: |
-          echo "Flowise JSON output:"
-          cat flow.json || echo "[empty]"
-
+          echo "analysis=$(cat flowise_output.json | jq -c . 2>/dev/null || echo '{}')" >> "$GITHUB_OUTPUT"
       
       - name: Comment on PR
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = String.raw`${{ steps.flowise.outputs.analysis }}`.trim();
+            const raw = `${{ steps.read-analysis.outputs.analysis }}`.trim();
 
-            if (!raw) {
-              core.warning('Flowise returned an empty response. Skipping PR comment.');
+            if (!raw || raw === "{}") {
+              core.warning('Flowise returned an empty or invalid response. Skipping PR comment.');
               return;
             }
 
