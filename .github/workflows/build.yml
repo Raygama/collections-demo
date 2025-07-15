@@ -1,9 +1,6 @@
 name: Build and Analyze with Maven
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -11,12 +8,10 @@ jobs:
   build:
     name: Build and Analyze
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # SonarCloud needs the full history
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -30,28 +25,13 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
-
+      
       - name: Compile project
         run: mvn -B compile -DskipTests -Drat.skip=true
 
-      # ✅ Analyze PR with PR metadata
-      - name: Analyze PR with SonarCloud
-        if: github.event_name == 'pull_request'
+      - name: Analyze with SonarCloud
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=Raygama_collections-demo \
-            -Dsonar.organization=raygama \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.pullrequest.branch="${{ github.head_ref }}" \
-            -Dsonar.pullrequest.base="${{ github.base_ref }}" \
-            -Dsonar.pullrequest.key="${{ github.event.pull_request.number }}"
-
-      # ✅ Analyze main after merge
-      - name: Analyze main with SonarCloud
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
@@ -59,72 +39,47 @@ jobs:
             -Dsonar.organization=raygama \
             -Dsonar.host.url=https://sonarcloud.io
 
-      # ✅ Install needed CLI tools
-      - name: Install GitHub CLI and jq
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq gh
-
-      # 🧠 Get Flowise AI Analysis for PR
-      - name: Get Flowise AI Analysis for PR
-        if: github.event_name == 'pull_request'
-        id: pr_analysis
+      - name: Get AI Analysis from Flowise
+        id: flowise-analysis
+        if: success()
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          RESPONSE=$(curl -s -X POST "https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6" \
-            -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"question\": \"Analyze a sonar issue using your knowledge!\", \"projectKey\": \"Raygama_collections-demo\", \"prNumber\": \"${{ github.head_ref }}\"}")
-          echo "response<<EOF" >> $GITHUB_OUTPUT
-          echo "$RESPONSE" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          JSON_BODY=$(printf '{
+            "question": "Analyze a sonar issue using your knowledge!",
+            "overrideConfig": {
+              "projectKey": "Raygama_collections-demo",
+              "prNumber": "%s"
+            }
+          }' "${{ github.event.pull_request.number }}")
+          
+          ANALYSIS_RESULT=$(curl -s https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6 \
+               -X POST \
+               -d "$JSON_BODY" \
+               -H "Content-Type: application/json" \
+               -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN")
+          
+          # Use a unique delimiter to safely handle multi-line output
+          EOF=$(openssl rand -hex 16)
+          echo "analysis<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$ANALYSIS_RESULT" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
 
-      # 📝 Comment on the PR with the Flowise result
-      - name: Comment on Pull Request with Flowise Analysis
-        if: github.event_name == 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
-          gh pr comment "$PR_URL" --body <<EOF
-### 🧠 Flowise Sonar Analysis
+      - name: Post Analysis to Pull Request
+        uses: actions/github-script@v6
+        if: success()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const analysisOutput = `${{ steps.flowise-analysis.outputs.analysis }}`;
+            // Extract the text content from the Flowise JSON response
+            const analysisText = JSON.parse(analysisOutput).text;
 
-${{ steps.pr_analysis.outputs.response }}
-EOF
-
-      # 🧮 Get latest merged PR number
-      - name: Get latest merged PR number
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: get-pr
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&base=main" \
-            | jq '[.[] | select(.merged_at != null)] | sort_by(.merged_at) | last | .number')
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-
-      # 🧠 Flowise analysis for merged PR
-      - name: Get Flowise AI Analysis for merged PR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: merged_analysis
-        env:
-          FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
-        run: |
-          RESPONSE=$(curl -s -X POST "https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6" \
-            -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"question\": \"Analyze a sonar issue using your knowledge!\", \"projectKey\": \"Raygama_collections-demo\", \"prNumber\": \"${{ steps.get-pr.outputs.pr_number }}\"}")
-          echo "response<<EOF" >> $GITHUB_OUTPUT
-          echo "$RESPONSE" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      # 🐛 Create GitHub Issue with analysis
-      - name: Create GitHub Issue for Tech Debt
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue create \
-            --title "🧠 Tech Debt Analysis for PR #${{ steps.get-pr.outputs.pr_number }}" \
-            --body "${{ steps.merged_analysis.outputs.response }}"
+            const body = `### 🤖 AI Technical Debt Analysis\n\n---\n\n${analysisText}`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
