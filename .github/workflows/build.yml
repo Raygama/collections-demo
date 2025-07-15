@@ -34,6 +34,7 @@ jobs:
       - name: Compile project
         run: mvn -B compile -DskipTests -Drat.skip=true
 
+      # ✅ Analyze PR with PR metadata
       - name: Analyze PR with SonarCloud
         if: github.event_name == 'pull_request'
         env:
@@ -47,6 +48,7 @@ jobs:
             -Dsonar.pullrequest.base="${{ github.base_ref }}" \
             -Dsonar.pullrequest.key="${{ github.event.pull_request.number }}"
 
+      # ✅ Analyze main after merge
       - name: Analyze main with SonarCloud
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
@@ -57,10 +59,12 @@ jobs:
             -Dsonar.organization=raygama \
             -Dsonar.host.url=https://sonarcloud.io
 
+      # ✅ Install needed CLI tools
       - name: Install GitHub CLI and jq
         run: |
           sudo apt-get update && sudo apt-get install -y jq gh
 
+      # 🧠 Get Flowise AI Analysis for PR
       - name: Get Flowise AI Analysis for PR
         if: github.event_name == 'pull_request'
         id: pr_analysis
@@ -71,19 +75,24 @@ jobs:
             -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{\"question\": \"Analyze a sonar issue using your knowledge!\", \"projectKey\": \"Raygama_collections-demo\", \"prNumber\": \"${{ github.head_ref }}\"}")
-          echo "$RESPONSE"
           echo "response<<EOF" >> $GITHUB_OUTPUT
           echo "$RESPONSE" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      # 📝 Comment on the PR with the Flowise result
       - name: Comment on Pull Request with Flowise Analysis
         if: github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
-          gh pr comment "$PR_URL" --body "${{ steps.pr_analysis.outputs.response }}"
+          gh pr comment "$PR_URL" --body <<EOF
+### 🧠 Flowise Sonar Analysis
 
+${{ steps.pr_analysis.outputs.response }}
+EOF
+
+      # 🧮 Get latest merged PR number
       - name: Get latest merged PR number
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: get-pr
@@ -95,6 +104,7 @@ jobs:
             | jq '[.[] | select(.merged_at != null)] | sort_by(.merged_at) | last | .number')
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
+      # 🧠 Flowise analysis for merged PR
       - name: Get Flowise AI Analysis for merged PR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: merged_analysis
@@ -109,12 +119,12 @@ jobs:
           echo "$RESPONSE" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      # 🐛 Create GitHub Issue with analysis
       - name: Create GitHub Issue for Tech Debt
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh auth login --with-token <<< "$GITHUB_TOKEN"
           gh issue create \
-            --title "Tech Debt Analysis for PR #${{ steps.get-pr.outputs.pr_number }}" \
+            --title "🧠 Tech Debt Analysis for PR #${{ steps.get-pr.outputs.pr_number }}" \
             --body "${{ steps.merged_analysis.outputs.response }}"
