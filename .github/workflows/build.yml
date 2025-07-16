@@ -102,7 +102,7 @@ jobs:
           echo ']' >> issues.json
 
 
-      - name: Send issues to Flowise AI
+      - name: Send issues to Technical Debt Analyzer
         id: flowise-analysis
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
