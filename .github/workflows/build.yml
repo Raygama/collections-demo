@@ -142,8 +142,15 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = `${{ steps.flowise-analysis.outputs.analysis }}`.trim();
+            const fs = require('fs');
+            const path = 'flowise_output.json';
 
+            if (!fs.existsSync(path)) {
+              core.warning('Flowise output file not found.');
+              return;
+            }
+
+            const raw = fs.readFileSync(path, 'utf8').trim();
             if (!raw || raw[0] !== '{') {
               core.warning('Flowise did not return valid JSON. Skipping comment.');
               return;
@@ -166,3 +173,4 @@ jobs:
               issue_number: context.issue.number,
               body
             });
+
