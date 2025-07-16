@@ -68,7 +68,6 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
-
           echo '[' > issues.json
           first=true
           while IFS= read -r issue; do
@@ -92,15 +91,12 @@ jobs:
           done < issue-lines.txt
           echo ']' >> issues.json
 
-          echo "::set-output name=data::$(jq -c . issues.json)"
-
-
       - name: Send issues to Flowise AI
         id: flowise-analysis
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          ISSUES_JSON=$(cat issues.json)
+          ISSUES_JSON=$(jq -c . issues.json)
 
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
@@ -122,15 +118,12 @@ jobs:
             -d "$PAYLOAD" \
             https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
 
-          EOF=$(openssl rand -hex 16)
-          echo "analysis<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$RESPONSE" > flowise_output.json
+
+          DELIM=$(openssl rand -hex 8)
+          echo "analysis<<$DELIM" >> "$GITHUB_OUTPUT"
           echo "$RESPONSE" >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
-    
-      - name: Debug Flowise JSON output
-        run: |
-          echo "----- FLOWISE OUTPUT -----"
-          cat flowise_output.json || echo "[flowise_output.json not found]"
+          echo "$DELIM" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR
         uses: actions/github-script@v6
@@ -138,21 +131,27 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Use toJSON() to safely embed the output from the previous step.
-            const analysisOutputString = ${{ toJSON(steps.flowise-analysis.outputs.analysis) }};
+            const raw = `${{ steps.flowise-analysis.outputs.analysis }}`.trim();
 
-            // The output from Flowise is a JSON object represented as a string, so we parse it.
-            const flowiseResponse = JSON.parse(analysisOutputString);
+            if (!raw || raw[0] !== '{') {
+              core.warning('Flowise did not return valid JSON. Skipping comment.');
+              return;
+            }
 
-            // Extract the actual analysis text from the 'text' property of the Flowise response.
-            const analysisText = flowiseResponse.text;
+            let parsed;
+            try {
+              parsed = JSON.parse(raw);
+            } catch (e) {
+              core.warning(`JSON parse error: ${e.message}`);
+              return;
+            }
 
-            const body = `### AI Technical Debt Analysis\n\n---\n\n${analysisText}`;
-            
+            const body = parsed.text || 'Flowise returned:\n```json\n' +
+                          JSON.stringify(parsed, null, 2) + '\n```';
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: body
+              body
             });
-
