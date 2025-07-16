@@ -120,7 +120,7 @@ jobs:
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
-            --arg question "You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner}}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once." \
+            --arg question "You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once." \
             --argjson issues "$ISSUES_JSON" \
             --argjson changedFiles "$CHANGED_FILES" \
             '{
@@ -136,13 +136,36 @@ jobs:
           echo "======= DEBUG: FINAL PAYLOAD ======="
           echo "$PAYLOAD" | jq .
 
-          RESPONSE=$(curl -s -X POST \
-            -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" \
-            https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+          ATTEMPTS=0
+          MAX_ATTEMPTS=5
+          SUCCESS=false
 
-          echo "$RESPONSE" > flowise_output.json
+          while [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
+            echo "Attempt $((ATTEMPTS+1)) of $MAX_ATTEMPTS..."
+            RESPONSE=$(curl -s -X POST \
+              -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD" \
+              https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+
+            echo "$RESPONSE" > flowise_output.json
+
+            if echo "$RESPONSE" | jq -e '.statusCode == 500 and (.message | contains("Agent node"))' > /dev/null; then
+              echo "Transient Flowise error detected, retrying in 10s..."
+              sleep 10
+              ATTEMPTS=$((ATTEMPTS+1))
+            else
+              echo "Flowise responded successfully or with non-retryable error."
+              SUCCESS=true
+              break
+            fi
+          done
+
+          if [ "$SUCCESS" = false ]; then
+            echo "Flowise request failed after $MAX_ATTEMPTS attempts."
+            exit 1
+          fi
+
 
 
       - name: Comment on PR
