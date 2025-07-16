@@ -57,7 +57,7 @@ jobs:
         run: |
           gh pr diff --name-only > changed.txt
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
-          echo "::set-output name=list::$(cat changed.json)"
+          echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
 
       - name: Fetch Sonar issues + code snippets
         id: sonar-issues
