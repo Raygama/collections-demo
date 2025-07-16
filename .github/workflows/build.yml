@@ -68,22 +68,32 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
-          echo '[]' > issues.json
 
+          echo '[' > issues.json
+          first=true
           while IFS= read -r issue; do
             comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
             ln=$(jq -r '.line // 1' <<<"$issue")
             raw=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/raw" \
               --data-urlencode "key=${{ env.PROJECT_KEY }}:$comp" \
               -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
-            snippet=$(echo "$raw" | sed -n "$((ln-3)),$((ln+3))p" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            jq -n \
+            snippet=$(echo "$raw" | sed -n "$((ln-3)),$((ln+3))p" \
+              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            entry=$(jq -n \
               --arg issue "$issue" \
               --arg snippet "$snippet" \
-              '($issue|fromjson) + { snippet: $snippet }' >> issues.json
+              '($issue|fromjson) + { snippet: $snippet }')
+            if [ "$first" = true ]; then
+              first=false
+              echo "$entry" >> issues.json
+            else
+              echo ",$entry" >> issues.json
+            fi
           done < issue-lines.txt
+          echo ']' >> issues.json
 
           echo "::set-output name=data::$(jq -c . issues.json)"
+
 
       - name: Send issues to Flowise AI
         id: flowise-analysis
