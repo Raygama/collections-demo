@@ -112,7 +112,7 @@ jobs:
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
-            --arg question "Analyze the following SonarCloud issues from PR #${{ github.event.pull_request.number }} If there are duplicates, then analyze it only one time. Make sure to refer to the real code and show where it went wrong." \
+            --arg question "Analyze the following SonarCloud issues from PR #${{ github.event.pull_request.number }} If there are duplicate issues, then analyze it only one time" \
             --argjson issues "$ISSUES_JSON" \
             '{
               question: $question,
