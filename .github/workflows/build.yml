@@ -112,11 +112,10 @@ jobs:
             -d "$PAYLOAD" \
             https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
 
-          echo "$RESPONSE" > flowise_output.json
-          DELIM=$(openssl rand -hex 8)
-          echo "analysis<<$DELIM" >> "$GITHUB_OUTPUT"
+          EOF=$(openssl rand -hex 16)
+          echo "analysis<<$EOF" >> "$GITHUB_OUTPUT"
           echo "$RESPONSE" >> "$GITHUB_OUTPUT"
-          echo "$DELIM" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
     
       - name: Debug Flowise JSON output
         run: |
@@ -129,29 +128,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const raw = `${{ steps.flowise-analysis.outputs.analysis }}`.trim();
+            // Use toJSON() to safely embed the output from the previous step.
+            const analysisOutputString = ${{ toJSON(steps.flowise-analysis.outputs.analysis) }};
 
-            if (!raw || raw === "{}" || raw === "") {
-              core.warning('❗ Flowise returned an empty or invalid response. Skipping PR comment.');
-              return;
-            }
+            // The output from Flowise is a JSON object represented as a string, so we parse it.
+            const flowiseResponse = JSON.parse(analysisOutputString);
 
-            let parsed;
-            try {
-              parsed = JSON.parse(raw);
-            } catch (e) {
-              core.warning(`❗ Failed to parse Flowise JSON: ${e.message}`);
-              core.warning(`Raw response:\n${raw}`);
-              return;
-            }
+            // Extract the actual analysis text from the 'text' property of the Flowise response.
+            const analysisText = flowiseResponse.text;
 
-            const message = parsed.text || 'Flowise returned:\n```json\n' +
-                              JSON.stringify(parsed, null, 2) + '\n```';
-
+            const body = `### AI Technical Debt Analysis\n\n---\n\n${analysisText}`;
+            
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `### 🤖 AI Technical Debt Analysis\n\n${message}`
+              body: body
             });
 
