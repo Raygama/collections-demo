@@ -58,6 +58,7 @@ jobs:
           gh pr diff --name-only > changed.txt
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
+          cat changed.json 
 
       - name: Fetch Sonar issues + code snippets
         id: sonar-issues
@@ -107,21 +108,33 @@ jobs:
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          ISSUES_JSON=$(jq -c . issues.json)
+          ISSUES_JSON=$(cat issues.json)
+          CHANGED_FILES=$(cat changed.json)
+
+          echo "======= DEBUG: ISSUES JSON ======="
+          echo "$ISSUES_JSON" | jq .
+
+          echo "======= DEBUG: CHANGED FILES ======="
+          echo "$CHANGED_FILES" | jq .
 
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
-            --arg question "Analyze the following SonarCloud issues from PR #${{ github.event.pull_request.number }} If there are duplicate issues, then analyse it only one time" \
+            --arg question "Analyze the following SonarCloud issues from PR #${{ github.event.pull_request.number }}. If there are duplicate issues, analyze them only once." \
             --argjson issues "$ISSUES_JSON" \
+            --argjson changedFiles "$CHANGED_FILES" \
             '{
               question: $question,
               overrideConfig: {
                 projectKey: $proj,
-                prNumber: $pr
+                prNumber: $pr,
+                changedFiles: $changedFiles
               },
               issues: $issues
             }')
+
+          echo "======= DEBUG: FINAL PAYLOAD ======="
+          echo "$PAYLOAD" | jq .
 
           RESPONSE=$(curl -s -X POST \
             -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
@@ -131,10 +144,6 @@ jobs:
 
           echo "$RESPONSE" > flowise_output.json
 
-          DELIM=$(openssl rand -hex 8)
-          echo "analysis<<$DELIM" >> "$GITHUB_OUTPUT"
-          echo "$RESPONSE" >> "$GITHUB_OUTPUT"
-          echo "$DELIM" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR
         uses: actions/github-script@v6
