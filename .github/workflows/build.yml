@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Maven & JDK17
@@ -59,29 +59,32 @@ jobs:
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
           cat changed.json
 
-      - name: Fetch Sonar issues + code snippets
+            - name: Fetch Sonar issues + focused code snippets
         id: sonar-issues
         run: |
+          # Get Sonar issues JSON
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
+            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" \
+            > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
           echo '[' > issues.json
           first=true
 
           while IFS= read -r issue; do
-            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line // 1' <<<"$issue")
+            file=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line // 1' <<< "$issue")
 
-            raw_url="https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.pull_request.head.repo.repo }}/$(jq -r '.component' <<<"$issue" | cut -d: -f2- | sed 's/:/\//')"
-            raw=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -L $raw_url)
+            # Extract hunk around change using git diff
+            snippet=$(git diff -U5 HEAD^ HEAD -- "$file" \
+              | awk -v L="$ln" '
+                  /^@@/ { split($0,h," "); start=h[2]; gsub(/[-+]/,"",start); split(start,s,","); hunkStart=s[1]; next }
+                  /^\+/ && FNR>=hunkStart && FNR<=hunkStart+10 {print substr($0,2)}
+                ' || echo "/* no diff snippet */")
 
-            start=$((ln > 5 ? ln - 5 : 1))
-            end=$((ln + 5))
-            snippet=$(echo "$raw" | sed -n "${start},${end}p" \
-              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            snippet=$(printf '%s\n' "$snippet" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
             entry=$(jq -n \
               --arg issue "$issue" \
@@ -89,8 +92,7 @@ jobs:
               '($issue|fromjson) + { snippet: $snippet }')
 
             if [ "$first" = true ]; then
-              first=false
-              echo "$entry" >> issues.json
+              first=false; echo "$entry" >> issues.json
             else
               echo ",$entry" >> issues.json
             fi
