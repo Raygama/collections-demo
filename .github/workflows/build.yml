@@ -82,8 +82,8 @@ jobs:
               -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
 
             # Extract only 10–11 lines around the issue
-            start=$((ln > 5 ? ln - 5 : 1))
-            end=$((ln + 5))
+            start=$((ln >= 1 ? ln - 1 : 1))
+            end=$((ln + 9)) 
             snippet=$(echo "$raw" | sed -n "${start},${end}p" \
               | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
