@@ -62,7 +62,6 @@ jobs:
       - name: Fetch Sonar issues + focused code snippets
         id: sonar-issues
         run: |
-          # Get Sonar issues JSON
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
@@ -77,14 +76,27 @@ jobs:
             file=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
             ln=$(jq -r '.line // 1' <<< "$issue")
 
-            # Extract hunk around change using git diff
-            snippet=$(git diff -U5 HEAD^ HEAD -- "$file" \
+            snippet=$(git diff -U5 origin/${{ github.event.pull_request.base.ref }}...HEAD -- "$file" \
               | awk -v L="$ln" '
-                  /^@@/ { split($0,h," "); start=h[2]; gsub(/[-+]/,"",start); split(start,s,","); hunkStart=s[1]; next }
-                  /^\+/ && FNR>=hunkStart && FNR<=hunkStart+10 {print substr($0,2)}
+                  /^@@/ {
+                    split($0,h," "); start=h[2]; gsub(/[-+]/,"",start);
+                    split(start,s,","); hunkStart=s[1];
+                    next
+                  }
+                  /^\+/ {
+                    lineNum = hunkStart + FNR - 1;
+                    if (lineNum == L) {
+                      for (i = -5; i <= 5; i++) {
+                        cmd = "sed -n \"" L+i "p\" \"" file "\""
+                        cmd | getline line; print line
+                      }
+                      exit
+                    }
+                  }
                 ' || echo "/* no diff snippet */")
 
-            snippet=$(printf '%s\n' "$snippet" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            snippet=$(printf '%s\n' "$snippet" \
+              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
             entry=$(jq -n \
               --arg issue "$issue" \
