@@ -117,10 +117,24 @@ jobs:
           echo "======= DEBUG: CHANGED FILES ======="
           echo "$CHANGED_FILES" | jq .
 
+          # Generate markdown-style summary for Sonar issues
+          SONAR_ISSUE_SUMMARY=$(jq -r '
+            .[] |
+            "### Rule: \(.rule)\n" +
+            "* Severity: \(.severity)\n" +
+            "* Location: \(.component):\(.line)\n" +
+            "* Message: \(.message)\n" +
+            "* Snippet:\n```\n\(.snippet)\n```"
+          ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
+
+          # Construct the full user message
+          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\\n\\n## Sonar Issues\\n$SONAR_ISSUE_SUMMARY"
+
+          # Build final JSON payload
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
-            --arg question "You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once." \
+            --arg question "$QUESTION_TEXT" \
             --argjson issues "$ISSUES_JSON" \
             --argjson changedFiles "$CHANGED_FILES" \
             '{
@@ -136,6 +150,7 @@ jobs:
           echo "======= DEBUG: FINAL PAYLOAD ======="
           echo "$PAYLOAD" | jq .
 
+          # Retry logic for transient Flowise errors
           ATTEMPTS=0
           MAX_ATTEMPTS=5
           SUCCESS=false
@@ -165,8 +180,6 @@ jobs:
             echo "Flowise request failed after $MAX_ATTEMPTS attempts."
             exit 1
           fi
-
-
 
       - name: Comment on PR
         uses: actions/github-script@v6
