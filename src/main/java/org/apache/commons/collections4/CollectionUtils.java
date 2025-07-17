@@ -1438,8 +1438,6 @@ public class CollectionUtils {
      * @since 3.2
      */
     public static boolean sizeIsEmpty(final Object object) {
-        // add a small technical debt
-        String methodName = "Technical Debt Sample";
         if (object == null) {
             return true;
         } else if (object instanceof Collection<?>) {
