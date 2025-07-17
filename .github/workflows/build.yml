@@ -59,7 +59,7 @@ jobs:
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
           cat changed.json
 
-            - name: Fetch Sonar issues + focused code snippets
+      - name: Fetch Sonar issues + focused code snippets
         id: sonar-issues
         run: |
           # Get Sonar issues JSON
