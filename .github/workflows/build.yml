@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Maven & JDK17
@@ -48,54 +48,41 @@ jobs:
             -Dsonar.host.url=${{ env.SONAR_URL }}
 
       - name: Install CLI tools
-        run: sudo apt-get update && sudo apt-get install -y jq gh curl
+        run: sudo apt-get update && sudo apt-get install -y jq gh
 
-      - name: Get PR changed files (using Git diff)
+      - name: Get PR changed files
         id: files
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
-          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD > changed.txt
+          gh pr diff --name-only > changed.txt
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
           cat changed.json
 
-      - name: Fetch Sonar issues + focused code snippets
+      - name: Fetch Sonar issues + code snippets
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" \
-            > all-issues.json
+            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
           echo '[' > issues.json
           first=true
 
           while IFS= read -r issue; do
-            file=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line // 1' <<< "$issue")
+            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line // 1' <<<"$issue")
 
-            snippet=$(git diff -U5 origin/${{ github.event.pull_request.base.ref }}...HEAD -- "$file" \
-              | awk -v L="$ln" '
-                  /^@@/ {
-                    split($0,h," "); start=h[2]; gsub(/[-+]/,"",start);
-                    split(start,s,","); hunkStart=s[1];
-                    next
-                  }
-                  /^\+/ {
-                    lineNum = hunkStart + FNR - 1;
-                    if (lineNum == L) {
-                      for (i = -5; i <= 5; i++) {
-                        cmd = "sed -n \"" L+i "p\" \"" file "\""
-                        cmd | getline line; print line
-                      }
-                      exit
-                    }
-                  }
-                ' || echo "/* no diff snippet */")
+            raw=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/raw" \
+              --data-urlencode "key=${{ env.PROJECT_KEY }}:$comp" \
+              -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
 
-            snippet=$(printf '%s\n' "$snippet" \
+            start=$((ln >= 1 ? ln - 1 : 1))
+            end=$((ln + 9))
+            snippet=$(echo "$raw" | sed -n "${start},${end}p" \
               | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
             entry=$(jq -n \
@@ -104,7 +91,8 @@ jobs:
               '($issue|fromjson) + { snippet: $snippet }')
 
             if [ "$first" = true ]; then
-              first=false; echo "$entry" >> issues.json
+              first=false
+              echo "$entry" >> issues.json
             else
               echo ",$entry" >> issues.json
             fi
@@ -194,9 +182,29 @@ jobs:
           script: |
             const fs = require('fs');
             const path = 'flowise_output.json';
-            if (!fs.existsSync(path)) return core.warning('No output');
-            const parsed = JSON.parse(fs.readFileSync(path, 'utf8'));
-            const body = parsed.text || `Flowise returned:\n\`\`\`json\n${JSON.stringify(parsed,null,2)}\n\`\`\``;
+
+            if (!fs.existsSync(path)) {
+              core.warning('Flowise output file not found.');
+              return;
+            }
+
+            const raw = fs.readFileSync(path, 'utf8').trim();
+            if (!raw || raw[0] !== '{') {
+              core.warning('Flowise did not return valid JSON. Skipping comment.');
+              return;
+            }
+
+            let parsed;
+            try {
+              parsed = JSON.parse(raw);
+            } catch (e) {
+              core.warning(`JSON parse error: ${e.message}`);
+              return;
+            }
+
+            const body = parsed.text || 'Flowise returned:\n```json\n' +
+                          JSON.stringify(parsed, null, 2) + '\n```';
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
