@@ -16,6 +16,11 @@ jobs:
       PROJECT_KEY: Raygama_collections-demo
 
     steps:
+      - name: Checkout with history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -52,15 +57,13 @@ jobs:
 
       - name: Get PR changed files
         id: files
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr diff --name-only > changed.txt
-          jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
-          echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
-          cat changed.json 
+          git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} HEAD)
+          echo "list=$(jq -R -s -c 'split(\"\\n\")[:-1]' <<< \"$CHANGED_FILES\")" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES"
 
-      - name: Fetch Sonar issues + code snippets
+      - name: Fetch Sonar issues + full patch snippet
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
@@ -69,32 +72,21 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
-          echo '[' > issues.json
-          first=true
+          echo '[' > issues.json; first=true
 
-          while IFS= read -r issue; do
-            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line // 1' <<<"$issue")
-
-            # Fetch raw file content
-            raw=$(curl -s -G "${{ env.SONAR_URL }}/api/sources/raw" \
-              --data-urlencode "key=${{ env.PROJECT_KEY }}:$comp" \
-              -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
-
-            # Extract only 10–11 lines around the issue
-            start=$((ln >= 1 ? ln - 1 : 1))
-            end=$((ln + 9)) 
-            snippet=$(echo "$raw" | sed -n "${start},${end}p" \
+          while read -r issue; do
+            comp=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line // 1' <<< "$issue")
+            # Grab full file patch around the issue using git
+            git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+            snippet=$(git diff origin/${{ github.event.pull_request.base.ref }} HEAD -- "$comp" \
+              | sed -n "$((ln-5)),$((ln+5))p" \
               | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
-            entry=$(jq -n \
-              --arg issue "$issue" \
-              --arg snippet "$snippet" \
+            entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" \
               '($issue|fromjson) + { snippet: $snippet }')
-
-            if [ "$first" = true ]; then
-              first=false
-              echo "$entry" >> issues.json
+            if $first; then
+              first=false; echo "$entry" >> issues.json
             else
               echo ",$entry" >> issues.json
             fi
