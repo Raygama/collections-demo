@@ -16,11 +16,6 @@ jobs:
       PROJECT_KEY: Raygama_collections-demo
 
     steps:
-      - name: Checkout with history
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2  
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -53,17 +48,18 @@ jobs:
             -Dsonar.host.url=${{ env.SONAR_URL }}
 
       - name: Install CLI tools
-        run: sudo apt-get update && sudo apt-get install -y jq gh
+        run: sudo apt-get update && sudo apt-get install -y jq gh curl
 
-      - name: Get PR changed files
+      - name: Get PR changed files (using Git diff)
         id: files
         run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} HEAD)
-          echo "list=$(jq -R -s -c 'split(\"\\n\")[:-1]' <<< \"$CHANGED_FILES\")" >> $GITHUB_OUTPUT
-          echo "$CHANGED_FILES"
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD > changed.txt
+          jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
+          echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
+          cat changed.json
 
-      - name: Fetch Sonar issues + full patch snippet
+      - name: Fetch Sonar issues + code snippets
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
@@ -72,28 +68,35 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
-          echo '[' > issues.json; first=true
+          echo '[' > issues.json
+          first=true
 
-          while read -r issue; do
-            comp=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line // 1' <<< "$issue")
-            # Grab full file patch around the issue using git
-            git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
-            snippet=$(git diff origin/${{ github.event.pull_request.base.ref }} HEAD -- "$comp" \
-              | sed -n "$((ln-5)),$((ln+5))p" \
+          while IFS= read -r issue; do
+            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line // 1' <<<"$issue")
+
+            raw_url="https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.pull_request.head.repo.repo }}/$(jq -r '.component' <<<"$issue" | cut -d: -f2- | sed 's/:/\//')"
+            raw=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -L $raw_url)
+
+            start=$((ln > 5 ? ln - 5 : 1))
+            end=$((ln + 5))
+            snippet=$(echo "$raw" | sed -n "${start},${end}p" \
               | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
-            entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" \
+            entry=$(jq -n \
+              --arg issue "$issue" \
+              --arg snippet "$snippet" \
               '($issue|fromjson) + { snippet: $snippet }')
-            if $first; then
-              first=false; echo "$entry" >> issues.json
+
+            if [ "$first" = true ]; then
+              first=false
+              echo "$entry" >> issues.json
             else
               echo ",$entry" >> issues.json
             fi
           done < issue-lines.txt
 
           echo ']' >> issues.json
-
 
       - name: Send issues to Technical Debt Analyzer
         id: flowise-analysis
@@ -109,7 +112,6 @@ jobs:
           echo "======= DEBUG: CHANGED FILES ======="
           echo "$CHANGED_FILES" | jq .
 
-          # Generate markdown-style summary for Sonar issues
           SONAR_ISSUE_SUMMARY=$(jq -r '
             .[] |
             "### Rule: \(.rule)\n" +
@@ -119,10 +121,8 @@ jobs:
             "* Snippet:\n```\n\(.snippet)\n```"
           ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          # Construct the full user message
           QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\\n\\n## Sonar Issues\\n$SONAR_ISSUE_SUMMARY"
 
-          # Build final JSON payload
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
             --arg proj "${{ env.PROJECT_KEY }}" \
@@ -142,7 +142,6 @@ jobs:
           echo "======= DEBUG: FINAL PAYLOAD ======="
           echo "$PAYLOAD" | jq .
 
-          # Retry logic for transient Flowise errors
           ATTEMPTS=0
           MAX_ATTEMPTS=5
           SUCCESS=false
@@ -181,33 +180,12 @@ jobs:
           script: |
             const fs = require('fs');
             const path = 'flowise_output.json';
-
-            if (!fs.existsSync(path)) {
-              core.warning('Flowise output file not found.');
-              return;
-            }
-
-            const raw = fs.readFileSync(path, 'utf8').trim();
-            if (!raw || raw[0] !== '{') {
-              core.warning('Flowise did not return valid JSON. Skipping comment.');
-              return;
-            }
-
-            let parsed;
-            try {
-              parsed = JSON.parse(raw);
-            } catch (e) {
-              core.warning(`JSON parse error: ${e.message}`);
-              return;
-            }
-
-            const body = parsed.text || 'Flowise returned:\n```json\n' +
-                          JSON.stringify(parsed, null, 2) + '\n```';
-
+            if (!fs.existsSync(path)) return core.warning('No output');
+            const parsed = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const body = parsed.text || `Flowise returned:\n\`\`\`json\n${JSON.stringify(parsed,null,2)}\n\`\`\``;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body
             });
-
