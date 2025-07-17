@@ -60,7 +60,7 @@ jobs:
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
           cat changed.json
 
-      - name: Fetch Sonar issues and actual modified code
+      - name: Fetch Sonar issues + code snippets
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
@@ -73,16 +73,17 @@ jobs:
           first=true
 
           while IFS= read -r issue; do
-            file=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line // 1' <<< "$issue")
+            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line // 1' <<<"$issue")
 
-            if [ ! -f "$file" ]; then
+            if [ ! -f "$comp" ]; then
+              echo "File $comp not found, skipping..."
               continue
             fi
 
-            start=$((ln - 5)); [ $start -lt 1 ] && start=1
-            end=$((ln + 5))
-            snippet=$(sed -n "${start},${end}p" "$file" | sed 's/\"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            start=$((ln - 2 < 1 ? 1 : ln - 2))
+            end=$((ln + 2))
+            snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
             entry=$(jq -n \
               --arg issue "$issue" \
@@ -90,9 +91,10 @@ jobs:
               '($issue|fromjson) + { snippet: $snippet }')
 
             if [ "$first" = true ]; then
-              first=false; echo "$entry" >> issues.json
+              first=false
+              echo "$entry" >> issues.json
             else
-              echo ",${entry}" >> issues.json
+              echo ",$entry" >> issues.json
             fi
           done < issue-lines.txt
 
@@ -113,12 +115,12 @@ jobs:
           echo "$CHANGED_FILES" | jq .
 
           SONAR_ISSUE_SUMMARY=$(jq -r '
-            reduce .[] as $item (""; . +
-            "### Rule: \($item.rule)\n" +
-            "* Severity: \($item.severity)\n" +
-            "* Location: \($item.component):\($item.line)\n" +
-            "* Message: \($item.message)\n" +
-            "* Snippet:\n```\n\($item.snippet)\n```\n")
+            .[] |
+            "### Rule: \(.rule)\n" +
+            "* Severity: \(.severity)\n" +
+            "* Location: \(.component):\(.line)\n" +
+            "* Message: \(.message)\n" +
+            "* Snippet:\n```\n\(.snippet)\n```"
           ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
           QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\\n\\n## Sonar Issues\\n$SONAR_ISSUE_SUMMARY"
