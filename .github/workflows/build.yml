@@ -75,6 +75,12 @@ jobs:
           while IFS= read -r issue; do
             comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
             ln=$(jq -r '.line // 1' <<<"$issue")
+            status=$(jq -r '.status' <<<"$issue")
+
+            if [[ "$status" != "OPEN" ]]; then
+              echo "Skipping closed issue in $comp line $ln"
+              continue
+            fi
 
             if [ ! -f "$comp" ]; then
               echo "File $comp not found, skipping..."
@@ -84,6 +90,13 @@ jobs:
             start=$((ln - 2 < 1 ? 1 : ln - 2))
             end=$((ln + 2))
             snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+
+            text=$(sed -n "${ln}p" "$comp" | sed 's/"/\\"/g')
+
+            if [[ -z "$text" ]] || ! grep -q "$text" <<< "$snippet"; then
+              echo "Line $ln no longer contains the offending code. Skipping..."
+              continue
+            fi
 
             entry=$(jq -n \
               --arg issue "$issue" \
@@ -114,6 +127,11 @@ jobs:
           echo "======= DEBUG: CHANGED FILES ======="
           echo "$CHANGED_FILES" | jq .
 
+          if [[ "$ISSUES_JSON" == "[]" ]]; then
+            echo '{"text": "✅ No potential Technical Debt was detected in the current PR."}' > flowise_output.json
+            exit 0
+          fi
+
           SONAR_ISSUE_SUMMARY=$(jq -r '
             .[] |
             "### Rule: \(.rule)\n" +
@@ -123,7 +141,7 @@ jobs:
             "* Snippet:\n```\n\(.snippet)\n```"
           ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\\n\\n## Sonar Issues\\n$SONAR_ISSUE_SUMMARY"
+          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\n\n## Sonar Issues\n$SONAR_ISSUE_SUMMARY"
 
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
