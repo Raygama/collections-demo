@@ -140,6 +140,7 @@ jobs:
           if [[ "$ISSUES_JSON" == "[]" ]]; then
             echo "🎉 Great job! No potential technical debts were found in the new code introduced by this pull request. Keep up the clean coding!" > skip_flowise.txt
             echo "No issues found. Skipping Flowise agent."
+            exit 0
           fi
 
           SONAR_ISSUE_SUMMARY=$(jq -r '
