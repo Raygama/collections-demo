@@ -1998,7 +1998,6 @@ public class CollectionUtils {
         return PredicatedCollection.predicatedCollection(collection, predicate);
     }
 
-    
     /**
      * Returns a transformed bag backed by the given collection.
      * <p>
@@ -2033,6 +2032,7 @@ public class CollectionUtils {
      * @since 4.0
      */
     public static <E> E extractSingleton(final Collection<E> collection) {
+        System.out.println("Technical Debt Test");
         if (collection == null) {
             throw new NullPointerException("Collection must not be null.");
         }
