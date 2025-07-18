@@ -86,10 +86,18 @@ jobs:
             start=$((ln - 2 < 1 ? 1 : ln - 2))
             end=$((ln + 2))
             snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            text=$(sed -n "${ln}p" "$comp" | sed 's/"/\\"/g')
+            text=$(sed -n "${ln}p" "$comp")
+            echo "Checking line $ln in $comp: $text"
 
-            if [[ -z "$text" ]] || ! grep -q "$text" <<< "$snippet"; then
-              echo "Line $ln no longer contains the offending code. Skipping..."
+            if [[ -z "$text" ]]; then
+              echo "Line $ln is empty. Skipping..."
+              continue
+            fi
+
+            # Looser check: require that issue line is within file bounds
+            total_lines=$(wc -l < "$comp")
+            if (( ln > total_lines )); then
+              echo "Line $ln out of bounds for file $comp. Skipping..."
               continue
             fi
 
