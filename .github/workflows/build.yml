@@ -74,20 +74,34 @@ jobs:
 
           while IFS= read -r issue; do
             comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
-            ln=$(jq -r '.textRange.startLine // 1' <<<"$issue")
+            ln=$(jq -r '.line // 1' <<<"$issue")
+            status=$(jq -r '.status' <<<"$issue")
+            text=$(jq -r '.message' <<<"$issue")
 
-            snippet="N/A"
-            if [ -f "$comp" ]; then
-              start=$((ln - 2 < 1 ? 1 : ln - 2))
-              end=$((ln + 2))
-              snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            # Skip non-OPEN issues
+            if [[ "$status" != "OPEN" ]]; then
+              continue
             fi
 
-            entry=$(jq -n \
-              --arg issue "$issue" \
-              --arg snippet "$snippet" \
-              '($issue|fromjson) + { snippet: $snippet }')
+            # Skip if file does not exist
+            if [ ! -f "$comp" ]; then
+              continue
+            fi
 
+            # Grab surrounding snippet
+            start=$((ln - 2 < 1 ? 1 : ln - 2))
+            end=$((ln + 2))
+            snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            text_line=$(sed -n "${ln}p" "$comp" | sed 's/"/\\"/g')
+
+            # Validate actual match
+            if [[ -z "$text_line" || "$text_line" == *"Licensed to the Apache Software Foundation"* || ! "$snippet" == *"$text_line"* ]]; then
+              echo "Skipping invalid or irrelevant issue at $comp:$ln"
+              continue
+            fi
+
+            # Add valid entry
+            entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" '($issue|fromjson) + { snippet: $snippet }')
             if [ "$first" = true ]; then
               first=false
               echo "$entry" >> issues.json
