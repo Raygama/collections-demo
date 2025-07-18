@@ -64,9 +64,12 @@ jobs:
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
-            --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
-            --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
+          --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
+          --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
+          --data-urlencode "resolved=false" \
+          --data-urlencode "types=CODE_SMELL,BUG,VULNERABILITY" \
+          --data-urlencode "sinceLeakPeriod=true" \
+          -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
           echo '[' > issues.json
