@@ -138,9 +138,8 @@ jobs:
           echo "$CHANGED_FILES" | jq .
 
           if [[ "$ISSUES_JSON" == "[]" ]]; then
-            echo '{"text": "🎉 Great job! No potential technical debts were found in the new code introduced by this pull request. Keep up the clean coding!"}' > flowise_output.json
+            echo "🎉 Great job! No potential technical debts were found in the new code introduced by this pull request. Keep up the clean coding!" > skip_flowise.txt
             echo "No issues found. Skipping Flowise agent."
-            exit 0
           fi
 
           SONAR_ISSUE_SUMMARY=$(jq -r '
@@ -206,34 +205,37 @@ jobs:
 
       - name: Comment on PR
         uses: actions/github-script@v6
-        if: success()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = 'flowise_output.json';
+            const skipPath = 'skip_flowise.txt';
 
-            if (!fs.existsSync(path)) {
-              core.warning('Flowise output file not found.');
+            let body;
+
+            if (fs.existsSync(skipPath)) {
+              const message = fs.readFileSync(skipPath, 'utf8').trim();
+              body = message || 'No potential technical debts were found.';
+            } else if (fs.existsSync(path)) {
+              const raw = fs.readFileSync(path, 'utf8').trim();
+              if (!raw || raw[0] !== '{') {
+                core.warning('Flowise did not return valid JSON. Skipping comment.');
+                return;
+              }
+
+              try {
+                const parsed = JSON.parse(raw);
+                body = parsed.text || 'Flowise returned:\n```json\n' +
+                        JSON.stringify(parsed, null, 2) + '\n```';
+              } catch (e) {
+                core.warning(`JSON parse error: ${e.message}`);
+                return;
+              }
+            } else {
+              core.warning('No output from Flowise or fallback message.');
               return;
             }
-
-            const raw = fs.readFileSync(path, 'utf8').trim();
-            if (!raw || raw[0] !== '{') {
-              core.warning('Flowise did not return valid JSON. Skipping comment.');
-              return;
-            }
-
-            let parsed;
-            try {
-              parsed = JSON.parse(raw);
-            } catch (e) {
-              core.warning(`JSON parse error: ${e.message}`);
-              return;
-            }
-
-            const body = parsed.text || 'Flowise returned:\n```json\n' +
-                          JSON.stringify(parsed, null, 2) + '\n```';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
