@@ -137,6 +137,12 @@ jobs:
           echo "======= DEBUG: CHANGED FILES ======="
           echo "$CHANGED_FILES" | jq .
 
+          if [[ "$ISSUES_JSON" == "[]" ]]; then
+            echo '{"text": "🎉 Great job! No potential technical debts were found in the new code introduced by this pull request. Keep up the clean coding!"}' > flowise_output.json
+            echo "No issues found. Skipping Flowise agent."
+            exit 0
+          fi
+
           SONAR_ISSUE_SUMMARY=$(jq -r '
             .[] |
             "### Rule: \(.rule)\n" +
@@ -146,7 +152,7 @@ jobs:
             "* Snippet:\n```\n\(.snippet)\n```"
           ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\\n\\n## Sonar Issues\\n$SONAR_ISSUE_SUMMARY"
+          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\n\n## Sonar Issues\n$SONAR_ISSUE_SUMMARY"
 
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
@@ -196,6 +202,7 @@ jobs:
             echo "Flowise request failed after $MAX_ATTEMPTS attempts."
             exit 1
           fi
+
 
       - name: Comment on PR
         uses: actions/github-script@v6
