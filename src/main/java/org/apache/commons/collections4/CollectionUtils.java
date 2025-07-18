@@ -1998,6 +1998,7 @@ public class CollectionUtils {
         return PredicatedCollection.predicatedCollection(collection, predicate);
     }
 
+    
     /**
      * Returns a transformed bag backed by the given collection.
      * <p>
