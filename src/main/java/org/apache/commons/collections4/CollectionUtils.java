@@ -2019,7 +2019,7 @@ public class CollectionUtils {
      */
     public static <E> Collection<E> transformingCollection(final Collection<E> collection,
             final Transformer<? super E, ? extends E> transformer) {
-                System.out.println("TD 2");
+                System.out.println("TD 2 TEST");
         return TransformedCollection.transformingCollection(collection, transformer);
     }
 
