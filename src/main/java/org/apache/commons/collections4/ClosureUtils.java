@@ -357,20 +357,20 @@ public class ClosureUtils {
      */
     @SuppressWarnings("unchecked")
     public static <E> Closure<E> switchMapClosure(final Map<? extends E, Closure<E>> objectsAndClosures) {
-        // if (objectsAndClosures == null) {
-        //     throw new NullPointerException("The object and closure map must not be null");
-        // }
-        // final Closure<? super E> def = objectsAndClosures.remove(null);
-        // final int size = objectsAndClosures.size();
-        // final Closure<? super E>[] trs = new Closure[size];
-        // final Predicate<E>[] preds = new Predicate[size];
-        // int i = 0;
-        // for (final Map.Entry<? extends E, Closure<E>> entry : objectsAndClosures.entrySet()) {
-        //     preds[i] = EqualPredicate.<E>equalPredicate(entry.getKey());
-        //     trs[i] = entry.getValue();
-        //     i++;
-        // }
-        // return ClosureUtils.<E>switchClosure(preds, trs, def);
+        if (objectsAndClosures == null) {
+            throw new NullPointerException("The object and closure map must not be null");
+        }
+        final Closure<? super E> def = objectsAndClosures.remove(null);
+        final int size = objectsAndClosures.size();
+        final Closure<? super E>[] trs = new Closure[size];
+        final Predicate<E>[] preds = new Predicate[size];
+        int i = 0;
+        for (final Map.Entry<? extends E, Closure<E>> entry : objectsAndClosures.entrySet()) {
+            preds[i] = EqualPredicate.<E>equalPredicate(entry.getKey());
+            trs[i] = entry.getValue();
+            i++;
+        }
+        return ClosureUtils.<E>switchClosure(preds, trs, def);
     }
 
 }
