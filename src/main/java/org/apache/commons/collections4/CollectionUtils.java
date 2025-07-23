@@ -1995,6 +1995,7 @@ public class CollectionUtils {
      */
     public static <C> Collection<C> predicatedCollection(final Collection<C> collection,
                                                          final Predicate<? super C> predicate) {
+        System.out.println("TD 3");
         return PredicatedCollection.predicatedCollection(collection, predicate);
     }
 
@@ -2018,6 +2019,7 @@ public class CollectionUtils {
      */
     public static <E> Collection<E> transformingCollection(final Collection<E> collection,
             final Transformer<? super E, ? extends E> transformer) {
+                System.out.println("TD 2");
         return TransformedCollection.transformingCollection(collection, transformer);
     }
 
@@ -2032,6 +2034,7 @@ public class CollectionUtils {
      * @since 4.0
      */
     public static <E> E extractSingleton(final Collection<E> collection) {
+        System.out.println("TD 1");
         if (collection == null) {
             throw new NullPointerException("Collection must not be null.");
         }
