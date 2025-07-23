@@ -1995,7 +1995,6 @@ public class CollectionUtils {
      */
     public static <C> Collection<C> predicatedCollection(final Collection<C> collection,
                                                          final Predicate<? super C> predicate) {
-        System.out.println("TD 3");
         return PredicatedCollection.predicatedCollection(collection, predicate);
     }
 
@@ -2019,7 +2018,6 @@ public class CollectionUtils {
      */
     public static <E> Collection<E> transformingCollection(final Collection<E> collection,
             final Transformer<? super E, ? extends E> transformer) {
-                System.out.println("TD 2 TESTT");
         return TransformedCollection.transformingCollection(collection, transformer);
     }
 
