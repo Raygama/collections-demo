@@ -2008,13 +2008,14 @@ public class CollectionUtils {
      * <p>
      * Existing entries in the specified collection will not be transformed.
      * If you want that behaviour, see {@link TransformedCollection#transformedCollection}.
-     * </p>
+     * </p> 
      *
      * @param <E> the type of object the {@link Collection} contains
      * @param collection  the collection to predicate, must not be null
      * @param transformer  the transformer for the collection, must not be null
      * @return a transformed collection backed by the given collection
      * @throws NullPointerException if the Collection or Transformer is null
+     * 
      */
     public static <E> Collection<E> transformingCollection(final Collection<E> collection,
             final Transformer<? super E, ? extends E> transformer) {
