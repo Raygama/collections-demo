@@ -2033,7 +2033,7 @@ public class CollectionUtils {
      * @since 4.0
      */
     public static <E> E extractSingleton(final Collection<E> collection) {
-        System.out.println("JAWA JAWA JAWAA");
+        System.out.println("JAWA JAWAA JAWAA");
         if (collection == null) {
             throw new NullPointerException("Collection must not be null.");
         }
