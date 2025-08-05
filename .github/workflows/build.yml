@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Maven & JDK17
@@ -48,69 +48,73 @@ jobs:
             -Dsonar.host.url=${{ env.SONAR_URL }}
 
       - name: Install CLI tools
-        run: sudo apt-get update && sudo apt-get install -y jq gh curl
+        run: sudo apt-get update && sudo apt-get install -y jq gh
 
-      - name: Get PR changed files (using Git diff)
+      - name: Get PR changed files
         id: files
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
-          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD > changed.txt
+          gh pr diff --name-only > changed.txt
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
           cat changed.json
 
-      - name: Fetch Sonar issues + focused code snippets
+      - name: Fetch Sonar issues + code snippets
         id: sonar-issues
         run: |
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" \
-            > all-issues.json
+            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" > all-issues.json
 
           jq -c '.issues[]' all-issues.json > issue-lines.txt || echo '[]' > issue-lines.txt
           echo '[' > issues.json
           first=true
 
           while IFS= read -r issue; do
-            file=$(jq -r '.component' <<< "$issue" | cut -d: -f2-)
-            ln=$(jq -r '.line // 1' <<< "$issue")
+            comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
+            ln=$(jq -r '.line // 1' <<<"$issue")
+            status=$(jq -r '.status' <<<"$issue")
+            text=$(jq -r '.message' <<<"$issue")
 
-            snippet=$(git diff -U5 origin/${{ github.event.pull_request.base.ref }}...HEAD -- "$file" \
-              | awk -v L="$ln" '
-                  /^@@/ {
-                    split($0,h," "); start=h[2]; gsub(/[-+]/,"",start);
-                    split(start,s,","); hunkStart=s[1];
-                    next
-                  }
-                  /^\+/ {
-                    lineNum = hunkStart + FNR - 1;
-                    if (lineNum == L) {
-                      for (i = -5; i <= 5; i++) {
-                        cmd = "sed -n \"" L+i "p\" \"" file "\""
-                        cmd | getline line; print line
-                      }
-                      exit
-                    }
-                  }
-                ' || echo "/* no diff snippet */")
+            # Skip non-OPEN issues
+            if [[ "$status" != "OPEN" ]]; then
+              continue
+            fi
 
-            snippet=$(printf '%s\n' "$snippet" \
-              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            # Skip if file does not exist
+            if [ ! -f "$comp" ]; then
+              continue
+            fi
 
-            entry=$(jq -n \
-              --arg issue "$issue" \
-              --arg snippet "$snippet" \
-              '($issue|fromjson) + { snippet: $snippet }')
+            # Grab surrounding snippet
+            start=$((ln - 2 < 1 ? 1 : ln - 2))
+            end=$((ln + 2))
+            snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            text_line=$(sed -n "${ln}p" "$comp" | sed 's/"/\\"/g')
 
+            # Validate actual match
+            if [[ -z "$text_line" || "$text_line" == *"Licensed to the Apache Software Foundation"* || ! "$snippet" == *"$text_line"* ]]; then
+              echo "Skipping invalid or irrelevant issue at $comp:$ln"
+              continue
+            fi
+
+            # Add valid entry
+            entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" '($issue|fromjson) + { snippet: $snippet }')
             if [ "$first" = true ]; then
-              first=false; echo "$entry" >> issues.json
+              first=false
+              echo "$entry" >> issues.json
             else
               echo ",$entry" >> issues.json
             fi
           done < issue-lines.txt
 
           echo ']' >> issues.json
+
+          HAS_ISSUES=$(jq 'length > 0' issues.json)
+          echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
+
 
       - name: Send issues to Technical Debt Analyzer
         id: flowise-analysis
@@ -126,6 +130,11 @@ jobs:
           echo "======= DEBUG: CHANGED FILES ======="
           echo "$CHANGED_FILES" | jq .
 
+          if [[ "$ISSUES_JSON" == "[]" ]]; then
+            echo '{"text": "✅ No potential Technical Debt was detected in the current PR."}' > flowise_output.json
+            exit 0
+          fi
+
           SONAR_ISSUE_SUMMARY=$(jq -r '
             .[] |
             "### Rule: \(.rule)\n" +
@@ -135,7 +144,7 @@ jobs:
             "* Snippet:\n```\n\(.snippet)\n```"
           ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\\n\\n## Sonar Issues\\n$SONAR_ISSUE_SUMMARY"
+          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\n\n## Sonar Issues\n$SONAR_ISSUE_SUMMARY"
 
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
@@ -194,9 +203,29 @@ jobs:
           script: |
             const fs = require('fs');
             const path = 'flowise_output.json';
-            if (!fs.existsSync(path)) return core.warning('No output');
-            const parsed = JSON.parse(fs.readFileSync(path, 'utf8'));
-            const body = parsed.text || `Flowise returned:\n\`\`\`json\n${JSON.stringify(parsed,null,2)}\n\`\`\``;
+
+            if (!fs.existsSync(path)) {
+              core.warning('Flowise output file not found.');
+              return;
+            }
+
+            const raw = fs.readFileSync(path, 'utf8').trim();
+            if (!raw || raw[0] !== '{') {
+              core.warning('Flowise did not return valid JSON. Skipping comment.');
+              return;
+            }
+
+            let parsed;
+            try {
+              parsed = JSON.parse(raw);
+            } catch (e) {
+              core.warning(`JSON parse error: ${e.message}`);
+              return;
+            }
+
+            const body = parsed.text || 'Flowise returned:\n```json\n' +
+                          JSON.stringify(parsed, null, 2) + '\n```';
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
