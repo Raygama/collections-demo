@@ -357,6 +357,7 @@ public class ClosureUtils {
      */
     @SuppressWarnings("unchecked")
     public static <E> Closure<E> switchMapClosure(final Map<? extends E, Closure<E>> objectsAndClosures) {
+        System.out.println("JAWA");
         if (objectsAndClosures == null) {
             throw new NullPointerException("The object and closure map must not be null");
         }
