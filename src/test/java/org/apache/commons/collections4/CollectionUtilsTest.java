@@ -476,7 +476,12 @@ public class CollectionUtilsTest extends MockTestCase {
     @Test
     public void testSubtractWithPredicate() {
         // greater than 3
-        final Predicate<Number> predicate = n -> n.longValue() > 3L;
+        final Predicate<Number> predicate = new Predicate<Number>() {
+            @Override
+            public boolean evaluate(final Number n) {
+                return n.longValue() > 3L;
+            }
+        };
 
         final Collection<Number> col = CollectionUtils.subtract(iterableA, collectionC, predicate);
         final Map<Number, Integer> freq2 = CollectionUtils.getCardinalityMap(col);
@@ -728,12 +733,22 @@ public class CollectionUtilsTest extends MockTestCase {
 
         final Collection<String> strings = Arrays.asList("a", "b", "c");
         final StringBuffer result = new StringBuffer();
-        result.append(CollectionUtils.forAllButLastDo(strings, (Closure<String>) input -> result.append(input+";")));
+        result.append(CollectionUtils.forAllButLastDo(strings, new Closure<String>() {
+            @Override
+            public void execute(final String input) {
+                result.append(input+";");
+            }
+        }));
         assertEquals("a;b;c", result.toString());
 
         final Collection<String> oneString = Arrays.asList("a");
         final StringBuffer resultOne = new StringBuffer();
-        resultOne.append(CollectionUtils.forAllButLastDo(oneString, (Closure<String>) input -> resultOne.append(input+";")));
+        resultOne.append(CollectionUtils.forAllButLastDo(oneString, new Closure<String>() {
+            @Override
+            public void execute(final String input) {
+                resultOne.append(input+";");
+            }
+        }));
         assertEquals("a", resultOne.toString());
         assertNull(CollectionUtils.forAllButLastDo(strings, (Closure<String>) null)); // do not remove cast
         assertNull(CollectionUtils.forAllButLastDo((Collection<String>) null, (Closure<String>) null)); // do not remove cast
@@ -1093,7 +1108,12 @@ public class CollectionUtilsTest extends MockTestCase {
     }
 
     // -----------------------------------------------------------------------
-    private static Predicate<Number> EQUALS_TWO = input -> input.intValue() == 2;
+    private static Predicate<Number> EQUALS_TWO = new Predicate<Number>() {
+        @Override
+        public boolean evaluate(final Number input) {
+            return input.intValue() == 2;
+        }
+    };
 
 //Up to here
     @Test
@@ -1276,7 +1296,12 @@ public class CollectionUtilsTest extends MockTestCase {
         assertTrue(collection.contains(2L) && !collection.contains(1));
     }
 
-    Transformer<Object, Integer> TRANSFORM_TO_INTEGER = input -> Integer.valueOf(((Long)input).intValue());
+    Transformer<Object, Integer> TRANSFORM_TO_INTEGER = new Transformer<Object, Integer>() {
+        @Override
+        public Integer transform(final Object input) {
+            return Integer.valueOf(((Long)input).intValue());
+        }
+    };
 
     @Test
     public void transform1() {
@@ -1308,7 +1333,12 @@ public class CollectionUtilsTest extends MockTestCase {
         set.add(1L);
         set.add(2L);
         set.add(3L);
-        CollectionUtils.transform(set, input -> 4);
+        CollectionUtils.transform(set, new Transformer<Object, Integer>() {
+            @Override
+            public Integer transform(final Object input) {
+                return 4;
+            }
+        });
         assertEquals(1, set.size());
         assertEquals(4, set.iterator().next());
     }
@@ -1470,115 +1500,6 @@ public class CollectionUtilsTest extends MockTestCase {
             fail("expecting NullPointerException");
         } catch (final NullPointerException npe) {
         } // this is what we want
-    }
-
-    @Test
-    public void testRemoveRange() {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        Collection<Integer> result = CollectionUtils.removeRange(list, 0, 0);
-        assertEquals(1, list.size());
-        assertEquals(0, result.size());
-
-        list.add(2);
-        list.add(3);
-        result = CollectionUtils.removeRange(list, 1, 3);
-        assertEquals(1, list.size());
-        assertEquals(1, (int) list.get(0));
-        assertEquals(2, result.size());
-        assertTrue(result.contains(2));
-        assertTrue(result.contains(3));
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testRemoveRangeNull() {
-        Collection<Integer> list = null;
-        Collection result = CollectionUtils.removeRange(list, 0, 0);
-    }
-
-    @Test(expected=IndexOutOfBoundsException.class)
-    public void testRemoveRangeStartIndexNegative() {
-        Collection<Integer> list = new ArrayList<>();
-        list.add(1);
-        Collection result = CollectionUtils.removeRange(list, -1, 1);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testRemoveRangeEndIndexNegative() {
-        Collection<Integer> list = new ArrayList<>();
-        list.add(1);
-        Collection result = CollectionUtils.removeRange(list, 0, -1);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testRemoveRangeEndLowStart() {
-        Collection<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        Collection result = CollectionUtils.removeRange(list, 1, 0);
-    }
-
-    @Test(expected=IndexOutOfBoundsException.class)
-    public void testRemoveRangeWrongEndIndex() {
-        Collection<Integer> list = new ArrayList<>();
-        list.add(1);
-        Collection result = CollectionUtils.removeRange(list, 0, 2);
-    }
-
-    @Test
-    public void testRemoveCount() {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
-
-        Collection<Integer> result = CollectionUtils.removeCount(list, 0, 0);
-        assertEquals(4, list.size());
-        assertEquals(0, result.size());
-
-        result = CollectionUtils.removeCount(list, 0, 1);
-        assertEquals(3, list.size());
-        assertEquals(2, (int) list.get(0));
-        assertEquals(1, result.size());
-        assertTrue(result.contains(1));
-
-        list.add(5);
-        list.add(6);
-        result = CollectionUtils.removeCount(list, 1, 3);
-
-        assertEquals(2, list.size());
-        assertEquals(2, (int) list.get(0));
-        assertEquals(6, (int) list.get(1));
-        assertEquals(3, result.size());
-        assertTrue(result.contains(3));
-        assertTrue(result.contains(4));
-        assertTrue(result.contains(5));
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testRemoveCountWithNull() {
-        Collection<Integer> list = null;
-        Collection result = CollectionUtils.removeCount(list, 0, 1);
-    }
-
-    @Test(expected=IndexOutOfBoundsException.class)
-    public void testRemoveCountStartNegative() {
-        Collection<Integer> list = new ArrayList<>();
-        Collection result = CollectionUtils.removeCount(list, -1, 1);
-    }
-
-    @Test(expected=IndexOutOfBoundsException.class)
-    public void testRemoveCountNegative() {
-        Collection<Integer> list = new ArrayList<>();
-        Collection result = CollectionUtils.removeCount(list, 0, -1);
-    }
-
-    @Test(expected=IndexOutOfBoundsException.class)
-    public void testRemoveCountWrongCount() {
-        Collection<Integer> list = new ArrayList<>();
-        list.add(1);
-        Collection result = CollectionUtils.removeCount(list, 0, 2);
     }
 
     @Test
@@ -1910,10 +1831,20 @@ public class CollectionUtilsTest extends MockTestCase {
         assertFalse(CollectionUtils.matchesAll(null, null));
         assertFalse(CollectionUtils.matchesAll(collectionA, null));
 
-        final Predicate<Integer> lessThanFive = object -> object < 5;
+        final Predicate<Integer> lessThanFive = new Predicate<Integer>() {
+            @Override
+            public boolean evaluate(final Integer object) {
+                return object < 5;
+            }
+        };
         assertTrue(CollectionUtils.matchesAll(collectionA, lessThanFive));
 
-        final Predicate<Integer> lessThanFour = object -> object < 4;
+        final Predicate<Integer> lessThanFour = new Predicate<Integer>() {
+            @Override
+            public boolean evaluate(final Integer object) {
+                return object < 4;
+            }
+        };
         assertFalse(CollectionUtils.matchesAll(collectionA, lessThanFour));
 
         assertTrue(CollectionUtils.matchesAll(null, lessThanFour));

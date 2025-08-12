@@ -76,7 +76,12 @@ public class PredicatedCollectionTest<E> extends AbstractCollectionTest<E> {
 
     //-----------------------------------------------------------------------
     protected Predicate<E> testPredicate =
-        o -> o instanceof String;
+        new Predicate<E>() {
+            @Override
+            public boolean evaluate(final E o) {
+                return o instanceof String;
+            }
+        };
 
     public Collection<E> makeTestCollection() {
         return decorateCollection(new ArrayList<E>(), testPredicate);

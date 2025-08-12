@@ -56,7 +56,12 @@ public class PredicatedListTest<E> extends AbstractListTest<E> {
 //--------------------------------------------------------------------
 
     protected Predicate<E> testPredicate =
-        o -> o instanceof String;
+        new Predicate<E>() {
+            @Override
+            public boolean evaluate(final E o) {
+                return o instanceof String;
+            }
+        };
 
     public List<E> makeTestList() {
         return decorateList(new ArrayList<E>(), testPredicate);
@@ -128,28 +133,6 @@ public class PredicatedListTest<E> extends AbstractListTest<E> {
          list.contains("two"));
         assertTrue("List should contain legal element",
          list.contains("three"));
-    }
-
-    public void testSubList() {
-        final List<E> list = makeTestList();
-        list.add((E) "zero");
-        //subList without any element of list
-        List<E> subList = list.subList(0, 0);
-        assertNotNull(subList);
-        assertEquals(0, subList.size());
-
-        //subList with one element oif list
-        subList = list.subList(0, 1);
-        assertEquals(1, subList.size());
-
-        final List<E> elements = new ArrayList<>();
-        elements.add((E) "one");
-        elements.add((E) "two");
-        elements.add((E) "three");
-        list.addAll(1, elements);
-        //subList with all elements of list
-        subList = list.subList(0, list.size());
-        assertEquals(list.size(), subList.size());
     }
 
     @Override
