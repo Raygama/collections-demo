@@ -48,7 +48,9 @@ jobs:
             -Dsonar.host.url=${{ env.SONAR_URL }}
 
       - name: Install CLI tools
-        run: sudo apt-get update && sudo apt-get install -y jq gh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq gh gettext-base
 
       - name: Resolve PR SHAs
         id: shas
@@ -61,6 +63,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           gh pr diff --name-only > changed.txt
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
@@ -72,31 +75,43 @@ jobs:
           BASE_SHA: ${{ steps.shas.outputs.base_sha }}
           HEAD_SHA: ${{ steps.shas.outputs.head_sha }}
         run: |
-          set -e
+          set -euo pipefail
 
-          # Make a JSON array of objects: {path, status, additions, deletions, patch, content}
-          # Safeguards: limit patch/content size to avoid prompt bloat
-          MAX_BYTES=20000   # ~20KB per file for content
-          MAX_LINES=400     # limit diff lines
+          # Limits to control prompt size (tune as needed)
+          MAX_BYTES=20000   # ~20KB per file content head
+          MAX_LINES=400     # max diff lines per file
 
           echo "[]" > changed_files_detail.json
+
           while IFS= read -r f; do
             [ -z "$f" ] && continue
-            [ ! -f "$f" ] && status="removed" || status="modified"
 
-            # Summary stats via git diff name-status/numstat
+            # Derive change status from name-status
+            nstat=$(git diff --name-status "$BASE_SHA" "$HEAD_SHA" -- "$f" | head -n1 || true)
+            status=$(echo "$nstat" | awk '{print $1}')
+            case "$status" in
+              A) status="added" ;;
+              M) status="modified" ;;
+              D) status="removed" ;;
+              R*) status="renamed" ;;
+              *) [ -f "$f" ] && status="modified" || status="removed" ;;
+            esac
+
+            # Additions/Deletions
             numstat=$(git diff --numstat "$BASE_SHA" "$HEAD_SHA" -- "$f" | head -n1 || true)
             add=$(echo "$numstat" | awk '{print $1}'); add=${add:-0}
             del=$(echo "$numstat" | awk '{print $2}'); del=${del:-0}
 
-            patch=$(git diff -U3 "$BASE_SHA" "$HEAD_SHA" -- "$f" | head -n "$MAX_LINES" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            # Safe file content (truncated)
+            # Diff (trim lines) and content (trim bytes)
+            patch=$(git diff -U3 "$BASE_SHA" "$HEAD_SHA" -- "$f" | head -n "$MAX_LINES" \
+              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
             if [ -f "$f" ]; then
               content=$(head -c $MAX_BYTES "$f" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
             else
               content=""
             fi
 
+            # Language hint
             lang="text"
             case "$f" in
               *.java) lang="java" ;;
@@ -112,9 +127,10 @@ jobs:
               *.json) lang="json" ;;
             esac
 
-            obj=$(jq -n --arg path "$f" --arg status "$status" --argjson additions "${add:-0}" --argjson deletions "${del:-0}" \
-                      --arg patch "$patch" --arg content "$content" --arg lang "$lang" \
-                      '{path:$path,status:$status,additions:$additions,deletions:$deletions,patch:$patch,content:$content,language:$lang}')
+            obj=$(jq -n --arg path "$f" --arg status "$status" \
+                  --argjson additions "${add:-0}" --argjson deletions "${del:-0}" \
+                  --arg patch "$patch" --arg content "$content" --arg lang "$lang" \
+                  '{path:$path,status:$status,additions:$additions,deletions:$deletions,patch:$patch,content:$content,language:$lang}')
 
             jq ". + [ $obj ]" changed_files_detail.json > tmp.json && mv tmp.json changed_files_detail.json
           done < changed.txt
@@ -125,6 +141,8 @@ jobs:
       - name: Fetch Sonar issues + code snippets
         id: sonar-issues
         run: |
+          set -euo pipefail
+
           curl -s -G "${{ env.SONAR_URL }}/api/issues/search" \
             --data-urlencode "componentKeys=${{ env.PROJECT_KEY }}" \
             --data-urlencode "pullRequest=${{ github.event.pull_request.number }}" \
@@ -138,25 +156,21 @@ jobs:
             comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
             ln=$(jq -r '.line // 1' <<<"$issue")
             status=$(jq -r '.status' <<<"$issue")
-            # Skip non-OPEN issues
-            if [[ "$status" != "OPEN" ]]; then
+
+            # Only OPEN issues that still exist in the checkout
+            if [[ "$status" != "OPEN" ]] || [[ ! -f "$comp" ]]; then
               continue
             fi
 
-            # Skip if file does not exist locally
-            if [ ! -f "$comp" ]; then
-              continue
-            fi
-
-            # Grab surrounding snippet (±2 lines)
             start=$((ln - 2 < 1 ? 1 : ln - 2))
             end=$((ln + 2))
-            snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            snippet=$(sed -n "${start},${end}p" "$comp" \
+              | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
-            entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" '($issue|fromjson) + { snippet: $snippet }')
+            entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" \
+              '($issue|fromjson) + { snippet: $snippet }')
             if [ "$first" = true ]; then
-              first=false
-              echo "$entry" >> issues.json
+              first=false; echo "$entry" >> issues.json
             else
               echo ",$entry" >> issues.json
             fi
@@ -168,29 +182,30 @@ jobs:
           echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
           echo "Sonar issue count: $(jq 'length' issues.json)"
 
-      - name: Build user prompt (pretty & structured; always analyze changed files)
+      - name: Build user prompt (pretty, safe expansion, capped size)
         id: prompt
         run: |
+          set -euo pipefail
+
           REPO="${{ github.repository }}"
           OWNER="${{ github.repository_owner }}"
           PRNUM="${{ github.event.pull_request.number }}"
           BRANCH="${{ github.event.pull_request.head.ref }}"
           BASE="${{ steps.shas.outputs.base_sha }}"
           HEAD="${{ steps.shas.outputs.head_sha }}"
-
           HAS_ISSUES="${{ steps.sonar-issues.outputs.has_issues }}"
 
-          # Format Sonar issues as a clean table + details if any
+          # Build Sonar sections
           if [ "$HAS_ISSUES" = "true" ]; then
             SONAR_TABLE=$(jq -r '
-              ["Rule","Type","Quality","Severity","File:Line","Message"],
+              ["Rule","Type","Quality","Severity","Location","Message"],
               ( .[] | [
                   .rule,
-                  .type,
-                  .impactSoftwareQualities // (.tags|join(",")) // "-",
-                  .severity,
+                  (.type // "-"),
+                  (.impactSoftwareQualities // (.tags|join(",")) // "-"),
+                  (.severity // "-"),
                   ((.component|split(":")[1]) + ":" + ( (.line|tostring) // "?" )),
-                  (.message|gsub("\n"; " "))
+                  ((.message // "-") | gsub("\n"; " "))
                 ] ) | @tsv
             ' issues.json | awk 'BEGIN{print "| Rule | Type | Quality | Severity | Location | Message |"; print "|---|---|---|---|---|---|"} {gsub("\t"," | "); print "| " $0 " |"}')
 
@@ -204,103 +219,113 @@ jobs:
               (if .snippet then "\n```" + ((.component|split(":")[1]|split(".")|last)) + "\n" + .snippet + "\n```\n" else "\n" end)
             ' issues.json)
           else
-            SONAR_TABLE="No SonarCloud issues were detected for this PR.\n"
+            SONAR_TABLE="No SonarCloud issues were detected for this PR."
             SONAR_DETAILS=""
           fi
 
           # Changed files summary table
           CHANGED_TABLE=$(jq -r '
-            ["Path","Status","Add","Del","Lang"],
+            ["Path","Status","+","-","Lang"],
             ( .[] | [ .path, .status, (.additions|tostring), (.deletions|tostring), .language ] )
             | @tsv
           ' changed_files_detail.json | awk 'BEGIN{print "| Path | Status | + | - | Lang |"; print "|---|---:|---:|---:|---|"} {gsub("\t"," | "); print "| " $0 " |"}')
 
-          # Changed file diffs (trimmed) & safe content blocks
-          CHANGED_BLOCKS=$(jq -r '
+          # Diffs & content blocks (raw)
+          CHANGED_BLOCKS_RAW=$(jq -r '
             .[] |
             "### " + .path + " (" + .status + ", +" + (.additions|tostring) + "/-" + (.deletions|tostring) + ")\n" +
             (if .patch != "" then "\n**Diff (trimmed):**\n```diff\n" + .patch + "\n```\n" else "" end) +
             (if .content != "" then "\n**Content (head, trimmed):**\n```" + .language + "\n" + .content + "\n```\n" else "" end)
           ' changed_files_detail.json)
 
-          cat > prompt.md << EOF
-            You are the **Technical Debt Analyzer**. Analyze the PR even if Sonar finds no issues. Use Sonar findings (if present) as hints, not limits.
+          # Template (kept literal; expand next with envsubst)
+          export REPO OWNER PRNUM BRANCH BASE HEAD SONAR_TABLE SONAR_DETAILS CHANGED_TABLE
 
-            ## PR Metadata
-            - Repository: **${REPO}** (owner: **${OWNER}**)
-            - Pull Request: **#${PRNUM}**
-            - Target branch: **${BRANCH}**
-            - Diff: **${BASE}..${HEAD}**
+          cat > prompt.tmpl <<'TPL'
+You are the **Technical Debt Analyzer**. Analyze the PR even if Sonar finds no issues. Use Sonar findings (if present) as hints, not limits.
 
-            ## Tasks
-            1. Identify and justify **Technical Debt** in changed files (even when not flagged by SonarCloud).
-            2. Classify each finding using **Sonar’s native model**:
-              - Type: Bug / Vulnerability / Code Smell / Security Hotspot
-              - Quality: Reliability / Security / Maintainability
-              - Severity: Blocker / Critical / Major / Minor / Info
-              - Include remediation effort (estimate) and references (e.g., rule rationale, CWE/OWASP if relevant).
-            3. Consider architectural, security, and code-quality perspectives. Tie findings to relevant epics/Jira items when evidence appears in the code or PR context.
-            4. Highlight **fault-inducing patterns** (e.g., risky changes, missing checks, concurrency hazards) even without existing rules.
-            5. Provide prioritized recommendations and a concise **Quality Gate-style verdict** for the PR.
+## PR Metadata
+- Repository: **${REPO}** (owner: **${OWNER}**)
+- Pull Request: **#${PRNUM}**
+- Target branch: **${BRANCH}**
+- Diff: **${BASE}..${HEAD}**
 
-            ## SonarCloud Summary
-            ${SONAR_TABLE}
+## Tasks
+1. Identify and justify **Technical Debt** in changed files (even when not flagged by SonarCloud).
+2. Classify each finding using **Sonar’s native model**:
+   - Type: Bug / Vulnerability / Code Smell / Security Hotspot
+   - Quality: Reliability / Security / Maintainability
+   - Severity: Blocker / Critical / Major / Minor / Info
+   - Include remediation effort (estimate) and references (e.g., rule rationale, CWE/OWASP if relevant).
+3. Consider **architectural**, **security**, and **code-quality** perspectives. Tie findings to relevant epics/Jira items when evidence appears in the code or PR context.
+4. Highlight **fault-inducing patterns** (e.g., risky changes, missing checks, concurrency hazards) even without existing rules.
+5. Provide **prioritized recommendations** and a concise **Quality Gate-style verdict** for the PR.
 
-            ${SONAR_DETAILS}
+## SonarCloud Summary
+${SONAR_TABLE}
 
-            ## Changed Files Summary
-            ${CHANGED_TABLE}
+${SONAR_DETAILS}
 
-            ## Changed Files (Diffs & Content)
-            ${CHANGED_BLOCKS}
-            EOF
+## Changed Files Summary
+${CHANGED_TABLE}
+
+## Changed Files (Diffs & Content)
+TPL
+
+          # Expand variables in the header/template (diffs appended separately)
+          envsubst < prompt.tmpl > prompt.md
+
+          # Cap overall prompt size to avoid model/token blowups
+          AI_MAX_PROMPT_CHARS="${AI_MAX_PROMPT_CHARS:-40000}"
+          header_chars=$(wc -c < prompt.md)
+          budget=$(( AI_MAX_PROMPT_CHARS - header_chars ))
+          if [ $budget -lt 0 ]; then
+            head -c "$AI_MAX_PROMPT_CHARS" prompt.md > prompt.md.trim && mv prompt.md.trim prompt.md
+            echo -e "\n\n> **Note:** Content truncated to fit prompt budget." >> prompt.md
+          else
+            printf "%s" "$CHANGED_BLOCKS_RAW" | head -c "$budget" >> prompt.md
+            [ $(printf "%s" "$CHANGED_BLOCKS_RAW" | wc -c) -gt $budget ] && \
+              echo -e "\n\n> **Note:** Diffs/content truncated to fit prompt budget." >> prompt.md
+          fi
 
           echo "Built prompt.md (first 80 lines):"
           head -n 80 prompt.md || true
+          echo "Prompt size (bytes): $(wc -c < prompt.md)"
 
       - name: Send prompt (always) to Technical Debt Analyzer
         id: flowise-analysis
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
-          ISSUES_JSON=$(cat issues.json)
+          set -euo pipefail
+
           PROMPT_TEXT=$(cat prompt.md)
+          ISSUES_JSON=$(cat issues.json)
 
-          echo "======= DEBUG: PROMPT (first 120 lines) ======="
-          echo "$PROMPT_TEXT" | head -n 120
+          PAYLOAD=$(jq -cn --arg question "$PROMPT_TEXT" --argjson issues "$ISSUES_JSON" \
+            '{ question: $question, issues: $issues }')
 
-          # NOTE: No overrideConfig; everything is inside the user prompt now.
-          PAYLOAD=$(jq -cn \
-            --arg question "$PROMPT_TEXT" \
-            --argjson issues "$ISSUES_JSON" \
-            '{
-              question: $question,
-              issues: $issues
-            }')
-
-          echo "======= DEBUG: FINAL PAYLOAD ======="
-          echo "$PAYLOAD" | jq .
+          echo "======= DEBUG: PROMPT (first 80 lines) ======="
+          echo "$PROMPT_TEXT" | head -n 80
 
           ATTEMPTS=0
-          MAX_ATTEMPTS=5
+          MAX_ATTEMPTS=3
           SUCCESS=false
 
           while [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
             echo "Attempt $((ATTEMPTS+1)) of $MAX_ATTEMPTS..."
-            RESPONSE=$(curl -s -X POST \
+            CODE=$(curl -sS -o flowise_output.json -w "%{http_code}" \
+              -X POST \
               -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
               -H "Content-Type: application/json" \
               -d "$PAYLOAD" \
-              https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
+              https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6 || true)
 
-            echo "$RESPONSE" > flowise_output.json
-
-            if echo "$RESPONSE" | jq -e '.statusCode == 500 and (.message | contains("Agent node"))' > /dev/null; then
-              echo "Transient Flowise error detected, retrying in 10s..."
-              sleep 10
+            echo "HTTP $CODE"
+            if [[ "$CODE" == 5* || "$CODE" == "429" ]]; then
+              sleep 8
               ATTEMPTS=$((ATTEMPTS+1))
             else
-              echo "Flowise responded successfully or with non-retryable error."
               SUCCESS=true
               break
             fi
