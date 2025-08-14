@@ -19,10 +19,11 @@ package org.apache.commons.collections4.set;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Objects;
 import java.util.Set;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -260,10 +261,14 @@ public class ListOrderedSet<E>
         if (result == false) {
             return false;
         }
-        if (decorated().isEmpty()) {
+        if (decorated().size() == 0) {
             setOrder.clear();
         } else {
-            setOrder.removeIf(e -> !decorated().contains(e));
+            for (final Iterator<E> it = setOrder.iterator(); it.hasNext();) {
+                if (!decorated().contains(it.next())) {
+                    it.remove();
+                }
+            }
         }
         return result;
     }

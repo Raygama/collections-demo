@@ -56,7 +56,12 @@ public class PredicatedSetTest<E> extends AbstractSetTest<E> {
 //--------------------------------------------------------------------
 
     protected Predicate<E> testPredicate =
-        o -> o instanceof String;
+        new Predicate<E>() {
+            @Override
+            public boolean evaluate(final E o) {
+                return o instanceof String;
+            }
+        };
 
     protected PredicatedSet<E> makeTestSet() {
         return decorateSet(new HashSet<E>(), testPredicate);

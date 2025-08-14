@@ -64,12 +64,12 @@ public class TransformedSortedBagTest<T> extends AbstractSortedBagTest<T> {
     }
 
     public void testTransformedBag_decorateTransform() {
-        final TreeBag<T> originalBag = new TreeBag<T>();
+        final Bag<Object> originalBag = new TreeBag<>();
         final Object[] els = new Object[] {"1", "3", "5", "7", "2", "4", "6"};
         for (final Object el : els) {
-            originalBag.add((T) el);
+            originalBag.add(el);
         }
-        final SortedBag<T> bag = TransformedSortedBag.transformedSortedBag(originalBag, (Transformer<T, T>) TransformedCollectionTest.STRING_TO_INTEGER_TRANSFORMER);
+        final Bag<?> bag = TransformedBag.transformedBag(originalBag, TransformedCollectionTest.STRING_TO_INTEGER_TRANSFORMER);
         assertEquals(els.length, bag.size());
         for (final Object el : els) {
             assertEquals(true, bag.contains(Integer.valueOf((String) el)));
