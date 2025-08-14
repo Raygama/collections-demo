@@ -50,7 +50,13 @@ jobs:
       - name: Install CLI tools
         run: sudo apt-get update && sudo apt-get install -y jq gh
 
-      - name: Get PR changed files
+      - name: Resolve PR SHAs
+        id: shas
+        run: |
+          echo "base_sha=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+          echo "head_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Get PR changed files (list + JSON)
         id: files
         env:
           GH_TOKEN: ${{ github.token }}
@@ -59,6 +65,62 @@ jobs:
           jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
           echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
           cat changed.json
+
+      - name: Build changed files details (summary + diffs + safe content)
+        id: changed-detail
+        env:
+          BASE_SHA: ${{ steps.shas.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.shas.outputs.head_sha }}
+        run: |
+          set -e
+
+          # Make a JSON array of objects: {path, status, additions, deletions, patch, content}
+          # Safeguards: limit patch/content size to avoid prompt bloat
+          MAX_BYTES=20000   # ~20KB per file for content
+          MAX_LINES=400     # limit diff lines
+
+          echo "[]" > changed_files_detail.json
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            [ ! -f "$f" ] && status="removed" || status="modified"
+
+            # Summary stats via git diff name-status/numstat
+            numstat=$(git diff --numstat "$BASE_SHA" "$HEAD_SHA" -- "$f" | head -n1 || true)
+            add=$(echo "$numstat" | awk '{print $1}'); add=${add:-0}
+            del=$(echo "$numstat" | awk '{print $2}'); del=${del:-0}
+
+            patch=$(git diff -U3 "$BASE_SHA" "$HEAD_SHA" -- "$f" | head -n "$MAX_LINES" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            # Safe file content (truncated)
+            if [ -f "$f" ]; then
+              content=$(head -c $MAX_BYTES "$f" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            else
+              content=""
+            fi
+
+            lang="text"
+            case "$f" in
+              *.java) lang="java" ;;
+              *.kt) lang="kotlin" ;;
+              *.js) lang="javascript" ;;
+              *.ts) lang="typescript" ;;
+              *.py) lang="python" ;;
+              *.go) lang="go" ;;
+              *.rb) lang="ruby" ;;
+              *.cs) lang="csharp" ;;
+              *.xml) lang="xml" ;;
+              *.yml|*.yaml) lang="yaml" ;;
+              *.json) lang="json" ;;
+            esac
+
+            obj=$(jq -n --arg path "$f" --arg status "$status" --argjson additions "${add:-0}" --argjson deletions "${del:-0}" \
+                      --arg patch "$patch" --arg content "$content" --arg lang "$lang" \
+                      '{path:$path,status:$status,additions:$additions,deletions:$deletions,patch:$patch,content:$content,language:$lang}')
+
+            jq ". + [ $obj ]" changed_files_detail.json > tmp.json && mv tmp.json changed_files_detail.json
+          done < changed.txt
+
+          echo "Built changed_files_detail.json:"
+          jq '.[0:3]' changed_files_detail.json || true
 
       - name: Fetch Sonar issues + code snippets
         id: sonar-issues
@@ -76,31 +138,21 @@ jobs:
             comp=$(jq -r '.component' <<<"$issue" | cut -d: -f2-)
             ln=$(jq -r '.line // 1' <<<"$issue")
             status=$(jq -r '.status' <<<"$issue")
-            text=$(jq -r '.message' <<<"$issue")
-
             # Skip non-OPEN issues
             if [[ "$status" != "OPEN" ]]; then
               continue
             fi
 
-            # Skip if file does not exist
+            # Skip if file does not exist locally
             if [ ! -f "$comp" ]; then
               continue
             fi
 
-            # Grab surrounding snippet
+            # Grab surrounding snippet (±2 lines)
             start=$((ln - 2 < 1 ? 1 : ln - 2))
             end=$((ln + 2))
             snippet=$(sed -n "${start},${end}p" "$comp" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            text_line=$(sed -n "${ln}p" "$comp" | sed 's/"/\\"/g')
 
-            # Validate actual match
-            if [[ -z "$text_line" || "$text_line" == *"Licensed to the Apache Software Foundation"* || ! "$snippet" == *"$text_line"* ]]; then
-              echo "Skipping invalid or irrelevant issue at $comp:$ln"
-              continue
-            fi
-
-            # Add valid entry
             entry=$(jq -n --arg issue "$issue" --arg snippet "$snippet" '($issue|fromjson) + { snippet: $snippet }')
             if [ "$first" = true ]; then
               first=false
@@ -114,51 +166,115 @@ jobs:
 
           HAS_ISSUES=$(jq 'length > 0' issues.json)
           echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
+          echo "Sonar issue count: $(jq 'length' issues.json)"
 
+      - name: Build user prompt (pretty & structured; always analyze changed files)
+        id: prompt
+        run: |
+          REPO="${{ github.repository }}"
+          OWNER="${{ github.repository_owner }}"
+          PRNUM="${{ github.event.pull_request.number }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BASE="${{ steps.shas.outputs.base_sha }}"
+          HEAD="${{ steps.shas.outputs.head_sha }}"
 
-      - name: Send issues to Technical Debt Analyzer
+          HAS_ISSUES="${{ steps.sonar-issues.outputs.has_issues }}"
+
+          # Format Sonar issues as a clean table + details if any
+          if [ "$HAS_ISSUES" = "true" ]; then
+            SONAR_TABLE=$(jq -r '
+              ["Rule","Type","Quality","Severity","File:Line","Message"],
+              ( .[] | [
+                  .rule,
+                  .type,
+                  .impactSoftwareQualities // (.tags|join(",")) // "-",
+                  .severity,
+                  ((.component|split(":")[1]) + ":" + ( (.line|tostring) // "?" )),
+                  (.message|gsub("\n"; " "))
+                ] ) | @tsv
+            ' issues.json | awk 'BEGIN{print "| Rule | Type | Quality | Severity | Location | Message |"; print "|---|---|---|---|---|---|"} {gsub("\t"," | "); print "| " $0 " |"}')
+
+            SONAR_DETAILS=$(jq -r '
+              .[] |
+              "#### " + .rule + "\n" +
+              "* Type: " + (.type // "-") + "\n" +
+              "* Severity: " + (.severity // "-") + "\n" +
+              "* Location: " + ((.component|split(":")[1]) + ":" + ( (.line|tostring) // "?" )) + "\n" +
+              "* Message: " + (.message // "-") + "\n" +
+              (if .snippet then "\n```" + ((.component|split(":")[1]|split(".")|last)) + "\n" + .snippet + "\n```\n" else "\n" end)
+            ' issues.json)
+          else
+            SONAR_TABLE="No SonarCloud issues were detected for this PR.\n"
+            SONAR_DETAILS=""
+          fi
+
+          # Changed files summary table
+          CHANGED_TABLE=$(jq -r '
+            ["Path","Status","Add","Del","Lang"],
+            ( .[] | [ .path, .status, (.additions|tostring), (.deletions|tostring), .language ] )
+            | @tsv
+          ' changed_files_detail.json | awk 'BEGIN{print "| Path | Status | + | - | Lang |"; print "|---|---:|---:|---:|---|"} {gsub("\t"," | "); print "| " $0 " |"}')
+
+          # Changed file diffs (trimmed) & safe content blocks
+          CHANGED_BLOCKS=$(jq -r '
+            .[] |
+            "### " + .path + " (" + .status + ", +" + (.additions|tostring) + "/-" + (.deletions|tostring) + ")\n" +
+            (if .patch != "" then "\n**Diff (trimmed):**\n```diff\n" + .patch + "\n```\n" else "" end) +
+            (if .content != "" then "\n**Content (head, trimmed):**\n```" + .language + "\n" + .content + "\n```\n" else "" end)
+          ' changed_files_detail.json)
+
+          cat > prompt.md << 'EOF'
+            You are the **Technical Debt Analyzer**. Analyze the PR even if Sonar finds no issues. Use Sonar findings (if present) as hints, not limits.
+
+            ## PR Metadata
+            - Repository: **${REPO}** (owner: **${OWNER}**)
+            - Pull Request: **#${PRNUM}**
+            - Target branch: **${BRANCH}**
+            - Diff: **${BASE}..${HEAD}**
+
+            ## Tasks
+            1. Identify and justify **Technical Debt** in changed files (even when not flagged by SonarCloud).
+            2. Classify each finding using **Sonar’s native model**:
+              - Type: Bug / Vulnerability / Code Smell / Security Hotspot
+              - Quality: Reliability / Security / Maintainability
+              - Severity: Blocker / Critical / Major / Minor / Info
+              - Include remediation effort (estimate) and references (e.g., rule rationale, CWE/OWASP if relevant).
+            3. Consider architectural, security, and code-quality perspectives. Tie findings to relevant epics/Jira items when evidence appears in the code or PR context.
+            4. Highlight **fault-inducing patterns** (e.g., risky changes, missing checks, concurrency hazards) even without existing rules.
+            5. Provide prioritized recommendations and a concise **Quality Gate-style verdict** for the PR.
+
+            ## SonarCloud Summary
+            ${SONAR_TABLE}
+
+            ${SONAR_DETAILS}
+
+            ## Changed Files Summary
+            ${CHANGED_TABLE}
+
+            ## Changed Files (Diffs & Content)
+            ${CHANGED_BLOCKS}
+            EOF
+
+          echo "Built prompt.md (first 80 lines):"
+          head -n 80 prompt.md || true
+
+      - name: Send prompt (always) to Technical Debt Analyzer
         id: flowise-analysis
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
           ISSUES_JSON=$(cat issues.json)
-          CHANGED_FILES=$(cat changed.json)
+          PROMPT_TEXT=$(cat prompt.md)
 
-          echo "======= DEBUG: ISSUES JSON ======="
-          echo "$ISSUES_JSON" | jq .
+          echo "======= DEBUG: PROMPT (first 120 lines) ======="
+          echo "$PROMPT_TEXT" | head -n 120
 
-          echo "======= DEBUG: CHANGED FILES ======="
-          echo "$CHANGED_FILES" | jq .
-
-          if [[ "$ISSUES_JSON" == "[]" ]]; then
-            echo '{"text": "✅ No potential Technical Debt was detected in the current PR."}' > flowise_output.json
-            exit 0
-          fi
-
-          SONAR_ISSUE_SUMMARY=$(jq -r '
-            .[] |
-            "### Rule: \(.rule)\n" +
-            "* Severity: \(.severity)\n" +
-            "* Location: \(.component):\(.line)\n" +
-            "* Message: \(.message)\n" +
-            "* Snippet:\n```\n\(.snippet)\n```"
-          ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
-
-          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\n\n## Sonar Issues\n$SONAR_ISSUE_SUMMARY"
-
+          # NOTE: No overrideConfig; everything is inside the user prompt now.
           PAYLOAD=$(jq -cn \
-            --arg pr "${{ github.event.pull_request.number }}" \
-            --arg proj "${{ env.PROJECT_KEY }}" \
-            --arg question "$QUESTION_TEXT" \
+            --arg question "$PROMPT_TEXT" \
             --argjson issues "$ISSUES_JSON" \
-            --argjson changedFiles "$CHANGED_FILES" \
             '{
               question: $question,
-              overrideConfig: {
-                projectKey: $proj,
-                prNumber: $pr,
-                changedFiles: $changedFiles
-              },
               issues: $issues
             }')
 
@@ -224,7 +340,7 @@ jobs:
             }
 
             const body = parsed.text || 'Flowise returned:\n```json\n' +
-                          JSON.stringify(parsed, null, 2) + '\n```';
+                            JSON.stringify(parsed, null, 2) + '\n```';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
