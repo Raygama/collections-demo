@@ -223,7 +223,7 @@ jobs:
             (if .content != "" then "\n**Content (head, trimmed):**\n```" + .language + "\n" + .content + "\n```\n" else "" end)
           ' changed_files_detail.json)
 
-          cat > prompt.md << 'EOF'
+          cat > prompt.md << EOF
             You are the **Technical Debt Analyzer**. Analyze the PR even if Sonar finds no issues. Use Sonar findings (if present) as hints, not limits.
 
             ## PR Metadata
