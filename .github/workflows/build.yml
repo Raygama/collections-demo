@@ -242,35 +242,35 @@ jobs:
           export REPO OWNER PRNUM BRANCH BASE HEAD SONAR_TABLE SONAR_DETAILS CHANGED_TABLE
 
           cat > prompt.tmpl <<'TPL'
-You are the **Technical Debt Analyzer**. Analyze the PR even if Sonar finds no issues. Use Sonar findings (if present) as hints, not limits.
+          You are the **Technical Debt Analyzer**. Analyze the PR even if Sonar finds no issues. Use Sonar findings (if present) as hints, not limits.
 
-## PR Metadata
-- Repository: **${REPO}** (owner: **${OWNER}**)
-- Pull Request: **#${PRNUM}**
-- Target branch: **${BRANCH}**
-- Diff: **${BASE}..${HEAD}**
+          ## PR Metadata
+          - Repository: **${REPO}** (owner: **${OWNER}**)
+          - Pull Request: **#${PRNUM}**
+          - Target branch: **${BRANCH}**
+          - Diff: **${BASE}..${HEAD}**
 
-## Tasks
-1. Identify and justify **Technical Debt** in changed files (even when not flagged by SonarCloud).
-2. Classify each finding using **Sonar’s native model**:
-   - Type: Bug / Vulnerability / Code Smell / Security Hotspot
-   - Quality: Reliability / Security / Maintainability
-   - Severity: Blocker / Critical / Major / Minor / Info
-   - Include remediation effort (estimate) and references (e.g., rule rationale, CWE/OWASP if relevant).
-3. Consider **architectural**, **security**, and **code-quality** perspectives. Tie findings to relevant epics/Jira items when evidence appears in the code or PR context.
-4. Highlight **fault-inducing patterns** (e.g., risky changes, missing checks, concurrency hazards) even without existing rules.
-5. Provide **prioritized recommendations** and a concise **Quality Gate-style verdict** for the PR.
+          ## Tasks
+          1. Identify and justify **Technical Debt** in changed files (even when not flagged by SonarCloud).
+          2. Classify each finding using **Sonar’s native model**:
+            - Type: Bug / Vulnerability / Code Smell / Security Hotspot
+            - Quality: Reliability / Security / Maintainability
+            - Severity: Blocker / Critical / Major / Minor / Info
+            - Include remediation effort (estimate) and references (e.g., rule rationale, CWE/OWASP if relevant).
+          3. Consider **architectural**, **security**, and **code-quality** perspectives. Tie findings to relevant epics/Jira items when evidence appears in the code or PR context.
+          4. Highlight **fault-inducing patterns** (e.g., risky changes, missing checks, concurrency hazards) even without existing rules.
+          5. Provide **prioritized recommendations** and a concise **Quality Gate-style verdict** for the PR.
 
-## SonarCloud Summary
-${SONAR_TABLE}
+          ## SonarCloud Summary
+          ${SONAR_TABLE}
 
-${SONAR_DETAILS}
+          ${SONAR_DETAILS}
 
-## Changed Files Summary
-${CHANGED_TABLE}
+          ## Changed Files Summary
+          ${CHANGED_TABLE}
 
-## Changed Files (Diffs & Content)
-TPL
+          ## Changed Files (Diffs & Content)
+          TPL
 
           # Expand variables in the header/template (diffs appended separately)
           envsubst < prompt.tmpl > prompt.md
