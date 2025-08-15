@@ -265,7 +265,6 @@ public abstract class AbstractMapMultiSet<E> extends AbstractMultiSet<E> {
             } else {
                 map.remove(object);
                 size -= mut.value;
-                mut.value = 0;
             }
         }
         return oldCount;
