@@ -194,8 +194,7 @@ class FunctorUtils {
      * simply as centralised documentation and atomic unchecked warning
      * suppression.
      *
-     * @param <I> the type of object the returned transformer should "accept"
-     * @param <O> the type of object the returned transformer should "produce"
+     * @param <T> the type of object the returned transformer should "accept"
      * @param transformer the transformer to coerce.
      * @return the coerced transformer.
      */

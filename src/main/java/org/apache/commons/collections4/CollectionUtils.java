@@ -264,8 +264,8 @@ public class CollectionUtils {
      * <p>
      * The cardinality of each element <i>e</i> in the returned
      * {@link Collection} will be equal to
-     * <code>max(cardinality(<i>e</i>,<i>a</i>),cardinality(<i>e</i>,<i>b</i>)) - min(cardinality(<i>e</i>,<i>a</i>),
-     * cardinality(<i>e</i>,<i>b</i>))</code>.
+     * <tt>max(cardinality(<i>e</i>,<i>a</i>),cardinality(<i>e</i>,<i>b</i>)) - min(cardinality(<i>e</i>,<i>a</i>),
+     * cardinality(<i>e</i>,<i>b</i>))</tt>.
      * <p>
      * This is equivalent to
      * {@code {@link #subtract subtract}({@link #union union(a,b)},{@link #intersection intersection(a,b)})}
@@ -638,7 +638,7 @@ public class CollectionUtils {
      * @param obj the object to find the cardinality of
      * @param coll the {@link Iterable} to search
      * @param <O> the type of object that the {@link Iterable} may contain.
-     * @return the number of occurrences of obj in coll
+     * @return the the number of occurrences of obj in coll
      * @throws NullPointerException if coll is null
      * @deprecated since 4.1, use {@link IterableUtils#frequency(Iterable, Object)} instead.
      *   Be aware that the order of parameters has changed.
