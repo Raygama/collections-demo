@@ -16,9 +16,6 @@
  */
 package org.apache.commons.collections4.keyvalue;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,13 +26,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for {@link org.apache.commons.collections4.keyvalue.MultiKey}.
  *
  */
-public class MultiKeyTest {
+public class MultiKeyTest extends TestCase {
 
     Integer ONE = Integer.valueOf(1);
     Integer TWO = Integer.valueOf(2);
@@ -43,8 +40,17 @@ public class MultiKeyTest {
     Integer FOUR = Integer.valueOf(4);
     Integer FIVE = Integer.valueOf(5);
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
+
     //-----------------------------------------------------------------------
-    @Test
     public void testConstructors() throws Exception {
         MultiKey<Integer> mk;
         mk = new MultiKey<>(ONE, TWO);
@@ -63,7 +69,6 @@ public class MultiKeyTest {
         assertTrue(Arrays.equals(new Object[] { THREE, FOUR, ONE, TWO }, mk.getKeys()));
     }
 
-    @Test
     public void testConstructorsByArray() throws Exception {
         MultiKey<Integer> mk;
         Integer[] keys = new Integer[] { THREE, FOUR, ONE, TWO };
@@ -91,7 +96,6 @@ public class MultiKeyTest {
         assertTrue(Arrays.equals(new Object[] { THREE, FOUR, ONE, FIVE }, mk.getKeys()));
     }
 
-    @Test
     public void testConstructorsByArrayNull() throws Exception {
         final Integer[] keys = null;
         try {
@@ -108,7 +112,6 @@ public class MultiKeyTest {
         } catch (final IllegalArgumentException ex) {}
     }
 
-    @Test
     public void testSize() {
         assertEquals(2, new MultiKey<>(ONE, TWO).size());
         assertEquals(2, new MultiKey<>(null, null).size());
@@ -125,7 +128,6 @@ public class MultiKeyTest {
         assertEquals(7, new MultiKey<>(new Integer[] { ONE, TWO, ONE, TWO, ONE, TWO, ONE }).size());
     }
 
-    @Test
     public void testGetIndexed() {
         final MultiKey<Integer> mk = new MultiKey<>(ONE, TWO);
         assertSame(ONE, mk.getKey(0));
@@ -140,7 +142,6 @@ public class MultiKeyTest {
         } catch (final IndexOutOfBoundsException ex) {}
     }
 
-    @Test
     public void testGetKeysSimpleConstructor() {
         final MultiKey<Integer> mk = new MultiKey<>(ONE, TWO);
         final Object[] array = mk.getKeys();
@@ -149,7 +150,6 @@ public class MultiKeyTest {
         assertEquals(2, array.length);
     }
 
-    @Test
     public void testGetKeysArrayConstructorCloned() {
         final Integer[] keys = new Integer[] { ONE, TWO };
         final MultiKey<Integer> mk = new MultiKey<>(keys, true);
@@ -161,7 +161,6 @@ public class MultiKeyTest {
         assertEquals(2, array.length);
     }
 
-    @Test
     public void testGetKeysArrayConstructorNonCloned() {
         final Integer[] keys = new Integer[] { ONE, TWO };
         final MultiKey<Integer> mk = new MultiKey<>(keys, false);
@@ -173,7 +172,6 @@ public class MultiKeyTest {
         assertEquals(2, array.length);
     }
 
-    @Test
     public void testHashCode() {
         final MultiKey<Integer> mk1 = new MultiKey<>(ONE, TWO);
         final MultiKey<Integer> mk2 = new MultiKey<>(ONE, TWO);
@@ -187,7 +185,6 @@ public class MultiKeyTest {
         assertEquals(total, mk1.hashCode());
     }
 
-    @Test
     public void testEquals() {
         final MultiKey<Integer> mk1 = new MultiKey<>(ONE, TWO);
         final MultiKey<Integer> mk2 = new MultiKey<>(ONE, TWO);
@@ -230,7 +227,6 @@ public class MultiKeyTest {
         }
     }
 
-    @Test
     public void testEqualsAfterSerialization() throws IOException, ClassNotFoundException
     {
         SystemHashCodeSimulatingKey sysKey = new SystemHashCodeSimulatingKey("test");
@@ -276,7 +272,6 @@ public class MultiKeyTest {
 
     }
 
-    @Test
     public void testEqualsAfterSerializationOfDerivedClass() throws IOException, ClassNotFoundException
     {
         final DerivedMultiKey<?> mk = new DerivedMultiKey<>("A", "B");

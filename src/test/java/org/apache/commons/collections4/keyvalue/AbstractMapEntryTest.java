@@ -19,8 +19,7 @@ package org.apache.commons.collections4.keyvalue;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
 /**
  * Abstract tests that can be extended to test any Map.Entry implementation.
@@ -31,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.0
  */
-public abstract class AbstractMapEntryTest<K, V> {
+public abstract class AbstractMapEntryTest<K, V> extends TestCase {
 
     protected final String key = "name";
     protected final String value = "duke";
@@ -72,7 +71,6 @@ public abstract class AbstractMapEntryTest<K, V> {
 
     //-----------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    @Test
     public void testAccessorsAndMutators() {
         Map.Entry<K, V> entry = makeMapEntry((K) key, (V) value);
 
@@ -97,7 +95,6 @@ public abstract class AbstractMapEntryTest<K, V> {
      */
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testSelfReferenceHandling() {
         // test that #setValue does not permit
         //  the MapEntry to contain itself (and thus cause infinite recursion
@@ -123,7 +120,6 @@ public abstract class AbstractMapEntryTest<K, V> {
     public abstract void testConstructors();
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testEqualsAndHashCode() {
         // 1. test with object data
         Map.Entry<K, V> e1 = makeMapEntry((K) key, (V) value);
@@ -145,7 +141,6 @@ public abstract class AbstractMapEntryTest<K, V> {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testToString() {
         Map.Entry<K, V> entry = makeMapEntry((K) key, (V) value);
         assertTrue(entry.toString().equals(entry.getKey() + "=" + entry.getValue()));
