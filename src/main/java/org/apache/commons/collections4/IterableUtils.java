@@ -172,7 +172,7 @@ public class IterableUtils {
             public Iterator<E> iterator() {
                 return new LazyIteratorChain<E>() {
                     @Override
-                    protected Iterator<? extends E> nextIterator(final int count) {
+                    protected Iterator<? extends E> nextIterator(int count) {
                         if (count > iterables.length) {
                             return null;
                         }
@@ -324,7 +324,7 @@ public class IterableUtils {
             public Iterator<E> iterator() {
                 return new LazyIteratorChain<E>() {
                     @Override
-                    protected Iterator<? extends E> nextIterator(final int count) {
+                    protected Iterator<? extends E> nextIterator(int count) {
                         if (IterableUtils.isEmpty(iterable)) {
                             return null;
                         }
@@ -546,7 +546,6 @@ public class IterableUtils {
             @Override
             public Iterator<E> iterator() {
                 @SuppressWarnings("unchecked") // safe
-                final
                 Iterator<? extends E>[] iterators = new Iterator[others.length + 1];
                 iterators[0] = first.iterator();
                 for (int i = 0; i < others.length; i++) {
@@ -775,26 +774,6 @@ public class IterableUtils {
     }
 
     /**
-     * Shortcut for {@code get(iterator, 0)}.
-     * <p>
-     * Returns the <code>first</code> value in the <code>iterable</code>'s {@link Iterator}, throwing
-     * <code>IndexOutOfBoundsException</code> if there is no such element.
-     * </p>
-     * <p>
-     * If the {@link Iterable} is a {@link List}, then it will use {@link List#get(int)}.
-     * </p>
-     *
-     * @param <T> the type of object in the {@link Iterable}.
-     * @param iterable  the {@link Iterable} to get a value from, may be null
-     * @return the first object
-     * @throws IndexOutOfBoundsException if the request  is invalid
-     * @since 4.2
-     */
-    public static <T> T first(final Iterable<T> iterable) {
-        return get(iterable, 0);
-    }
-
-    /**
      * Returns the number of elements contained in the given iterator.
      * <p>
      * A <code>null</code> or empty iterator returns {@code 0}.
@@ -936,7 +915,7 @@ public class IterableUtils {
             throw new NullPointerException("Predicates must not be null.");
         }
 
-        for (final Predicate<?> p : predicates) {
+        for (Predicate<?> p : predicates) {
             if (p == null) {
                 throw new NullPointerException("Predicate must not be null.");
             }

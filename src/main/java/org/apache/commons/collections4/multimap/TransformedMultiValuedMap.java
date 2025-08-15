@@ -171,7 +171,7 @@ public class TransformedMultiValuedMap<K, V> extends AbstractMultiValuedMapDecor
             throw new NullPointerException("Map must not be null.");
         }
         boolean changed = false;
-        for (final Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             changed |= put(entry.getKey(), entry.getValue());
         }
         return changed;
@@ -183,7 +183,7 @@ public class TransformedMultiValuedMap<K, V> extends AbstractMultiValuedMapDecor
             throw new NullPointerException("Map must not be null.");
         }
         boolean changed = false;
-        for (final Map.Entry<? extends K, ? extends V> entry : map.entries()) {
+        for (Map.Entry<? extends K, ? extends V> entry : map.entries()) {
             changed |= put(entry.getKey(), entry.getValue());
         }
         return changed;

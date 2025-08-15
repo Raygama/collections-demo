@@ -731,21 +731,21 @@ public class CollectionUtilsTest extends MockTestCase {
         lastElement = CollectionUtils.forAllButLastDo(col, testClosure);
         assertNull(lastElement);
 
-        final Collection<String> strings = Arrays.asList("a", "b", "c");
+        Collection<String> strings = Arrays.asList("a", "b", "c");
         final StringBuffer result = new StringBuffer();
         result.append(CollectionUtils.forAllButLastDo(strings, new Closure<String>() {
             @Override
-            public void execute(final String input) {
+            public void execute(String input) {
                 result.append(input+";");
             }
         }));
         assertEquals("a;b;c", result.toString());
 
-        final Collection<String> oneString = Arrays.asList("a");
+        Collection<String> oneString = Arrays.asList("a");
         final StringBuffer resultOne = new StringBuffer();
         resultOne.append(CollectionUtils.forAllButLastDo(oneString, new Closure<String>() {
             @Override
-            public void execute(final String input) {
+            public void execute(String input) {
                 resultOne.append(input+";");
             }
         }));
@@ -761,7 +761,7 @@ public class CollectionUtilsTest extends MockTestCase {
         final Collection<List<? extends Number>> col = new ArrayList<>();
         col.add(collectionA);
         col.add(collectionB);
-        final List<? extends Number> lastElement = CollectionUtils.forAllButLastDo(col.iterator(), testClosure);
+        List<? extends Number> lastElement = CollectionUtils.forAllButLastDo(col.iterator(), testClosure);
         assertSame(lastElement, collectionB);
         assertTrue(collectionA.isEmpty() && !collectionB.isEmpty());
 
@@ -1211,14 +1211,14 @@ public class CollectionUtilsTest extends MockTestCase {
 
     @Test
     public void selectWithOutputCollections() {
-        final List<Integer> input = new ArrayList<>();
+        List<Integer> input = new ArrayList<>();
         input.add(1);
         input.add(2);
         input.add(3);
         input.add(4);
 
-        final List<Integer> output = new ArrayList<>();
-        final List<Integer> rejected = new ArrayList<>();
+        List<Integer> output = new ArrayList<>();
+        List<Integer> rejected = new ArrayList<>();
 
         CollectionUtils.select(input, EQUALS_TWO, output, rejected);
 
@@ -1227,7 +1227,7 @@ public class CollectionUtilsTest extends MockTestCase {
         assertEquals(2, CollectionUtils.extractSingleton(output).intValue());
 
         // rejected contains 1, 3, and 4
-        final Integer[] expected = {1, 3, 4};
+        Integer[] expected = {1, 3, 4};
         Assert.assertArrayEquals(expected, rejected.toArray());
 
         output.clear();
@@ -1363,7 +1363,7 @@ public class CollectionUtilsTest extends MockTestCase {
     @Test
     public void predicatedCollection() {
         final Predicate<Object> predicate = PredicateUtils.instanceofPredicate(Integer.class);
-        final Collection<Number> collection = CollectionUtils.predicatedCollection(new ArrayList<Number>(), predicate);
+        Collection<Number> collection = CollectionUtils.predicatedCollection(new ArrayList<Number>(), predicate);
         assertTrue("returned object should be a PredicatedCollection", collection instanceof PredicatedCollection);
         try {
             CollectionUtils.predicatedCollection(new ArrayList<Number>(), null);
@@ -1538,7 +1538,7 @@ public class CollectionUtilsTest extends MockTestCase {
     @Test
     public void testTransformedCollection() {
         final Transformer<Object, Object> transformer = TransformerUtils.nopTransformer();
-        final Collection<Object> collection = CollectionUtils.transformingCollection(new ArrayList<>(), transformer);
+        Collection<Object> collection = CollectionUtils.transformingCollection(new ArrayList<>(), transformer);
         assertTrue("returned object should be a TransformedCollection", collection instanceof TransformedCollection);
         try {
             CollectionUtils.transformingCollection(new ArrayList<>(), null);
@@ -1569,7 +1569,7 @@ public class CollectionUtilsTest extends MockTestCase {
     @Test
     @Deprecated
     public void testSynchronizedCollection() {
-        final Collection<Object> col = CollectionUtils.synchronizedCollection(new ArrayList<>());
+        Collection<Object> col = CollectionUtils.synchronizedCollection(new ArrayList<>());
         assertTrue("Returned object should be a SynchronizedCollection.", col instanceof SynchronizedCollection);
         try {
             CollectionUtils.synchronizedCollection(null);
@@ -1582,7 +1582,7 @@ public class CollectionUtilsTest extends MockTestCase {
     @Test
     @Deprecated
     public void testUnmodifiableCollection() {
-        final Collection<Object> col = CollectionUtils.unmodifiableCollection(new ArrayList<>());
+        Collection<Object> col = CollectionUtils.unmodifiableCollection(new ArrayList<>());
         assertTrue("Returned object should be a UnmodifiableCollection.", col instanceof UnmodifiableCollection);
         try {
             CollectionUtils.unmodifiableCollection(null);
@@ -1768,7 +1768,7 @@ public class CollectionUtilsTest extends MockTestCase {
         List<Integer> result2 = CollectionUtils.collate(collectionE, collectionD);
         assertEquals("Merge two lists 1", result1, result2);
 
-        final List<Integer> combinedList = new ArrayList<>();
+        List<Integer> combinedList = new ArrayList<>();
         combinedList.addAll(collectionD);
         combinedList.addAll(collectionE);
         Collections.sort(combinedList);
@@ -1793,14 +1793,14 @@ public class CollectionUtilsTest extends MockTestCase {
 
     @Test
     public void testCollateIgnoreDuplicates() {
-        final List<Integer> result1 = CollectionUtils.collate(collectionD, collectionE, false);
-        final List<Integer> result2 = CollectionUtils.collate(collectionE, collectionD, false);
+        List<Integer> result1 = CollectionUtils.collate(collectionD, collectionE, false);
+        List<Integer> result2 = CollectionUtils.collate(collectionE, collectionD, false);
         assertEquals("Merge two lists 1 - ignore duplicates", result1, result2);
 
-        final Set<Integer> combinedSet = new HashSet<>();
+        Set<Integer> combinedSet = new HashSet<>();
         combinedSet.addAll(collectionD);
         combinedSet.addAll(collectionE);
-        final List<Integer> combinedList = new ArrayList<>(combinedSet);
+        List<Integer> combinedList = new ArrayList<>(combinedSet);
         Collections.sort(combinedList);
 
         assertEquals("Merge two lists 2 - ignore duplicates", combinedList, result2);
@@ -1813,11 +1813,11 @@ public class CollectionUtilsTest extends MockTestCase {
 
     @Test
     public void testPermutations() {
-        final List<Integer> sample = collectionA.subList(0, 5);
-        final Collection<List<Integer>> permutations = CollectionUtils.permutations(sample);
+        List<Integer> sample = collectionA.subList(0, 5);
+        Collection<List<Integer>> permutations = CollectionUtils.permutations(sample);
 
         // result size = n!
-        final int collSize = sample.size();
+        int collSize = sample.size();
         int factorial = 1;
         for (int i = 1; i <= collSize; i++) {
             factorial *= i;
@@ -1831,17 +1831,17 @@ public class CollectionUtilsTest extends MockTestCase {
         assertFalse(CollectionUtils.matchesAll(null, null));
         assertFalse(CollectionUtils.matchesAll(collectionA, null));
 
-        final Predicate<Integer> lessThanFive = new Predicate<Integer>() {
+        Predicate<Integer> lessThanFive = new Predicate<Integer>() {
             @Override
-            public boolean evaluate(final Integer object) {
+            public boolean evaluate(Integer object) {
                 return object < 5;
             }
         };
         assertTrue(CollectionUtils.matchesAll(collectionA, lessThanFive));
 
-        final Predicate<Integer> lessThanFour = new Predicate<Integer>() {
+        Predicate<Integer> lessThanFour = new Predicate<Integer>() {
             @Override
-            public boolean evaluate(final Integer object) {
+            public boolean evaluate(Integer object) {
                 return object < 4;
             }
         };
@@ -1867,12 +1867,12 @@ public class CollectionUtilsTest extends MockTestCase {
         final Collection<String> result = CollectionUtils.removeAll(base, remove, new Equator<String>() {
 
             @Override
-            public boolean equate(final String o1, final String o2) {
+            public boolean equate(String o1, String o2) {
                 return o1.charAt(1) == o2.charAt(1);
             }
 
             @Override
-            public int hash(final String o) {
+            public int hash(String o) {
                 return o.charAt(1);
             }
         });
@@ -1919,12 +1919,12 @@ public class CollectionUtilsTest extends MockTestCase {
         final Collection<String> result = CollectionUtils.retainAll(base, retain, new Equator<String>() {
 
             @Override
-            public boolean equate(final String o1, final String o2) {
+            public boolean equate(String o1, String o2) {
                 return o1.charAt(1) == o2.charAt(1);
             }
 
             @Override
-            public int hash(final String o) {
+            public int hash(String o) {
                 return o.charAt(1);
             }
         });

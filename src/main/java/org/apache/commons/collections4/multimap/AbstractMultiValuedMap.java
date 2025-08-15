@@ -111,7 +111,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
      * @param map the map to wrap
      */
     @SuppressWarnings("unchecked")
-    protected void setMap(final Map<K, ? extends Collection<V>> map) {
+    protected void setMap(Map<K, ? extends Collection<V>> map) {
         this.map = (Map<K, Collection<V>>) map;
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
 
     // -----------------------------------------------------------------------
     @Override
-    public boolean containsKey(final Object key) {
+    public boolean containsKey(Object key) {
         return getMap().containsKey(key);
     }
 
@@ -129,8 +129,8 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
     }
 
     @Override
-    public boolean containsMapping(final Object key, final Object value) {
-        final Collection<V> coll = getMap().get(key);
+    public boolean containsMapping(Object key, Object value) {
+        Collection<V> coll = getMap().get(key);
         return coll != null && coll.contains(value);
     }
 
@@ -165,7 +165,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
      *   empty, unmodifiable collection for no mapping found
      */
     @Override
-    public Collection<V> remove(final Object key) {
+    public Collection<V> remove(Object key) {
         return CollectionUtils.emptyIfNull(getMap().remove(key));
     }
 
@@ -188,7 +188,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         if (coll == null) {
             return false;
         }
-        final boolean changed = coll.remove(value);
+        boolean changed = coll.remove(value);
         if (coll.isEmpty()) {
             getMap().remove(key);
         }
@@ -285,7 +285,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
             throw new NullPointerException("Map must not be null.");
         }
         boolean changed = false;
-        for (final Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             changed |= put(entry.getKey(), entry.getValue());
         }
         return changed;
@@ -309,7 +309,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
             throw new NullPointerException("Map must not be null.");
         }
         boolean changed = false;
-        for (final Map.Entry<? extends K, ? extends V> entry : map.entries()) {
+        for (Map.Entry<? extends K, ? extends V> entry : map.entries()) {
             changed |= put(entry.getKey(), entry.getValue());
         }
         return changed;
@@ -353,10 +353,10 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         if (values instanceof Collection<?>) {
-            final Collection<? extends V> valueCollection = (Collection<? extends V>) values;
+            Collection<? extends V> valueCollection = (Collection<? extends V>) values;
             return !valueCollection.isEmpty() && get(key).addAll(valueCollection);
         }
-        final Iterator<? extends V> it = values.iterator();
+        Iterator<? extends V> it = values.iterator();
         return it.hasNext() && CollectionUtils.addAll(get(key), it);
     }
 
@@ -369,7 +369,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -414,7 +414,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean add(final V value) {
+        public boolean add(V value) {
             Collection<V> coll = getMapping();
             if (coll == null) {
                 coll = createCollection();
@@ -424,7 +424,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean addAll(final Collection<? extends V> other) {
+        public boolean addAll(Collection<? extends V> other) {
             Collection<V> coll = getMapping();
             if (coll == null) {
                 coll = createCollection();
@@ -459,13 +459,13 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean contains(final Object obj) {
+        public boolean contains(Object obj) {
             final Collection<V> coll = getMapping();
             return coll == null ? false : coll.contains(obj);
         }
 
         @Override
-        public boolean containsAll(final Collection<?> other) {
+        public boolean containsAll(Collection<?> other) {
             final Collection<V> coll = getMapping();
             return coll == null ? false : coll.containsAll(other);
         }
@@ -477,13 +477,13 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean remove(final Object item) {
+        public boolean remove(Object item) {
             final Collection<V> coll = getMapping();
             if (coll == null) {
                 return false;
             }
 
-            final boolean result = coll.remove(item);
+            boolean result = coll.remove(item);
             if (coll.isEmpty()) {
                 AbstractMultiValuedMap.this.remove(key);
             }
@@ -491,13 +491,13 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean removeAll(final Collection<?> c) {
+        public boolean removeAll(Collection<?> c) {
             final Collection<V> coll = getMapping();
             if (coll == null) {
                 return false;
             }
 
-            final boolean result = coll.removeAll(c);
+            boolean result = coll.removeAll(c);
             if (coll.isEmpty()) {
                 AbstractMultiValuedMap.this.remove(key);
             }
@@ -505,13 +505,13 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean retainAll(final Collection<?> c) {
+        public boolean retainAll(Collection<?> c) {
             final Collection<V> coll = getMapping();
             if (coll == null) {
                 return false;
             }
 
-            final boolean result = coll.retainAll(c);
+            boolean result = coll.retainAll(c);
             if (coll.isEmpty()) {
                 AbstractMultiValuedMap.this.remove(key);
             }
@@ -529,7 +529,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
 
         @Override
         @SuppressWarnings("unchecked")
-        public <T> T[] toArray(final T[] a) {
+        public <T> T[] toArray(T[] a) {
             final Collection<V> coll = getMapping();
             if (coll == null) {
                 return (T[]) CollectionUtils.EMPTY_COLLECTION.toArray(a);
@@ -554,7 +554,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
     private class KeysMultiSet extends AbstractMultiSet<K> {
 
         @Override
-        public boolean contains(final Object o) {
+        public boolean contains(Object o) {
             return getMap().containsKey(o);
         }
 
@@ -574,9 +574,9 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public int getCount(final Object object) {
+        public int getCount(Object object) {
             int count = 0;
-            final Collection<V> col = AbstractMultiValuedMap.this.getMap().get(object);
+            Collection<V> col = AbstractMultiValuedMap.this.getMap().get(object);
             if (col != null) {
                 count = col.size();
             }
@@ -621,7 +621,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
                 final Iterator<K> keyIterator = keysCol.iterator();
 
                 @Override
-                protected Iterator<? extends Entry<K, V>> nextIterator(final int count) {
+                protected Iterator<? extends Entry<K, V>> nextIterator(int count) {
                     if (!keyIterator.hasNext()) {
                         return null;
                     }
@@ -651,12 +651,12 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
      */
     private class MultiValuedMapEntry extends AbstractMapEntry<K, V> {
 
-        public MultiValuedMapEntry(final K key, final V value) {
+        public MultiValuedMapEntry(K key, V value) {
             super(key, value);
         }
 
         @Override
-        public V setValue(final V value) {
+        public V setValue(V value) {
             throw new UnsupportedOperationException();
         }
 
@@ -708,7 +708,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public V setValue(final V value) {
+        public V setValue(V value) {
             if (current == null) {
                 throw new IllegalStateException();
             }
@@ -790,18 +790,17 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean containsKey(final Object key) {
+        public boolean containsKey(Object key) {
             return decoratedMap.containsKey(key);
         }
 
         @Override
-        public Collection<V> get(final Object key) {
-          final Collection<V> collection = decoratedMap.get(key);
+        public Collection<V> get(Object key) {
+          Collection<V> collection = decoratedMap.get(key);
           if (collection == null) {
             return null;
           }
           @SuppressWarnings("unchecked")
-        final
           K k = (K) key;
           return wrappedCollection(k);
         }
@@ -817,8 +816,8 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public Collection<V> remove(final Object key) {
-          final Collection<V> collection = decoratedMap.remove(key);
+        public Collection<V> remove(Object key) {
+          Collection<V> collection = decoratedMap.remove(key);
           if (collection == null) {
             return null;
           }
@@ -830,7 +829,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         }
 
         @Override
-        public boolean equals(final Object object) {
+        public boolean equals(Object object) {
           return this == object || decoratedMap.equals(object);
         }
 
@@ -867,16 +866,16 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
             }
 
             @Override
-            public boolean contains(final Object o) {
+            public boolean contains(Object o) {
                 return decoratedMap.entrySet().contains(o);
             }
 
             @Override
-            public boolean remove(final Object o) {
+            public boolean remove(Object o) {
                 if (!contains(o)) {
                     return false;
                 }
-                final Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
+                Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
                 AbstractMultiValuedMap.this.remove(entry.getKey());
                 return true;
             }
@@ -887,7 +886,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
          */
         class AsMapEntrySetIterator extends AbstractIteratorDecorator<Map.Entry<K, Collection<V>>> {
 
-            AsMapEntrySetIterator(final Iterator<Map.Entry<K, Collection<V>>> iterator) {
+            AsMapEntrySetIterator(Iterator<Map.Entry<K, Collection<V>>> iterator) {
                 super(iterator);
             }
 
@@ -934,7 +933,6 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
             final int valueSize = in.readInt();
             for (int j = 0; j < valueSize; j++) {
                 @SuppressWarnings("unchecked") // see above
-                final
                 V value = (V) in.readObject();
                 values.add(value);
             }
