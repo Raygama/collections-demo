@@ -1084,8 +1084,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         try {
-            // Casting to Object[] allows compilation on Java 11.
-            array = getCollection().toArray((Object[]) null);
+            array = getCollection().toArray(null);
             fail("toArray(null) should raise NPE");
         } catch (final NullPointerException e) {
             // expected
