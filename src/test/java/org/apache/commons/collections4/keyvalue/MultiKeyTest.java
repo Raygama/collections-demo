@@ -16,6 +16,7 @@
  */
 package org.apache.commons.collections4.keyvalue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

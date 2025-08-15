@@ -97,7 +97,7 @@ public class PeekingIterator<E> implements Iterator<E> {
         if (exhausted) {
             return false;
         }
-        return slotFilled || iterator.hasNext();
+        return slotFilled ? true : iterator.hasNext();
     }
 
     /**
