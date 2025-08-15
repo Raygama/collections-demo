@@ -22,7 +22,6 @@ import org.apache.commons.collections4.ResettableIterator;
 /**
  * Provides an implementation of an empty ordered iterator.
  *
- * @param <E> the type to iterate.
  * @since 3.1
  */
 public class EmptyOrderedIterator<E> extends AbstractEmptyIterator<E>
@@ -40,6 +39,7 @@ public class EmptyOrderedIterator<E> extends AbstractEmptyIterator<E>
      * @param <E> the element type
      * @return OrderedIterator&lt;E&gt;
      */
+    @SuppressWarnings("unchecked")
     public static <E> OrderedIterator<E> emptyOrderedIterator() {
         return INSTANCE;
     }

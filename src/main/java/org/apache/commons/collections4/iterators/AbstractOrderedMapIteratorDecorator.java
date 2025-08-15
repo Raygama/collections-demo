@@ -23,8 +23,6 @@ import org.apache.commons.collections4.OrderedMapIterator;
  * <p>
  * All methods are forwarded to the decorated map iterator.
  *
- * @param <K> the type of keys
- * @param <V> the type of mapped values
  * @since 3.0
  */
 public class AbstractOrderedMapIteratorDecorator<K, V> implements OrderedMapIterator<K, V> {

@@ -302,9 +302,7 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
     public void clear() {
         super.clear();
         // drain the queue
-        while (queue.poll() != null) {
-            // empty
-        }
+        while (queue.poll() != null) {} // NOPMD
     }
 
     //-----------------------------------------------------------------------
@@ -736,7 +734,6 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
          * This is the callback for custom "after purge" logic
          */
         protected void onPurge() {
-            // empty
         }
 
         /**

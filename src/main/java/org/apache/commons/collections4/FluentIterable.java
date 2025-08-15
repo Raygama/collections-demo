@@ -78,6 +78,7 @@ public class FluentIterable<E> implements Iterable<E> {
      * @param <T>  the element type
      * @return a new empty FluentIterable
      */
+    @SuppressWarnings("unchecked")
     public static <T> FluentIterable<T> empty() {
         return IterableUtils.EMPTY_ITERABLE;
     }

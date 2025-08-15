@@ -159,7 +159,6 @@ public class PassiveExpiringMap<K, V>
      * @param <V> the value object type
      * @since 4.0
      */
-    @FunctionalInterface
     public interface ExpirationPolicy<K, V>
         extends Serializable {
 

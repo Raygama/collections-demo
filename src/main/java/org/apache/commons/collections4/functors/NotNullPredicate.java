@@ -41,6 +41,7 @@ public final class NotNullPredicate<T> implements Predicate<T>, Serializable {
      * @return the singleton instance
      * @since 3.1
      */
+    @SuppressWarnings("unchecked")
     public static <T> Predicate<T> notNullPredicate() {
         return INSTANCE;
     }

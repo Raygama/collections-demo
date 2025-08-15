@@ -22,8 +22,6 @@ import org.apache.commons.collections4.ResettableIterator;
 /**
  * Provides an implementation of an empty map iterator.
  *
- * @param <K> the type of keys
- * @param <V> the type of mapped values
  * @since 3.1
  */
 public class EmptyMapIterator<K, V> extends AbstractEmptyMapIterator<K, V> implements
@@ -42,6 +40,7 @@ public class EmptyMapIterator<K, V> extends AbstractEmptyMapIterator<K, V> imple
      * @param <V> the value type
      * @return {@link MapIterator}&lt;K, V&gt;
      */
+    @SuppressWarnings("unchecked")
     public static <K, V> MapIterator<K, V> emptyMapIterator() {
         return INSTANCE;
     }

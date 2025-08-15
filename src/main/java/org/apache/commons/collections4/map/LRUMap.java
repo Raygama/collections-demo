@@ -271,7 +271,8 @@ public class LRUMap<K, V>
             // remove
             if(entry.before == null) {
                 throw new IllegalStateException("Entry.before is null." +
-                    " This should not occur if your keys are immutable, and you have used synchronization properly.");
+                    " Please check that your keys are immutable, and that you have used synchronization properly." +
+                    " If so, then please report this to dev@commons.apache.org as a bug.");
             }
             entry.before.after = entry.after;
             entry.after.before = entry.before;
@@ -282,7 +283,7 @@ public class LRUMap<K, V>
             header.before = entry;
         } else if (entry == header) {
             throw new IllegalStateException("Can't move header to MRU" +
-                    " This should not occur if your keys are immutable, and you have used synchronization properly.");
+                " (please report this to dev@commons.apache.org)");
         }
     }
 
@@ -333,7 +334,8 @@ public class LRUMap<K, V>
                     throw new IllegalStateException(
                         "Entry.after=null, header.after=" + header.after + " header.before=" + header.before +
                         " key=" + key + " value=" + value + " size=" + size + " maxSize=" + maxSize +
-                        " This should not occur if your keys are immutable, and you have used synchronization properly.");
+                        " Please check that your keys are immutable, and that you have used synchronization properly." +
+                        " If so, then please report this to dev@commons.apache.org as a bug.");
                 }
             } else {
                 removeLRUEntry = removeLRU(reuse);
@@ -344,8 +346,9 @@ public class LRUMap<K, V>
                     throw new IllegalStateException(
                         "reuse=null, header.after=" + header.after + " header.before=" + header.before +
                         " key=" + key + " value=" + value + " size=" + size + " maxSize=" + maxSize +
-                        " This should not occur if your keys are immutable, and you have used synchronization properly.");
-            }
+                        " Please check that your keys are immutable, and that you have used synchronization properly." +
+                        " If so, then please report this to dev@commons.apache.org as a bug.");
+                }
                 reuseMapping(reuse, hashIndex, hashCode, key, value);
             } else {
                 super.addMapping(hashIndex, hashCode, key, value);
@@ -384,7 +387,8 @@ public class LRUMap<K, V>
                 throw new IllegalStateException(
                     "Entry.next=null, data[removeIndex]=" + data[removeIndex] + " previous=" + previous +
                     " key=" + key + " value=" + value + " size=" + size + " maxSize=" + maxSize +
-                    " This should not occur if your keys are immutable, and you have used synchronization properly.");
+                    " Please check that your keys are immutable, and that you have used synchronization properly." +
+                    " If so, then please report this to dev@commons.apache.org as a bug.");
             }
 
             // reuse the entry
@@ -396,7 +400,8 @@ public class LRUMap<K, V>
             throw new IllegalStateException(
                     "NPE, entry=" + entry + " entryIsHeader=" + (entry==header) +
                     " key=" + key + " value=" + value + " size=" + size + " maxSize=" + maxSize +
-                    " This should not occur if your keys are immutable, and you have used synchronization properly.");
+                    " Please check that your keys are immutable, and that you have used synchronization properly." +
+                    " If so, then please report this to dev@commons.apache.org as a bug.");
         }
     }
 

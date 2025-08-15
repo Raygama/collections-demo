@@ -55,6 +55,7 @@ public class TransformingComparator<I, O> implements Comparator<I>, Serializable
      *
      * @param transformer what will transform the arguments to <code>compare</code>
      */
+    @SuppressWarnings("unchecked")
     public TransformingComparator(final Transformer<? super I, ? extends O> transformer) {
         this(transformer, ComparatorUtils.NATURAL_COMPARATOR);
     }

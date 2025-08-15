@@ -50,6 +50,7 @@ public class EmptyIterator<E> extends AbstractEmptyIterator<E> implements Resett
      * @param <E> the element type
      * @return ResettableIterator&lt;E&gt;
      */
+    @SuppressWarnings("unchecked")
     public static <E> ResettableIterator<E> resettableEmptyIterator() {
         return RESETTABLE_INSTANCE;
     }
@@ -59,6 +60,7 @@ public class EmptyIterator<E> extends AbstractEmptyIterator<E> implements Resett
      * @param <E> the element type
      * @return Iterator&lt;E&gt;
      */
+    @SuppressWarnings("unchecked")
     public static <E> Iterator<E> emptyIterator() {
         return INSTANCE;
     }

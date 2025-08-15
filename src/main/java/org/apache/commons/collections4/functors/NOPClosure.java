@@ -41,6 +41,7 @@ public final class NOPClosure<E> implements Closure<E>, Serializable {
      * @return the singleton instance
      * @since 3.1
      */
+    @SuppressWarnings("unchecked")
     public static <E> Closure<E> nopClosure() {
         return INSTANCE;
     }
