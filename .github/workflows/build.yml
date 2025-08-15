@@ -121,11 +121,16 @@ jobs:
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
+          # --- Tunables (adjust if needed) ---
+          MAX_SUMMARY_CHARS=25000    # cap on rendered Markdown issues section
+          MAX_QUESTION_CHARS=38000   # cap on final question string in payload
+          # -----------------------------------
+
           ISSUES_JSON=$(cat issues.json)
           CHANGED_FILES=$(cat changed.json)
 
-          echo "======= DEBUG: ISSUES JSON ======="
-          echo "$ISSUES_JSON" | jq .
+          echo "======= DEBUG: ISSUES JSON (count) ======="
+          echo "$ISSUES_JSON" | jq 'length'
 
           echo "======= DEBUG: CHANGED FILES ======="
           echo "$CHANGED_FILES" | jq .
@@ -135,16 +140,23 @@ jobs:
             exit 0
           fi
 
+          # Render a compact Markdown summary, then cap it
           SONAR_ISSUE_SUMMARY=$(jq -r '
             .[] |
             "### Rule: \(.rule)\n" +
             "* Severity: \(.severity)\n" +
             "* Location: \(.component):\(.line)\n" +
             "* Message: \(.message)\n" +
-            "* Snippet:\n```\n\(.snippet)\n```"
+            (if .snippet then "* Snippet:*\\n```\\n\(.snippet)\\n```" else "" end) + "\n"
           ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\n\n## Sonar Issues\n$SONAR_ISSUE_SUMMARY"
+          # Trim the summary to MAX_SUMMARY_CHARS
+          SONAR_ISSUE_SUMMARY=$(printf "%s" "$SONAR_ISSUE_SUMMARY" | head -c "$MAX_SUMMARY_CHARS")
+
+          QUESTION_TEXT="You're analyzing SonarCloud issues from Pull Request #${{ github.event.pull_request.number }} in the '${{ github.repository }}' repository (owner: '${{ github.repository_owner }}'), targeting the '${{ github.event.pull_request.head.ref }}' branch. If there are duplicate issues, analyze them only once.\n\n## Sonar Issues (truncated if large)\n$SONAR_ISSUE_SUMMARY"
+
+          # Final cap on the full question text to protect the model endpoint
+          QUESTION_TEXT=$(printf "%s" "$QUESTION_TEXT" | head -c "$MAX_QUESTION_CHARS")
 
           PAYLOAD=$(jq -cn \
             --arg pr "${{ github.event.pull_request.number }}" \
@@ -162,8 +174,10 @@ jobs:
               issues: $issues
             }')
 
-          echo "======= DEBUG: FINAL PAYLOAD ======="
-          echo "$PAYLOAD" | jq .
+          echo "======= DEBUG: FINAL PAYLOAD (sizes) ======="
+          echo "question bytes: $(printf '%s' "$QUESTION_TEXT" | wc -c)"
+          echo "issues count:   $(echo "$ISSUES_JSON" | jq 'length')"
+          echo "changed files:  $(echo "$CHANGED_FILES" | jq 'length')"
 
           ATTEMPTS=0
           MAX_ATTEMPTS=5
@@ -194,6 +208,7 @@ jobs:
             echo "Flowise request failed after $MAX_ATTEMPTS attempts."
             exit 1
           fi
+
 
       - name: Comment on PR
         uses: actions/github-script@v6
