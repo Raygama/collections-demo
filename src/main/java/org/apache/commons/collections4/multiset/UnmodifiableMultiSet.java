@@ -22,7 +22,6 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.MultiSet;
 import org.apache.commons.collections4.Unmodifiable;
@@ -33,7 +32,6 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * Decorates another {@link MultiSet} to ensure it can't be altered.
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
- * </p>
  *
  * @param <E> the type held in the multiset
  * @since 4.1
@@ -124,14 +122,6 @@ public final class UnmodifiableMultiSet<E>
 
     @Override
     public boolean remove(final Object object) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
         throw new UnsupportedOperationException();
     }
 

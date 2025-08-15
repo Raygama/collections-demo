@@ -24,7 +24,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * Decorates an iterator such that it cannot be modified.
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
- * </p>
  *
  * @since 3.0
  */

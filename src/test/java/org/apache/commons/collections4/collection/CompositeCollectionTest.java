@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.junit.Assert;
 
@@ -258,21 +257,21 @@ public class CompositeCollectionTest<E> extends AbstractCollectionTest<E> {
         cc.addComposited(nullList);
         Assert.assertEquals(0, cc.size());
     }
-
+    
     public void testAddNullLists2Args() {
         ArrayList<String> nullList = null;
         CompositeCollection<String> cc = new CompositeCollection<>();
         cc.addComposited(nullList, nullList);
         Assert.assertEquals(0, cc.size());
     }
-
+    
     public void testAddNullListsVarArgs() {
         ArrayList<String> nullList = null;
         CompositeCollection<String> cc = new CompositeCollection<>();
         cc.addComposited(nullList, nullList, nullList);
         Assert.assertEquals(0, cc.size());
     }
-
+    
     @SuppressWarnings("unchecked")
     public void testIsEmpty() {
         setUpTest();
@@ -341,28 +340,6 @@ public class CompositeCollectionTest<E> extends AbstractCollectionTest<E> {
         assertTrue(!one.contains("1"));
         assertTrue(!two.contains("1"));
         c.removeAll(null);
-        assertTrue(!c.contains("1"));
-        assertTrue(!one.contains("1"));
-        assertTrue(!two.contains("1"));
-    }
-
-    /**
-     * @since 4.4
-     */
-    @SuppressWarnings("unchecked")
-    public void testRemoveIf() {
-        setUpMutatorTest();
-        one.add((E) "1");
-        two.add((E) "2");
-        two.add((E) "1");
-        // need separate list to remove, as otherwise one clears itself
-        final Predicate<E> predicate = e -> e == "1";
-        c.addComposited(one, two);
-        c.removeIf(predicate);
-        assertTrue(!c.contains("1"));
-        assertTrue(!one.contains("1"));
-        assertTrue(!two.contains("1"));
-        c.removeIf(null);
         assertTrue(!c.contains("1"));
         assertTrue(!one.contains("1"));
         assertTrue(!two.contains("1"));

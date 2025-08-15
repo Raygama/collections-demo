@@ -30,10 +30,8 @@ import org.apache.commons.collections4.Bag;
  * By decorating an existing {@link Bag} instance with a {@link CollectionBag},
  * it can be safely passed on to methods that require Collection types that
  * are fully compliant with the Collection contract.
- * </p>
  * <p>
  * The method javadoc highlights the differences compared to the original Bag interface.
- * </p>
  *
  * @see Bag
  * @param <E> the type of elements in this bag

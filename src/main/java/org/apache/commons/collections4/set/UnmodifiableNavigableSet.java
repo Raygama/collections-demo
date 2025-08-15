@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.Unmodifiable;
 import org.apache.commons.collections4.iterators.UnmodifiableIterator;
@@ -32,7 +31,6 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * Decorates another <code>NavigableSet</code> to ensure it can't be altered.
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
- * </p>
  *
  * @param <E> the type of the elements in this set
  * @since 4.1
@@ -93,14 +91,6 @@ public final class UnmodifiableNavigableSet<E>
 
     @Override
     public boolean remove(final Object object) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
         throw new UnsupportedOperationException();
     }
 

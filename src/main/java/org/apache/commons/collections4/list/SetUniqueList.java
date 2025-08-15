@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.iterators.AbstractIteratorDecorator;
@@ -40,15 +39,12 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * rejecting duplicates. Each violation is explained in the method, but it
  * should not affect you. Bear in mind that Sets require immutable objects to
  * function correctly.
- * </p>
  * <p>
  * The {@link org.apache.commons.collections4.set.ListOrderedSet ListOrderedSet}
  * class provides an alternative approach, by wrapping an existing Set and
  * retaining insertion order in the iterator.
- * </p>
  * <p>
  * This class is Serializable from Commons Collections 3.1.
- * </p>
  *
  * @since 3.0
  */
@@ -243,16 +239,6 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
     public E remove(final int index) {
         final E result = super.remove(index);
         set.remove(result);
-        return result;
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
-        boolean result = super.removeIf(filter);
-        set.removeIf(filter);
         return result;
     }
 

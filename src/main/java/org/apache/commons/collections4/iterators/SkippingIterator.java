@@ -21,7 +21,6 @@ import java.util.Iterator;
  * In case an offset parameter other than 0 is provided, the decorated
  * iterator is immediately advanced to this position, skipping all elements
  * before that position.
- * </p>
  *
  * @since 4.1
  */

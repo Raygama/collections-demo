@@ -61,7 +61,6 @@ public class BagUtils {
      * <p>
      * It is imperative that the user manually synchronize on the returned bag
      * when iterating over it:
-     * </p>
      *
      * <pre>
      * Bag bag = BagUtils.synchronizedBag(new HashBag());
@@ -106,7 +105,6 @@ public class BagUtils {
      * IllegalArgumentException. It is important not to use the original bag
      * after invoking this method, as it is a backdoor for adding invalid
      * objects.
-     * </p>
      *
      * @param <E> the element type
      * @param bag the bag to predicate, must not be null
@@ -124,11 +122,9 @@ public class BagUtils {
      * Each object is passed through the transformer as it is added to the Bag.
      * It is important not to use the original bag after invoking this method,
      * as it is a backdoor for adding untransformed objects.
-     * </p>
      * <p>
      * Existing entries in the specified bag will not be transformed.
      * If you want that behaviour, see {@link TransformedBag#transformedBag(Bag, Transformer)}.
-     * </p>
      *
      * @param <E> the element type
      * @param bag the bag to predicate, must not be null
@@ -161,7 +157,6 @@ public class BagUtils {
      * <p>
      * It is imperative that the user manually synchronize on the returned bag
      * when iterating over it:
-     * </p>
      *
      * <pre>
      * SortedBag bag = BagUtils.synchronizedSortedBag(new TreeBag());
@@ -208,7 +203,6 @@ public class BagUtils {
      * IllegalArgumentException. It is important not to use the original bag
      * after invoking this method, as it is a backdoor for adding invalid
      * objects.
-     * </p>
      *
      * @param <E> the element type
      * @param bag the sorted bag to predicate, must not be null
@@ -227,12 +221,10 @@ public class BagUtils {
      * Each object is passed through the transformer as it is added to the Bag.
      * It is important not to use the original bag after invoking this method,
      * as it is a backdoor for adding untransformed objects.
-     * </p>
      * <p>
      * Existing entries in the specified bag will not be transformed.
      * If you want that behaviour, see
      * {@link TransformedSortedBag#transformedSortedBag(SortedBag, Transformer)}.
-     * </p>
      *
      * @param <E> the element type
      * @param bag the bag to predicate, must not be null

@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Objects;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.iterators.EmptyIterator;
@@ -38,14 +36,12 @@ import org.apache.commons.collections4.list.UnmodifiableList;
  * Changes made to this set will actually be made on the decorated set.
  * Add operations require the use of a pluggable strategy.
  * If no strategy is provided then add is unsupported.
- * </p>
  * <p>
  * From version 4.0, this class does not extend
  * {@link org.apache.commons.collections4.collection.CompositeCollection CompositeCollection}
  * anymore due to its input restrictions (only accepts Sets).
  * See <a href="https://issues.apache.org/jira/browse/COLLECTIONS-424">COLLECTIONS-424</a>
  * for more details.
- * </p>
  *
  * @param <E> the type of the elements in this set
  * @since 3.0
@@ -285,21 +281,6 @@ public class CompositeSet<E> implements Set<E>, Serializable {
                 "addAll() is not supported on CompositeSet without a SetMutator strategy");
         }
         return mutator.addAll(this, all, coll);
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
-        if (Objects.isNull(filter)) {
-            return false;
-        }
-        boolean changed = false;
-        for (final Collection<E> item : all) {
-            changed |= item.removeIf(filter);
-        }
-        return changed;
     }
 
     /**

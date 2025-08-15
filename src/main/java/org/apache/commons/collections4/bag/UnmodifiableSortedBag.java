@@ -22,7 +22,6 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.SortedBag;
 import org.apache.commons.collections4.Unmodifiable;
@@ -33,10 +32,8 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * Decorates another {@link SortedBag} to ensure it can't be altered.
  * <p>
  * This class is Serializable from Commons Collections 3.1.
- * </p>
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
- * </p>
  *
  * @param <E> the type of elements in this bag
  * @since 3.0
@@ -125,14 +122,6 @@ public final class UnmodifiableSortedBag<E>
 
     @Override
     public boolean remove(final Object object) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
         throw new UnsupportedOperationException();
     }
 

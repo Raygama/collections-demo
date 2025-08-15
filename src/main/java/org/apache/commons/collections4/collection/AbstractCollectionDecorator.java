@@ -19,7 +19,6 @@ package org.apache.commons.collections4.collection;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.function.Predicate;
 
 /**
  * Decorates another <code>Collection</code> to provide additional behaviour.
@@ -30,13 +29,11 @@ import java.util.function.Predicate;
  * main advantage of decoration is that one decorator can wrap any implementation
  * of <code>Collection</code>, whereas sub-classing requires a new class to be
  * written for each implementation.
- * </p>
  * <p>
  * This implementation does not perform any special processing with
  * {@link #iterator()}. Instead it simply returns the value from the
  * wrapped collection. This may be undesirable, for example if you are trying
  * to write an unmodifiable implementation it might provide a loophole.
- * </p>
  * <p>
  * This implementation does not forward the hashCode and equals methods through
  * to the backing object, but relies on Object's implementation. This is necessary
@@ -50,7 +47,6 @@ import java.util.function.Predicate;
  * JDK's collection wrappers, such as {@link java.util.Collections#unmodifiableCollection(Collection)}.
  * Use an interface-specific subclass of AbstractCollectionDecorator, such as
  * AbstractListDecorator, to preserve equality behavior, or override equals directly.
- * </p>
  *
  * @param <E> the type of the elements in the collection
  * @since 3.0
@@ -161,14 +157,6 @@ public abstract class AbstractCollectionDecorator<E>
     @Override
     public boolean containsAll(final Collection<?> coll) {
         return decorated().containsAll(coll);
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(final Predicate<? super E> filter) {
-        return decorated().removeIf(filter);
     }
 
     @Override

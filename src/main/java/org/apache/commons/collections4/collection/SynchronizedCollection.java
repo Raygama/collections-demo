@@ -19,14 +19,12 @@ package org.apache.commons.collections4.collection;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.function.Predicate;
 
 /**
  * Decorates another {@link Collection} to synchronize its behaviour
  * for a multi-threaded environment.
  * <p>
  * Iterators must be manually synchronized:
- * </p>
  * <pre>
  * synchronized (coll) {
  *   Iterator it = coll.iterator();
@@ -35,7 +33,6 @@ import java.util.function.Predicate;
  * </pre>
  * <p>
  * This class is Serializable from Commons Collections 3.1.
- * </p>
  *
  * @param <E> the type of the elements in the collection
  * @since 3.0
@@ -183,16 +180,6 @@ public class SynchronizedCollection<E> implements Collection<E>, Serializable {
     public boolean remove(final Object object) {
         synchronized (lock) {
             return decorated().remove(object);
-        }
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(final Predicate<? super E> filter) {
-        synchronized (lock) {
-            return decorated().removeIf(filter);
         }
     }
 

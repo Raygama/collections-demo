@@ -23,7 +23,6 @@ import java.util.NavigableSet;
  * Decorates another <code>NavigableSet</code> to provide additional behaviour.
  * <p>
  * Methods are forwarded directly to the decorated set.
- * </p>
  *
  * @param <E> the type of the elements in the navigable set
  * @since 4.1

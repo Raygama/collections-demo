@@ -20,8 +20,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Objects;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.MapIterator;
@@ -35,7 +33,6 @@ import org.apache.commons.collections4.keyvalue.AbstractMapEntryDecorator;
  * <p>
  * An implementation can be written simply by implementing the
  * {@link #createBidiMap(Map, Map, BidiMap)} method.
- * </p>
  *
  * @param <K> the type of the keys in the map
  * @param <V> the type of the values in the map
@@ -371,27 +368,6 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
         @Override
         public int hashCode() {
             return decorated().hashCode();
-        }
-
-        /**
-         * @since 4.4
-         */
-        @Override
-        public boolean removeIf(Predicate<? super E> filter) {
-            if (parent.isEmpty() || Objects.isNull(filter)) {
-                return false;
-            }
-            boolean modified = false;
-            final Iterator<?> it = iterator();
-            while (it.hasNext()) {
-                @SuppressWarnings("unchecked")
-                final E e = (E) it.next();
-                if (filter.test(e)) {
-                    it.remove();
-                    modified = true;
-                }
-            }
-            return modified;
         }
 
         @Override

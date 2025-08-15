@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.Predicate;
 
 import org.apache.commons.collections4.BoundedCollection;
 import org.apache.commons.collections4.iterators.AbstractListIteratorDecorator;
@@ -31,16 +30,13 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * <p>
  * The add, remove, clear and retain operations are unsupported.
  * The set method is allowed (as it doesn't change the list size).
- * </p>
  * <p>
  * NOTE:
  * Modifying the decorated list directly would results in influencing the outcome
  * of method calls on this object. For example, the bounds of this list would reflect
  * a newly added object to the underlying list.
- * </p>
  * <p>
  * This class is Serializable from Commons Collections 3.1.
- * </p>
  *
  * @param <E> the type of elements in this collection
  * @since 3.0
@@ -139,14 +135,6 @@ public class FixedSizeList<E>
 
     @Override
     public boolean remove(final Object object) {
-        throw unsupportedOperationException();
-    }
-
-    /**
-     * @since 4.4
-     */
-    @Override
-    public boolean removeIf(Predicate<? super E> filter) {
         throw unsupportedOperationException();
     }
 

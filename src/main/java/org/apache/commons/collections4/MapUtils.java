@@ -54,10 +54,8 @@ import org.apache.commons.collections4.map.UnmodifiableSortedMap;
  * <p>
  * It contains various type safe methods
  * as well as other useful features like deep copying.
- * </p>
  * <p>
  * It also provides the following decorators:
- * </p>
  *
  *  <ul>
  *  <li>{@link #fixedSizeMap(Map)}
