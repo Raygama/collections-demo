@@ -253,21 +253,6 @@ public class SetUtils {
     }
 
     /**
-     * Create a set from the given items. If the passed var-args argument is {@code
-     * null}, then the method returns {@code null}.
-     * @param <E> the element type
-     * @param items the elements that make up the new set
-     * @return a set
-     * @since 4.3
-     */
-    public static <E> HashSet<E> hashSet(final E... items) {
-        if (items == null) {
-            return null;
-        }
-        return new HashSet<>(Arrays.asList(items));
-    }
-
-    /**
      * Returns a unmodifiable <b>view</b> of the intersection of the given {@link Set}s.
      * <p>
      * The returned view contains all elements that are members of both input sets
@@ -562,9 +547,6 @@ public class SetUtils {
         return TransformedSortedSet.transformingSortedSet(set, transformer);
     }
 
-    // Set operations
-    //-----------------------------------------------------------------------
-
     /**
      * Returns a unmodifiable <b>view</b> of the union of the given {@link Set}s.
      * <p>
@@ -608,6 +590,9 @@ public class SetUtils {
         };
     }
 
+    // Set operations
+    //-----------------------------------------------------------------------
+
     // NavigableSet
     //-----------------------------------------------------------------------
     /**
@@ -626,21 +611,6 @@ public class SetUtils {
     }
 
     /**
-     * Create an unmodifiable set from the given items. If the passed var-args argument is {@code
-     * null}, then the method returns {@code null}.
-     * @param <E> the element type
-     * @param items the elements that make up the new set
-     * @return a set
-     * @since 4.3
-     */
-    public static <E> Set<E> unmodifiableSet(final E... items) {
-        if (items == null) {
-            return null;
-        }
-        return UnmodifiableSet.unmodifiableSet(hashSet(items));
-    }
-
-    /**
      * Returns an unmodifiable set backed by the given set.
      * <p>
      * This method uses the implementation in the decorators subpackage.
@@ -655,17 +625,16 @@ public class SetUtils {
     }
 
     /**
-     * Returns an unmodifiable sorted set backed by the given sorted set.
-     * <p>
-     * This method uses the implementation in the decorators subpackage.
-     *
+     * Create an unmodifiable set from the given items. If the passed var-args argument is {@code
+     * null}, then the method returns {@code null}.
      * @param <E> the element type
-     * @param set  the sorted set to make unmodifiable, must not be null
-     * @return an unmodifiable set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @return a set
      */
-    public static <E> SortedSet<E> unmodifiableSortedSet(final SortedSet<E> set) {
-        return UnmodifiableSortedSet.unmodifiableSortedSet(set);
+    public static <E> Set<E> unmodifiableSetSet(final E... items) {
+        if (items == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(items)));
     }
 
     /**
