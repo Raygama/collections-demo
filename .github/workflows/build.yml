@@ -54,35 +54,65 @@ jobs:
         id: files
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           set -euo pipefail
-          gh pr diff --name-only > changed.txt
-          jq -R -s -c 'split("\n")[:-1]' changed.txt > changed.json
 
-          # Keep only files that actually appear in issues.json + a small tail for context
+          # 1) List changed files for *this* PR explicitly
+          gh pr diff ${{ github.event.pull_request.number }} --name-only > changed.txt || true
+          # Normalize to JSON array (possibly empty)
+          jq -R -s -c 'split("\n") | map(select(length>0))' changed.txt > changed.json
+
+          # 2) Build list of files mentioned by issues (may not exist yet)
           if [ -f issues.json ]; then
             jq -c 'map(.component) | unique' issues.json > issue_files.json
           else
             echo '[]' > issue_files.json
           fi
 
-          # intersection + add up to 20 other changed files as context
-          INTERSECT=$(jq -c --slurpfile changed changed.json --slurpfile iss issue_files.json '
-            (($iss[0] // []) as $issf
-             | ($changed[0] // []) as $chg
-             | ($chg | map(select(IN($issf[])))) )' /dev/null)
+          # 3) Intersection: changed files that appear in issues.json (jq 1.6-safe)
+          INTERSECT=$(
+            jq -c --slurpfile changed changed.json --slurpfile iss issue_files.json '
+              ($iss[0] // []) as $issf |
+              ($changed[0] // []) as $chg |
+              [ $chg[] | select( ($issf | index(.)) != null ) ]
+            ' /dev/null
+          )
+          # Fallback if something went weird
+          if [ -z "${INTERSECT:-}" ] || ! jq -e . >/dev/null 2>&1 <<<"$INTERSECT"; then
+            INTERSECT='[]'
+          fi
 
-          # add up to 20 extra changed files (not already included)
-          EXTRA=$(jq -c --slurpfile changed changed.json --argjson base "$INTERSECT" '
-            ($changed[0] // []) as $all
-            | [$all[] | select((. as $f | ($base | index($f)) | not))][0:20]
-          ' /dev/null)
+          # 4) Up to 20 extra changed files not already in INTERSECT
+          EXTRA=$(
+            jq -c --slurpfile changed changed.json --argjson base "$INTERSECT" '
+              ($changed[0] // []) as $all |
+              [ $all[]
+                | select( ($base | index(.)) == null )
+              ][0:20]
+            ' /dev/null
+          )
+          if [ -z "${EXTRA:-}" ] || ! jq -e . >/dev/null 2>&1 <<<"$EXTRA"; then
+            EXTRA='[]'
+          fi
 
-          FINAL=$(jq -c --argjson a "$INTERSECT" --argjson b "$EXTRA" '$a + $b')
+          # 5) Final list = intersect + extra
+          FINAL=$(jq -c --argjson a "$INTERSECT" --argjson b "$EXTRA" '$a + $b' <<< '{}')
+          if [ -z "${FINAL:-}" ] || ! jq -e . >/dev/null 2>&1 <<<"$FINAL"; then
+            FINAL='[]'
+          fi
+
           echo "$FINAL" > changed.json
 
-          echo "list=$(cat changed.json)" >> $GITHUB_OUTPUT
+          echo "======= DEBUG: CHANGED FILES (focused) ======="
+          echo "INTERSECT count: $(jq 'length' <<<"$INTERSECT")"
+          echo "EXTRA count:     $(jq 'length' <<<"$EXTRA")"
+          echo "FINAL count:     $(jq 'length' changed.json)"
+
+          # expose for later steps
+          echo "list=$(cat changed.json)" >> "$GITHUB_OUTPUT"
           jq length changed.json
+
 
 
 
