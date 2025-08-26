@@ -264,22 +264,28 @@ jobs:
           RULE_BLOCKLIST='["java:S1604","java:S108"]'   # de-noise spammy rules in prompt
           MAX_EXEMPLARS_PER_RULE=1
 
-          # 1) Start from your existing issues.json
+          # 1) Normalize input
           jq -c '.' issues.json > _issues_raw.json
 
-          # 2) Optionally drop test files & blocklisted rules (jq 1.6-safe: use index() instead of IN())
+          # 2) Filter (jq 1.6-safe + robust)
           FILTERED=$(
             jq -c \
               --argjson block "$RULE_BLOCKLIST" \
               --arg ntest "$NON_TEST_ONLY" '
                 [ .[]
-                  | select( ( ($ntest=="true") | not ) or (.component | test("^src/test/") | not) )
-                  | select( ($block | index(.rule)) == null )
+                  | select(type=="object")                               # only objects
+                  | select( (.rule // null) != null )                    # must have rule
+                  | select( (.component // null) != null )               # must have component
+                  | select(                                              # optional: drop tests
+                      ( ($ntest=="true") | not )
+                      or ( ((.component // "") | test("^src/test/") | not) )
+                    )
+                  | select( ($block | index((.rule // ""))) == null )    # blocklist rules
                 ]
               ' _issues_raw.json
           )
 
-          # 3) Priority sort: severity rank (BLOCKER>CRITICAL>MAJOR), then rule, then file:line
+          # 3) Sort by severity rank, then rule, then file:line
           SORTED=$(
             jq -c '
               def rank:
@@ -287,11 +293,11 @@ jobs:
                 elif .severity=="CRITICAL" then 2
                 elif .severity=="MAJOR" then 1
                 else 0 end;
-              sort_by([ - (rank), .rule, .component, (.line // 0) ])
+              sort_by([ - (rank), (.rule // ""), (.component // ""), (.line // 0) ])
             ' <<<"$FILTERED"
           )
 
-          # 4) Cap per-rule and per-file, then global cap (wrap whole pipeline inside $())
+          # 4) Cap per-rule and per-file, then global cap
           CAPPED=$(
             jq -c \
               --argjson maxRule "$MAX_PER_RULE" \
@@ -299,10 +305,11 @@ jobs:
                 (group_by(.rule) | map(.[0:$maxRule]) | add) as $byRule
                 | ($byRule | group_by(.component) | map(.[0:$maxFile]) | add)
               ' <<<"$SORTED" \
-            | jq -c --argjson m "$MAX_TOTAL_ISSUES" '.[0:$m]'
+            | jq -c --argjson m "$MAX_TOTAL_ISSUES" '([.] | add) | .[0:$m]'
+            # ([.] | add) ensures we have an array even if previous step emitted null
           )
 
-          # If empty/null, normalize to []
+          # Normalize to [] if empty/invalid
           if [ -z "${CAPPED:-}" ] || ! jq -e . >/dev/null 2>&1 <<<"$CAPPED"; then
             CAPPED='[]'
           fi
@@ -310,18 +317,20 @@ jobs:
           echo "$CAPPED" > issues_compact.json
           echo "Compact issue count: $(jq 'length' issues_compact.json)"
 
-          # 5) Tiny per-rule summary + 1 exemplar path per rule for QUESTION_TEXT
+          # 5) Tiny per-rule summary + 1 exemplar per rule
           jq -r --argjson k "$MAX_EXEMPLARS_PER_RULE" '
-            group_by(.rule)
+            ( . // [] )                                   # tolerate empty
+            | group_by(.rule)
             | map({
                 rule: .[0].rule,
-                severity: .[0].severity,
+                severity: (.[0].severity // "UNKNOWN"),
                 count: length,
-                samples: (.[0:$k] | map("\(.component):\(.line // 0)"))
+                samples: (.[0:$k] | map("\((.component // "")):\((.line // 0))"))
               })
             | map("• \(.rule) [\(.severity)] — \(.count) hits; e.g. \(.samples|join(", "))")
             | .[]
           ' issues_compact.json > question_summary.txt
+
 
 
       - name: Send issues to Technical Debt Analyzer (compact + robust)
