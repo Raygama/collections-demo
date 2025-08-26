@@ -251,7 +251,70 @@ jobs:
           HAS_ISSUES=$(jq 'length > 0' issues.json)
           echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
 
+      - name: Build compact issues + tiny summary
+        run: |
+          set -euo pipefail
 
+          # Tunables
+          MAX_TOTAL_ISSUES=60
+          MAX_PER_RULE=10
+          MAX_PER_FILE=5
+          NON_TEST_ONLY=true
+          # De-noise: drop low-value spammy rules from the AI prompt (still counted in totals if you want)
+          RULE_BLOCKLIST='["java:S1604","java:S108"]'   # lambda-suggest + empty block spam
+          MAX_EXEMPLARS_PER_RULE=1
+
+          # 1) Start from your existing issues.json
+          jq -c '.' issues.json > _issues_raw.json
+
+          # 2) Optionally drop test files & blocklisted rules
+          FILTERED=$(jq -c \
+            --argjson block "$RULE_BLOCKLIST" \
+            --arg ntest "$NON_TEST_ONLY" '
+              . as $all
+              | [ $all[]
+                  | select( ( ($ntest=="true") | not ) or (.component | test("^src/test/") | not) )
+                  | select( (.rule | IN($block[])) | not )
+                ]
+            ' _issues_raw.json)
+
+          # 3) Priority sort: severity rank (BLOCKER>CRITICAL>MAJOR), then rule, then file:line
+          SORTED=$(
+            jq -c '
+              def rank:
+                if .severity=="BLOCKER" then 3
+                elif .severity=="CRITICAL" then 2
+                elif .severity=="MAJOR" then 1
+                else 0 end;
+              sort_by(- (rank), .rule, .component, (.line // 0))
+            ' <<<"$FILTERED"
+          )
+
+          # 4) Cap per-rule and per-file, then global cap
+          CAPPED=$(
+            jq -c \
+              --argjson maxRule "$MAX_PER_RULE" \
+              --argjson maxFile "$MAX_PER_FILE" '
+                (group_by(.rule) | map(.[0:$maxRule]) | add) as $byRule
+                | ($byRule | group_by(.component) | map(.[0:$maxFile]) | add)
+              ' <<<"$SORTED"
+            | jq -c --argjson m "$MAX_TOTAL_ISSUES" '.[0:$m]'
+          )
+          echo "$CAPPED" > issues_compact.json
+          echo "Compact issue count: $(jq 'length' issues_compact.json)"
+
+          # 5) Tiny per-rule summary + 1 exemplar location per rule (for QUESTION_TEXT)
+          jq -r --argjson k "$MAX_EXEMPLARS_PER_RULE" '
+            group_by(.rule)
+            | map({
+                rule: .[0].rule,
+                severity: .[0].severity,
+                count: length,
+                samples: (.[0:$k] | map("\(.component):\(.line // 0)"))
+              })
+            | map("• \(.rule) [\(.severity)] — \(.count) hits; e.g. \(.samples|join(", "))")
+            | .[]
+          ' issues_compact.json > question_summary.txt
 
       - name: Send issues to Technical Debt Analyzer (size-aware)
         id: flowise-analysis
