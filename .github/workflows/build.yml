@@ -264,51 +264,52 @@ jobs:
           RULE_BLOCKLIST='["java:S1604","java:S108"]'
           MAX_EXEMPLARS_PER_RULE=1
 
-          # 0) Canonicalize to a flat array of OBJECTS
-          #    - If top-level is object -> wrap into array
-          #    - If array-of-arrays -> flatten one level
-          #    - Keep only objects
-          CANON=$(
+          # 0) Canonicalize top-level to array, then **normalize** each element to a small object
+          #    Using the ? operator avoids errors if keys are missing; non-objects are dropped via `empty`.
+          NORM=$(
             jq -c '
-              ( if type=="array" then . else [.] end )            # top-level => array
-              | [ .[] ]                                           # copy
-              | map( if type=="array" then .[] else . end )       # flatten one level if needed
-              | map(select(type=="object"))                       # keep objects only
+              ( if type=="array" then . else [.] end )
+              | map(
+                  if type=="object" then
+                    {
+                      rule:      (.rule?      // ""),
+                      component: (.component? // ""),
+                      severity:  (.severity?  // "UNKNOWN"),
+                      line:      (.line?      // 0),
+                      message:   (.message?   // "")
+                    }
+                  else empty end
+                )
             ' issues.json
           )
 
-          echo "Canonicalized length: $(jq 'length' <<<"$CANON")"
+          echo "Normalized length: $(jq 'length' <<<"$NORM")"
 
-          # 1) Defensive filtering:
-          #    - must have "rule" and "component"
-          #    - optional drop tests
-          #    - blocklist noisy rules (jq 1.6: use any())
+          # 1) Filter:
+          #    - must have non-empty rule & component
+          #    - (optional) drop src/test files
+          #    - blocklist noisy rules (jq 1.6-friendly with index())
           FILTERED=$(
             jq -c \
               --argjson block "$RULE_BLOCKLIST" \
               --arg ntest "$NON_TEST_ONLY" '
                 [ .[]
-                  | select( (has("rule")) and (has("component")) )
-                  | select(
-                      ( ($ntest=="true") | not )
-                      or ( ((.component|tostring) | test("^src/test/") | not) )
-                    )
-                  | select( ( $block | any(. == (.rule|tostring)) ) | not )
+                  | select(.rule != "" and .component != "")
+                  | select( ( ($ntest=="true") | not ) or ( (.component | test("^src/test/") | not) ) )
+                  | select( ($block | index(.rule)) == null )
                 ]
-              ' <<<"$CANON"
+              ' <<<"$NORM"
           )
 
           echo "Filtered length: $(jq 'length' <<<"$FILTERED")"
 
-          # Short-circuit if nothing left
           if [ "$(jq 'length' <<<"$FILTERED")" -eq 0 ]; then
-            echo "No eligible issues after filtering. Creating empty artifacts."
             echo "[]" > issues_compact.json
             printf "No eligible issues after filtering by rule/component (and test/blocklist rules).\n" > question_summary.txt
             exit 0
           fi
 
-          # 2) Sort by severity rank, then rule, then file:line
+          # 2) Sort by severity rank, then rule, then file:line (jq 1.6 safe)
           SORTED=$(
             jq -c '
               def rank:
@@ -316,23 +317,24 @@ jobs:
                 elif .severity=="CRITICAL" then 2
                 elif .severity=="MAJOR" then 1
                 else 0 end;
-              sort_by([ - (rank), (.rule // ""), (.component // ""), (.line // 0) ])
+              sort_by([ - (rank), .rule, .component, .line ])
             ' <<<"$FILTERED"
           )
 
-          # 3) Cap per-rule, per-file, then global cap (jq 1.6)
+          # 3) Cap per-rule, per-file, then global cap
           CAPPED=$(
             jq -c \
               --argjson maxRule "$MAX_PER_RULE" \
               --argjson maxFile "$MAX_PER_FILE" '
                 (group_by(.rule) | map(.[0:$maxRule]) | add) as $byRule
                 | ($byRule | group_by(.component) | map(.[0:$maxFile]) | add)
-                | ( . // [] )                                     # in case add returned null
+                | ( . // [] )
               ' <<<"$SORTED" \
             | jq -c --argjson m "$MAX_TOTAL_ISSUES" '.[0:$m]'
           )
 
-          if [ -z "${CAPPED:-}" ] || ! jq -e . >/devnull 2>&1 <<<"$CAPPED"; then
+          # Fallback to [] if anything odd
+          if [ -z "${CAPPED:-}" ] || ! jq -e . >/dev/null 2>&1 <<<"$CAPPED"; then
             CAPPED='[]'
           fi
 
@@ -347,7 +349,7 @@ jobs:
                 rule: .[0].rule,
                 severity: (.[0].severity // "UNKNOWN"),
                 count: length,
-                samples: (.[0:$k] | map("\((.component // "")):\((.line // 0))"))
+                samples: (.[0:$k] | map("\(.component):\(.line)"))
               })
             | sort_by(.rule)
             | map("• \(.rule) [\(.severity)] — \(.count) hits; e.g. \(.samples|join(", "))")
@@ -357,10 +359,14 @@ jobs:
           echo "Summary preview:"
           head -n 10 question_summary.txt || true
 
-          # 5) If something still explodes, dump the first non-object for diagnosis (won't fail the job)
-          if ! jq -e '. | type=="array"' >/dev/null 2>&1 <(echo "$CANON"); then
-            echo "DEBUG: Canonical array check failed"
-          fi
+          # DEBUG (optional): show any non-objects originally present
+          echo "Any non-objects that were dropped (first 3 shown):"
+          jq -c '
+            ( if type=="array" then . else [.] end )
+            | [ .[] | select(type!="object") ][0:3]
+          ' issues.json || true
+
+
 
       - name: Send issues to Technical Debt Analyzer (compact + robust)
         env:
