@@ -209,20 +209,17 @@ jobs:
             ' all-issues.json
           )
 
-          # Enforce per-rule & per-file caps (already using flatten)
+          # Enforce per-rule & per-file caps
           TRIMMED=$(
-            echo "$PRIORITIZED" \
-            | jq -c --argjson maxPerRule "$MAX_ISSUES_PER_RULE" --argjson maxPerFile "$MAX_ISSUES_PER_FILE" '
-                (group_by(.rule)       | map(.[0:$maxPerRule])       | flatten) as $byRule
-                | ($byRule | group_by(.component) | map(.[0:$maxPerFile]) | flatten)
-              '
+            echo "$PRIORITIZED" | jq -c --argjson maxPerRule "$MAX_ISSUES_PER_RULE" --argjson maxPerFile "$MAX_ISSUES_PER_FILE" '
+              # group, then take first N from each bucket to avoid domination
+              (group_by(.rule) | map(.[0:$maxPerRule]) | add) as $byRule
+              | ($byRule | group_by(.component) | map(.[0:$maxPerFile]) | add)
+            '
           )
 
           # Apply global cap
           TRIMMED=$(echo "$TRIMMED" | jq -c --argjson maxIssues "$MAX_ISSUES" '.[0:$maxIssues]')
-
-          # Belt-and-suspenders: guarantee array-of-objects only
-          TRIMMED=$(echo "$TRIMMED" | jq -c '[ .[] | objects ]')
 
           echo "$TRIMMED" > trimmed-issues.json
           echo "After trimming: $(jq 'length' trimmed-issues.json) issues"
@@ -254,125 +251,42 @@ jobs:
           HAS_ISSUES=$(jq 'length > 0' issues.json)
           echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
 
-      - name: debug inspect issues.json shapes
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "===== RAW issues.json (first 4000 bytes) ====="
-          head -c 4000 issues.json || true
-          echo
-          echo "===== Top-level type & length ====="
-          jq -r 'type as $t | "type=\($t) len=\(if $t=="array" then length else 1 end)"' issues.json
-
-          echo "===== If object, show keys ====="
-          jq -r 'if type=="object" then ("keys: " + (keys|join(", "))) else "not an object" end' issues.json
-
-          echo "===== If array, show element types histogram ====="
-          jq -r 'if type=="array" then (map(type) | reduce .[] as $t ({}; .[$t] += 1) | to_entries | map("\(.key): \(.value)") | .[] ) else "not an array" end' issues.json
-
-          echo "===== First 5 non-objects (if top-level is array) ====="
-          jq -c 'if type=="array" then [ .[] | select(type!="object") ][0:5] else [] end' issues.json
-
-          echo "===== First 5 objects missing rule or component ====="
-          jq -c 'if type=="array" then [ .[] | select(type=="object" and ( (has("rule")|not) or (has("component")|not) )) ][0:5] else [] end' issues.json
-
-          echo "===== First 5 objects where rule/component are not strings ====="
-          jq -c 'if type=="array" then [ .[] | select(type=="object" and ((.rule|type)!="string" or (.component|type)!="string")) ][0:5] else [] end' issues.json
 
 
-      - name: Build compact issues + tiny summary (from trimmed-issues.json)
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          # Tunables
-          MAX_TOTAL_ISSUES=60
-          MAX_PER_RULE=10
-          MAX_PER_FILE=5
-          NON_TEST_ONLY=true
-          RULE_BLOCKLIST='["java:S1604","java:S108"]'
-          MAX_EXEMPLARS_PER_RULE=1
-
-          SRC=trimmed-issues.json
-          echo "Source length: $(jq 'length' "$SRC")"
-
-          # Normalize: drop non-objects (if any slipped in)
-          NORM=$(
-            jq -c '[ .[] | objects ]' "$SRC"
-          )
-
-          echo "Normalized length: $(jq 'length' <<<"$NORM")"
-
-          # Filter (non-empty rule/component, optional drop tests, blocklist)
-          FILTERED=$(
-            jq -c \
-              --argjson block "$RULE_BLOCKLIST" \
-              --arg ntest "$NON_TEST_ONLY" '
-                [ .[]
-                  | select((.rule // "") != "" and (.component // "") != "")
-                  | select( ( ($ntest=="true") | not ) or ( ((.component // "") | test("^src/test/") | not) ) )
-                  | select( ($block | index((.rule // ""))) == null )
-                ]
-              ' <<<"$NORM"
-          )
-
-          # Sort & cap (same as you had)
-          SORTED=$(
-            jq -c '
-              def rank:
-                if .severity=="BLOCKER" then 3
-                elif .severity=="CRITICAL" then 2
-                elif .severity=="MAJOR" then 1
-                else 0 end;
-              sort_by([ - (rank), (.rule // ""), (.component // ""), (.line // 0) ])
-            ' <<<"$FILTERED"
-          )
-
-          CAPPED=$(
-            jq -c \
-              --argjson maxRule "$MAX_PER_RULE" \
-              --argjson maxFile "$MAX_PER_FILE" '
-                (group_by(.rule) | map(.[0:$maxRule]) | flatten) as $byRule
-                | ($byRule | group_by(.component) | map(.[0:$maxFile]) | flatten)
-              ' <<<"$SORTED" \
-            | jq -c --argjson m "$MAX_TOTAL_ISSUES" '.[0:$m]'
-          )
-
-          # Force array-of-objects again before summary (final guard)
-          echo "$CAPPED" | jq -c '[ .[] | objects ]' > issues_compact.json
-          echo "Compact issue count: $(jq 'length' issues_compact.json)"
-
-          # Tiny per-rule summary (now safe)
-          jq -r --argjson k "$MAX_EXEMPLARS_PER_RULE" '
-            group_by(.rule)
-            | map({
-                rule: .[0].rule,
-                severity: (.[0].severity // "UNKNOWN"),
-                count: length,
-                samples: (.[0:$k] | map("\(.component):\(.line)"))
-              })
-            | sort_by(.rule)
-            | map("• \(.rule) [\(.severity)] — \(.count) hits; e.g. \(.samples|join(", "))")
-            | .[]
-          ' issues_compact.json > question_summary.txt
-
-
-
-      - name: Send issues to Technical Debt Analyzer (compact + robust)
+      - name: Send issues to Technical Debt Analyzer (size-aware)
+        id: flowise-analysis
         env:
           FLOWISE_BEARER_TOKEN: ${{ secrets.FLOWISE_BEARER_TOKEN }}
         run: |
           set -euo pipefail
 
-          # Tiny question text built from the summary file
-          BASE_HDR="You're analyzing SonarCloud issues from PR #${{ github.event.pull_request.number }} in '${{ github.repository }}' (owner: '${{ github.repository_owner }}'), targeting '${{ github.event.pull_request.head.ref }}'. Analyze duplicates once."
-          SUMMARY=$(tr '\n' '\\n' < question_summary.txt | head -c 14000)
-          QUESTION_TEXT="$BASE_HDR\\n\\n## Issue summary (by rule)\\n$SUMMARY"
+          # ---- Tunables ----
+          MAX_SUMMARY_CHARS=20000
+          MAX_QUESTION_CHARS=20000
+          MAX_PAYLOAD_BYTES=100000       # final JSON size safety cap (~180 KB)
+          MAX_EXEMPLARS_PER_RULE=3       # if we switch to summary mode
+          # -------------------
 
-          # Use compact JSON
-          ISSUES_JSON=$(cat issues_compact.json)
+          ISSUES_JSON=$(cat issues.json)
           CHANGED_FILES=$(cat changed.json)
+
+          if [[ "$ISSUES_JSON" == "[]" ]]; then
+            echo '{"text": "No potential Technical Debt was detected in the current PR."}' > flowise_output.json
+            exit 0
+          fi
+
+          # Compact Markdown summary
+          SONAR_ISSUE_SUMMARY=$(jq -r '
+            .[] |
+            "### Rule: \(.rule)\n" +
+            "* Severity: \(.severity)\n" +
+            "* Location: \(.component):\(.line)\n" +
+            "* Message: \(.message)\n" +
+            (if .snippet then "* Snippet:*\\n```\\n\(.snippet)\\n```" else "" end) + "\n"
+          ' issues.json | sed ':a;N;$!ba;s/\n/\\n/g' | head -c "$MAX_SUMMARY_CHARS")
+
+          QUESTION_TEXT="You're analyzing SonarCloud issues from PR #${{ github.event.pull_request.number }} in '${{ github.repository }}' (owner: '${{ github.repository_owner }}'), targeting '${{ github.event.pull_request.head.ref }}'. If there are duplicates, analyze them once.\n\n## Sonar Issues (truncated)\n$SONAR_ISSUE_SUMMARY"
+          QUESTION_TEXT=$(printf "%s" "$QUESTION_TEXT" | head -c "$MAX_QUESTION_CHARS")
 
           make_payload () {
             jq -cn \
@@ -385,25 +299,77 @@ jobs:
           }
 
           PAYLOAD=$(make_payload "$ISSUES_JSON" "$CHANGED_FILES")
+          BYTES=$(printf '%s' "$PAYLOAD" | wc -c)
+          echo "Initial payload bytes: $BYTES"
 
-          # Send with robust handling
-          RESP_BODY=flowise_output_raw.txt
-          HTTP_CODE=$(curl -sS -o "$RESP_BODY" -w "%{http_code}" \
+          # If still too big, progressively shrink:
+          shrink_once () {
+            local current="$1"
+            # 1) Drop snippets first (keep structure)
+            local no_snips
+            no_snips=$(echo "$current" | jq 'map(del(.snippet))')
+            echo "$no_snips"
+          }
+
+          if [ "$BYTES" -gt "$MAX_PAYLOAD_BYTES" ]; then
+            echo "Dropping snippets to fit budget…"
+            ISSUES_JSON=$(shrink_once "$ISSUES_JSON")
+            PAYLOAD=$(make_payload "$ISSUES_JSON" "$CHANGED_FILES")
+            BYTES=$(printf '%s' "$PAYLOAD" | wc -c)
+            echo "After dropping snippets: $BYTES bytes"
+          fi
+
+          # If *still* too big, switch to per-rule summary with a few exemplars
+          if [ "$BYTES" -gt "$MAX_PAYLOAD_BYTES" ]; then
+            echo "Switching to per-rule summary mode…"
+            SUMMARY_JSON=$(
+              jq -c --argjson k "$MAX_EXEMPLARS_PER_RULE" '
+                group_by(.rule)
+                | map({
+                    rule: .[0].rule,
+                    severityMode: (.[0].severity),
+                    count: length,
+                    exemplars: (.[0:$k] | map({component, line, message}))
+                  })
+              ' <<<"$ISSUES_JSON"
+            )
+
+            QUESTION_TEXT=$(
+              jq -r '
+                map(
+                  "### Rule: \(.rule) (" + (.count|tostring) + " hits, e.g.: " +
+                  ( .exemplars | map("\(.component):\(.line)") | join(", ") ) + ")\n"
+                ) | join("")
+              ' <<<"$SUMMARY_JSON"
+            )
+            QUESTION_TEXT=$(printf "Summarized by rule due to size.\n\n%s" "$QUESTION_TEXT" | sed ':a;N;$!ba;s/\n/\\n/g' | head -c "$MAX_QUESTION_CHARS")
+
+            # Replace issues with just the summary structure to *guarantee* small size
+            PAYLOAD=$(jq -cn \
+              --arg pr "${{ github.event.pull_request.number }}" \
+              --arg proj "${{ env.PROJECT_KEY }}" \
+              --arg question "$QUESTION_TEXT" \
+              --argjson summary "$SUMMARY_JSON" \
+              --argjson changedFiles "$CHANGED_FILES" \
+              '{question:$question, overrideConfig:{projectKey:$proj, prNumber:$pr, changedFiles:$changedFiles}, issuesSummary:$summary}')
+            BYTES=$(printf '%s' "$PAYLOAD" | wc -c)
+            echo "After summary mode: $BYTES bytes"
+          fi
+
+          # Final send
+          echo "======= DEBUG: FINAL PAYLOAD (sizes) ======="
+          echo "question bytes: $(printf '%s' "$QUESTION_TEXT" | wc -c)"
+          echo "payload bytes:  $BYTES"
+
+          RESPONSE=$(curl -s -X POST \
             -H "Authorization: Bearer $FLOWISE_BEARER_TOKEN" \
             -H "Content-Type: application/json" \
-            -H "Accept: application/json" \
-            --max-time 55 \
-            --retry 2 --retry-delay 2 --retry-max-time 60 \
             -d "$PAYLOAD" \
             https://cloud.flowiseai.com/api/v1/prediction/ae8b5cb1-b90b-4f25-9395-a839e92e2bf6)
 
-          echo "HTTP status: $HTTP_CODE"
-          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ] && jq -e . "$RESP_BODY" >/dev/null 2>&1; then
-            cp "$RESP_BODY" flowise_output.json
-          else
-            RAW=$(head -c 6000 "$RESP_BODY" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-            printf '{"text":"Flowise response issue (HTTP %s). Body (first 6KB):\\n```\\n%s\\n```"}' "$HTTP_CODE" "$RAW" > flowise_output.json
-          fi
+          echo "$RESPONSE" > flowise_output.json
+
+
 
       - name: Comment on PR
         uses: actions/github-script@v6
@@ -439,6 +405,6 @@ jobs:
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number, 
+              issue_number: context.issue.number,
               body
             });
