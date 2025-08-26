@@ -251,7 +251,7 @@ jobs:
           HAS_ISSUES=$(jq 'length > 0' issues.json)
           echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
 
-      - name: DEBUG: inspect issues.json shapes
+      - name: debug inspect issues.json shapes
         shell: bash
         run: |
           set -euo pipefail
