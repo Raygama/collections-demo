@@ -264,26 +264,43 @@ jobs:
           RULE_BLOCKLIST='["java:S1604","java:S108"]'   # de-noise spammy rules in prompt
           MAX_EXEMPLARS_PER_RULE=1
 
-          # 1) Normalize input
+          # Normalize input
           jq -c '.' issues.json > _issues_raw.json
 
-          # 2) Filter (jq 1.6-safe + robust)
+          # 0) (Optional) quick type histogram to aid debugging
+          echo "Type histogram of issues.json:"
+          jq -r 'map(type) | reduce .[] as $t ({}; .[$t] += 1) | to_entries | map("\(.key): \(.value)") | .[]' _issues_raw.json || true
+
+          # 1) Flatten any nested arrays, keep only objects with rule+component (jq 1.6 safe)
+          #    (.. | arrays | .[]) walks into all arrays; then we collect all objects with needed fields.
+          FLATTENED=$(
+            jq -c '
+              [ (.. | arrays | .[]), (.. | objects) ]                # collect array elements & objects
+              | flatten                                              # single flat array
+              | map(select(type=="object"))                          # keep objects only
+            ' _issues_raw.json
+          )
+
+          # 2) Filter: must have rule & component, optional: drop tests, blocklist rules
           FILTERED=$(
             jq -c \
               --argjson block "$RULE_BLOCKLIST" \
               --arg ntest "$NON_TEST_ONLY" '
                 [ .[]
-                  | select(type=="object")                               # only objects
-                  | select( (.rule // null) != null )                    # must have rule
-                  | select( (.component // null) != null )               # must have component
-                  | select(                                              # optional: drop tests
-                      ( ($ntest=="true") | not )
-                      or ( ((.component // "") | test("^src/test/") | not) )
-                    )
-                  | select( ($block | index((.rule // ""))) == null )    # blocklist rules
+                  | select(has("rule") and has("component"))
+                  | select( ( ($ntest=="true") | not ) or ((.component|tostring) | test("^src/test/") | not) )
+                  | select( ($block | index(.rule)) == null )
                 ]
-              ' _issues_raw.json
+              ' <<<"$FLATTENED"
           )
+
+          # If nothing survived, short-circuit gracefully
+          if [ "$(jq 'length' <<<"$FILTERED")" -eq 0 ]; then
+            echo "No eligible issues after filtering. Creating empty artifacts."
+            echo "[]" > issues_compact.json
+            printf "No eligible issues after filtering by rule/component (and test/blocklist rules).\n" > question_summary.txt
+            exit 0
+          fi
 
           # 3) Sort by severity rank, then rule, then file:line
           SORTED=$(
@@ -306,7 +323,6 @@ jobs:
                 | ($byRule | group_by(.component) | map(.[0:$maxFile]) | add)
               ' <<<"$SORTED" \
             | jq -c --argjson m "$MAX_TOTAL_ISSUES" '([.] | add) | .[0:$m]'
-            # ([.] | add) ensures we have an array even if previous step emitted null
           )
 
           # Normalize to [] if empty/invalid
@@ -319,7 +335,7 @@ jobs:
 
           # 5) Tiny per-rule summary + 1 exemplar per rule
           jq -r --argjson k "$MAX_EXEMPLARS_PER_RULE" '
-            ( . // [] )                                   # tolerate empty
+            ( . // [] )
             | group_by(.rule)
             | map({
                 rule: .[0].rule,
@@ -327,9 +343,14 @@ jobs:
                 count: length,
                 samples: (.[0:$k] | map("\((.component // "")):\((.line // 0))"))
               })
+            | sort_by(.rule)
             | map("• \(.rule) [\(.severity)] — \(.count) hits; e.g. \(.samples|join(", "))")
             | .[]
           ' issues_compact.json > question_summary.txt
+
+          echo "Preview of summary:"
+          head -n 10 question_summary.txt || true
+
 
 
 
