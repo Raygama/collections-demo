@@ -38,6 +38,7 @@ import java.util.NoSuchElementException;
  *
  * @param <E>  the type of the objects being permuted
  *
+ * @version $Id$
  * @since 4.0
  */
 public class PermutationIterator<E> implements Iterator<List<E>> {
@@ -81,13 +82,13 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         direction = new boolean[coll.size()];
         Arrays.fill(direction, false);
         int value = 1;
-        objectMap = new HashMap<>();
+        objectMap = new HashMap<Integer, E>();
         for (E e : coll) {
             objectMap.put(Integer.valueOf(value), e);
             keys[value - 1] = value;
             value++;
         }
-        nextPermutation = new ArrayList<>(coll);
+        nextPermutation = new ArrayList<E>(coll);
     }
 
     /**
@@ -116,7 +117,7 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         for (int i = 0; i < keys.length; i++) {
             if ((direction[i] && i < keys.length - 1 && keys[i] > keys[i + 1]) ||
                 (!direction[i] && i > 0 && keys[i] > keys[i - 1])) {
-                if (keys[i] > largestKey) { // NOPMD
+                if (keys[i] > largestKey) {
                     largestKey = keys[i];
                     indexOfLargestMobileInteger = i;
                 }
@@ -138,7 +139,7 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         direction[indexOfLargestMobileInteger + offset] = tmpDirection;
 
         // reverse the direction of all integers larger than k and build the result
-        final List<E> nextP = new ArrayList<>();
+        final List<E> nextP = new ArrayList<E>();
         for (int i = 0; i < keys.length; i++) {
             if (keys[i] > largestKey) {
                 direction[i] = !direction[i];

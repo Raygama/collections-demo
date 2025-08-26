@@ -28,6 +28,7 @@ import org.apache.commons.collections4.map.AbstractSortedMapTest;
  * {@link UnmodifiableTrie} implementation.
  *
  * @since 4.0
+ * @version $Id$
  */
 public class UnmodifiableTrieTest<V> extends AbstractSortedMapTest<String, V> {
 
@@ -63,7 +64,7 @@ public class UnmodifiableTrieTest<V> extends AbstractSortedMapTest<String, V> {
 
     @Override
     public Trie<String, V> makeFullMap() {
-        final Trie<String, V> m = new PatriciaTrie<>();
+        final Trie<String, V> m = new PatriciaTrie<V>();
         addSampleMappings(m);
         return UnmodifiableTrie.unmodifiableTrie(m);
     }

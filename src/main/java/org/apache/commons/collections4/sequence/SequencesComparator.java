@@ -54,6 +54,7 @@ import org.apache.commons.collections4.functors.DefaultEquator;
  * @see CommandVisitor
  *
  * @since 4.0
+ * @version $Id$
  */
 public class SequencesComparator<T> {
 
@@ -125,7 +126,7 @@ public class SequencesComparator<T> {
      *         sequences
      */
     public EditScript<T> getScript() {
-        final EditScript<T> script = new EditScript<>();
+        final EditScript<T> script = new EditScript<T>();
         buildScript(0, sequence1.size(), 0, sequence2.size(), script);
         return script;
     }
@@ -201,7 +202,7 @@ public class SequencesComparator<T> {
                 }
                 // Second step
                 if (delta % 2 != 0 && delta - d <= k && k <= delta + d) {
-                    if (vUp[i-delta] <= vDown[i]) { // NOPMD
+                    if (vUp[i-delta] <= vDown[i]) {
                         return buildSnake(vUp[i-delta], k + start1 - start2, end1, end2);
                     }
                 }
@@ -227,7 +228,7 @@ public class SequencesComparator<T> {
                 }
                 // Second step
                 if (delta % 2 == 0 && -d <= k && k <= d ) {
-                    if (vUp[i] <= vDown[i + delta]) { // NOPMD
+                    if (vUp[i] <= vDown[i + delta]) {
                         return buildSnake(vUp[i], k + start1 - start2, end1, end2);
                     }
                 }
@@ -261,15 +262,15 @@ public class SequencesComparator<T> {
             int j = start2;
             while (i < end1 || j < end2) {
                 if (i < end1 && j < end2 && equator.equate(sequence1.get(i), sequence2.get(j))) {
-                    script.append(new KeepCommand<>(sequence1.get(i)));
+                    script.append(new KeepCommand<T>(sequence1.get(i)));
                     ++i;
                     ++j;
                 } else {
                     if (end1 - start1 > end2 - start2) {
-                        script.append(new DeleteCommand<>(sequence1.get(i)));
+                        script.append(new DeleteCommand<T>(sequence1.get(i)));
                         ++i;
                     } else {
-                        script.append(new InsertCommand<>(sequence2.get(j)));
+                        script.append(new InsertCommand<T>(sequence2.get(j)));
                         ++j;
                     }
                 }
@@ -281,7 +282,7 @@ public class SequencesComparator<T> {
                         start2, middle.getStart() - middle.getDiag(),
                         script);
             for (int i = middle.getStart(); i < middle.getEnd(); ++i) {
-                script.append(new KeepCommand<>(sequence1.get(i)));
+                script.append(new KeepCommand<T>(sequence1.get(i)));
             }
             buildScript(middle.getEnd(), end1,
                         middle.getEnd() - middle.getDiag(), end2,

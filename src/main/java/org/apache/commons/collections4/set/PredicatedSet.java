@@ -34,8 +34,8 @@ import org.apache.commons.collections4.collection.PredicatedCollection;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of the elements in this set
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedSet<E> extends PredicatedCollection<E> implements Set<E> {
 
@@ -57,7 +57,7 @@ public class PredicatedSet<E> extends PredicatedCollection<E> implements Set<E> 
      * @since 4.0
      */
     public static <E> PredicatedSet<E> predicatedSet(final Set<E> set, final Predicate<? super E> predicate) {
-        return new PredicatedSet<>(set, predicate);
+        return new PredicatedSet<E>(set, predicate);
     }
 
     //-----------------------------------------------------------------------

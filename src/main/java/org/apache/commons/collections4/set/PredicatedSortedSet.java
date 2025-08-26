@@ -38,8 +38,8 @@ import org.apache.commons.collections4.Predicate;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of the elements in this set
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedSortedSet<E> extends PredicatedSet<E> implements SortedSet<E> {
 
@@ -62,7 +62,7 @@ public class PredicatedSortedSet<E> extends PredicatedSet<E> implements SortedSe
      */
     public static <E> PredicatedSortedSet<E> predicatedSortedSet(final SortedSet<E> set,
                                                                  final Predicate<? super E> predicate) {
-        return new PredicatedSortedSet<>(set, predicate);
+        return new PredicatedSortedSet<E>(set, predicate);
     }
 
     //-----------------------------------------------------------------------
@@ -110,19 +110,19 @@ public class PredicatedSortedSet<E> extends PredicatedSet<E> implements SortedSe
     @Override
     public SortedSet<E> subSet(final E fromElement, final E toElement) {
         final SortedSet<E> sub = decorated().subSet(fromElement, toElement);
-        return new PredicatedSortedSet<>(sub, predicate);
+        return new PredicatedSortedSet<E>(sub, predicate);
     }
 
     @Override
     public SortedSet<E> headSet(final E toElement) {
         final SortedSet<E> head = decorated().headSet(toElement);
-        return new PredicatedSortedSet<>(head, predicate);
+        return new PredicatedSortedSet<E>(head, predicate);
     }
 
     @Override
     public SortedSet<E> tailSet(final E fromElement) {
         final SortedSet<E> tail = decorated().tailSet(fromElement);
-        return new PredicatedSortedSet<>(tail, predicate);
+        return new PredicatedSortedSet<E>(tail, predicate);
     }
 
 }

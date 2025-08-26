@@ -24,6 +24,7 @@ import org.apache.commons.collections4.Transformer;
  * Decorates an iterator such that each element returned is transformed.
  *
  * @since 1.0
+ * @version $Id$
  */
 public class TransformIterator<I, O> implements Iterator<O> {
 

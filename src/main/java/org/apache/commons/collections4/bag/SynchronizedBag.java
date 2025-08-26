@@ -30,8 +30,8 @@ import org.apache.commons.collections4.collection.SynchronizedCollection;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of elements in this bag
  * @since 3.0
+ * @version $Id$
  */
 public class SynchronizedBag<E> extends SynchronizedCollection<E> implements Bag<E> {
 
@@ -48,7 +48,7 @@ public class SynchronizedBag<E> extends SynchronizedCollection<E> implements Bag
      * @since 4.0
      */
     public static <E> SynchronizedBag<E> synchronizedBag(final Bag<E> bag) {
-        return new SynchronizedBag<>(bag);
+        return new SynchronizedBag<E>(bag);
     }
 
     //-----------------------------------------------------------------------

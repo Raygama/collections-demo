@@ -24,6 +24,7 @@ import org.apache.commons.collections4.Transformer;
  * Transformer implementation that does nothing.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class NOPTransformer<T> implements Transformer<T, T>, Serializable {
 
@@ -32,7 +33,7 @@ public class NOPTransformer<T> implements Transformer<T, T>, Serializable {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes")
-    public static final Transformer INSTANCE = new NOPTransformer<>();
+    public static final Transformer INSTANCE = new NOPTransformer<Object>();
 
     /**
      * Factory returning the singleton instance.
@@ -43,7 +44,7 @@ public class NOPTransformer<T> implements Transformer<T, T>, Serializable {
      */
     @SuppressWarnings("unchecked")
     public static <T> Transformer<T, T> nopTransformer() {
-        return INSTANCE;
+        return (Transformer<T, T>) INSTANCE;
     }
 
     /**

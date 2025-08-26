@@ -26,6 +26,7 @@ import org.apache.commons.collections4.Transformer;
  * Predicate implementation that returns the result of a transformer.
  *
  * @since 3.0
+ * @version $Id$
  */
 public final class TransformerPredicate<T> implements Predicate<T>, Serializable {
 
@@ -47,7 +48,7 @@ public final class TransformerPredicate<T> implements Predicate<T>, Serializable
         if (transformer == null) {
             throw new NullPointerException("The transformer to call must not be null");
         }
-        return new TransformerPredicate<>(transformer);
+        return new TransformerPredicate<T>(transformer);
     }
 
     /**

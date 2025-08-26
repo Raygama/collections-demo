@@ -31,8 +31,8 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
- * @param <E> the type of elements held in this queue
  * @since 4.0
+ * @version $Id$
  */
 public final class UnmodifiableQueue<E>
         extends AbstractQueueDecorator<E>
@@ -57,7 +57,7 @@ public final class UnmodifiableQueue<E>
             final Queue<E> tmpQueue = (Queue<E>) queue;
             return tmpQueue;
         }
-        return new UnmodifiableQueue<>(queue);
+        return new UnmodifiableQueue<E>(queue);
     }
 
     //-----------------------------------------------------------------------

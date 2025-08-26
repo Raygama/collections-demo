@@ -38,8 +38,8 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * map will be used to map bag elements to a number; the number represents the
  * number of occurrences of that element in the bag.
  *
- * @param <E> the type of elements in this bag
  * @since 3.0 (previously DefaultMapBag v2.0)
+ * @version $Id$
  */
 public abstract class AbstractMapBag<E> implements Bag<E> {
 
@@ -141,7 +141,7 @@ public abstract class AbstractMapBag<E> implements Bag<E> {
         if (coll instanceof Bag) {
             return containsAll((Bag<?>) coll);
         }
-        return containsAll(new HashBag<>(coll));
+        return containsAll(new HashBag<Object>(coll));
     }
 
     /**
@@ -171,7 +171,7 @@ public abstract class AbstractMapBag<E> implements Bag<E> {
      */
     @Override
     public Iterator<E> iterator() {
-        return new BagIterator<>(this);
+        return new BagIterator<E>(this);
     }
 
     /**
@@ -379,7 +379,7 @@ public abstract class AbstractMapBag<E> implements Bag<E> {
         if (coll instanceof Bag) {
             return retainAll((Bag<?>) coll);
         }
-        return retainAll(new HashBag<>(coll));
+        return retainAll(new HashBag<Object>(coll));
     }
 
     /**
@@ -392,7 +392,7 @@ public abstract class AbstractMapBag<E> implements Bag<E> {
      */
     boolean retainAll(final Bag<?> other) {
         boolean result = false;
-        final Bag<E> excess = new HashBag<>();
+        final Bag<E> excess = new HashBag<E>();
         final Iterator<E> i = uniqueSet().iterator();
         while (i.hasNext()) {
             final E current = i.next();

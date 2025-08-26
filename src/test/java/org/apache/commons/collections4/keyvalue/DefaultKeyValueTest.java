@@ -25,6 +25,7 @@ import junit.framework.TestCase;
  * Test the DefaultKeyValue class.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class DefaultKeyValueTest<K, V> extends TestCase {
 
@@ -38,7 +39,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
      * of the type being tested.
      */
     protected DefaultKeyValue<K, V> makeDefaultKeyValue() {
-        return new DefaultKeyValue<>(null, null);
+        return new DefaultKeyValue<K, V>(null, null);
     }
 
     /**
@@ -47,7 +48,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
      * of the type being tested.
      */
     protected DefaultKeyValue<K, V> makeDefaultKeyValue(final K key, final V value) {
-        return new DefaultKeyValue<>(key, value);
+        return new DefaultKeyValue<K, V>(key, value);
     }
 
     //-----------------------------------------------------------------------
@@ -105,15 +106,15 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
     @SuppressWarnings("unchecked")
     public void testConstructors() {
         // 1. test default constructor
-        DefaultKeyValue<K, V> kv = new DefaultKeyValue<>();
+        DefaultKeyValue<K, V> kv = new DefaultKeyValue<K, V>();
         assertTrue(kv.getKey() == null && kv.getValue() == null);
 
         // 2. test key-value constructor
-        kv = new DefaultKeyValue<>((K) key, (V) value);
+        kv = new DefaultKeyValue<K, V>((K) key, (V) value);
         assertTrue(kv.getKey() == key && kv.getValue() == value);
 
         // 3. test copy constructor
-        final DefaultKeyValue<K, V> kv2 = new DefaultKeyValue<>(kv);
+        final DefaultKeyValue<K, V> kv2 = new DefaultKeyValue<K, V>(kv);
         assertTrue(kv2.getKey() == key && kv2.getValue() == value);
 
         // test that the KVPs are independent
@@ -123,11 +124,11 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
         assertTrue(kv2.getKey() == key && kv2.getValue() == value);
 
         // 4. test Map.Entry constructor
-        final Map<K, V> map = new HashMap<>();
+        final Map<K, V> map = new HashMap<K, V>();
         map.put((K) key, (V) value);
         final Map.Entry<K, V> entry = map.entrySet().iterator().next();
 
-        kv = new DefaultKeyValue<>(entry);
+        kv = new DefaultKeyValue<K, V>(entry);
         assertTrue(kv.getKey() == key && kv.getValue() == value);
 
         // test that the KVP is independent of the Map.Entry
@@ -169,7 +170,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
     public void testToMapEntry() {
         final DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
 
-        final Map<K, V> map = new HashMap<>();
+        final Map<K, V> map = new HashMap<K, V>();
         map.put(kv.getKey(), kv.getValue());
         final Map.Entry<K, V> entry = map.entrySet().iterator().next();
 

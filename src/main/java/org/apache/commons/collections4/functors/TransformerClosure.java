@@ -26,6 +26,7 @@ import org.apache.commons.collections4.Transformer;
  * and ignore the result.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class TransformerClosure<E> implements Closure<E>, Serializable {
 
@@ -48,7 +49,7 @@ public class TransformerClosure<E> implements Closure<E>, Serializable {
         if (transformer == null) {
             return NOPClosure.<E>nopClosure();
         }
-        return new TransformerClosure<>(transformer);
+        return new TransformerClosure<E>(transformer);
     }
 
     /**

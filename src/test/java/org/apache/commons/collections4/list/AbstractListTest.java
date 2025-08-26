@@ -46,6 +46,7 @@ import org.apache.commons.collections4.iterators.AbstractListIteratorTest;
  * test case (method) your {@link List} fails or override one of the
  * protected methods from AbstractCollectionTest.
  *
+ * @version $Id$
  */
 public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
 
@@ -119,7 +120,7 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
      */
     @Override
     public Collection<E> makeConfirmedCollection() {
-        final ArrayList<E> list = new ArrayList<>();
+        final ArrayList<E> list = new ArrayList<E>();
         return list;
     }
 
@@ -128,7 +129,7 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
      */
     @Override
     public Collection<E> makeConfirmedFullCollection() {
-        final ArrayList<E> list = new ArrayList<>();
+        final ArrayList<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -322,7 +323,7 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
             // main list is only size 1, so lets add other elements to get a better list
             list.addAll(Arrays.asList(getOtherElements()));
             getConfirmed().addAll(Arrays.asList(getOtherElements()));
-            list2 = new ArrayList<>(list2);
+            list2 = new ArrayList<E>(list2);
             list2.addAll(Arrays.asList(getOtherElements()));
         }
         if (list2.size() > 1) {
@@ -1132,7 +1133,7 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         if (getFullElements().length - 6 < 10) {
             return null;
         }
-        return new BulkTestSubList<>(this);
+        return new BulkTestSubList<E>(this);
     }
 
    public static class BulkTestSubList<E> extends AbstractListTest<E> {
@@ -1337,8 +1338,9 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
            if (t instanceof ConcurrentModificationException) {
                // expected
                return;
+           } else {
+               fail(m.getName() + " raised unexpected " + e);
            }
-        fail(m.getName() + " raised unexpected " + e);
        }
    }
 

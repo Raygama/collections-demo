@@ -38,8 +38,9 @@ import java.util.Set;
  * In an ideal world, the interface would be changed to fix the problems, however
  * it has been decided to maintain backwards compatibility instead.
  *
- * @param <E> the type of elements in this bag
+ * @param <E> the type held in the bag
  * @since 2.0
+ * @version $Id$
  */
 public interface Bag<E> extends Collection<E> {
 

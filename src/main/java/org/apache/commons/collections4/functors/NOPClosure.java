@@ -24,6 +24,7 @@ import org.apache.commons.collections4.Closure;
  * Closure implementation that does nothing.
  *
  * @since 3.0
+ * @version $Id$
  */
 public final class NOPClosure<E> implements Closure<E>, Serializable {
 
@@ -32,7 +33,7 @@ public final class NOPClosure<E> implements Closure<E>, Serializable {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes")
-    public static final Closure INSTANCE = new NOPClosure<>();
+    public static final Closure INSTANCE = new NOPClosure<Object>();
 
     /**
      * Factory returning the singleton instance.
@@ -43,7 +44,7 @@ public final class NOPClosure<E> implements Closure<E>, Serializable {
      */
     @SuppressWarnings("unchecked")
     public static <E> Closure<E> nopClosure() {
-        return INSTANCE;
+        return (Closure<E>) INSTANCE;
     }
 
     /**

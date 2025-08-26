@@ -31,12 +31,13 @@ import org.apache.commons.collections4.Transformer;
  * for more details.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class InstantiateTransformer<T> implements Transformer<Class<? extends T>, T> {
 
     /** Singleton instance that uses the no arg constructor */
     @SuppressWarnings("rawtypes")
-    private static final Transformer NO_ARG_INSTANCE = new InstantiateTransformer<>();
+    private static final Transformer NO_ARG_INSTANCE = new InstantiateTransformer<Object>();
 
     /** The constructor parameter types */
     private final Class<?>[] iParamTypes;
@@ -47,7 +48,7 @@ public class InstantiateTransformer<T> implements Transformer<Class<? extends T>
      * Get a typed no-arg instance.
      *
      * @param <T>  the type of the objects to be created
-     * @return Transformer&lt;Class&lt;? extends T&gt;, T&gt;
+     * @return Transformer<Class<? extends T>, T>
      */
     @SuppressWarnings("unchecked")
     public static <T> Transformer<Class<? extends T>, T> instantiateTransformer() {
@@ -72,9 +73,9 @@ public class InstantiateTransformer<T> implements Transformer<Class<? extends T>
         }
 
         if (paramTypes == null || paramTypes.length == 0) {
-            return new InstantiateTransformer<>();
+            return new InstantiateTransformer<T>();
         }
-        return new InstantiateTransformer<>(paramTypes, args);
+        return new InstantiateTransformer<T>(paramTypes, args);
     }
 
     /**

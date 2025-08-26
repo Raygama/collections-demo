@@ -26,6 +26,7 @@ import org.apache.commons.collections4.Transformer;
  * another <code>Predicate</code>.
  *
  * @since 3.1
+ * @version $Id$
  */
 public final class TransformedPredicate<T> implements PredicateDecorator<T>, Serializable {
 
@@ -55,7 +56,7 @@ public final class TransformedPredicate<T> implements PredicateDecorator<T>, Ser
         if (predicate == null) {
             throw new NullPointerException("The predicate to call must not be null");
         }
-        return new TransformedPredicate<>(transformer, predicate);
+        return new TransformedPredicate<T>(transformer, predicate);
     }
 
     /**

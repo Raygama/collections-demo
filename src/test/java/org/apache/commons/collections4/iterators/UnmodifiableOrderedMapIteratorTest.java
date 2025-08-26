@@ -28,6 +28,7 @@ import org.apache.commons.collections4.map.ListOrderedMap;
 /**
  * Tests the UnmodifiableOrderedMapIterator.
  *
+ * @version $Id$
  */
 public class UnmodifiableOrderedMapIteratorTest<K, V> extends AbstractOrderedMapIteratorTest<K, V> {
 
@@ -59,7 +60,7 @@ public class UnmodifiableOrderedMapIteratorTest<K, V> extends AbstractOrderedMap
     @Override
     @SuppressWarnings("unchecked")
     public Map<K, V> getConfirmedMap() {
-        final Map<K, V> testMap = new TreeMap<>();
+        final Map<K, V> testMap = new TreeMap<K, V>();
         testMap.put((K) "A", (V) "a");
         testMap.put((K) "B", (V) "b");
         testMap.put((K) "C", (V) "c");

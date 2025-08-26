@@ -34,6 +34,7 @@ import org.apache.commons.collections4.list.AbstractListTest;
  * you may still use this base set of cases.  Simply override the
  * test case (method) your {@link List} fails.
  *
+ * @version $Id$
  */
 public abstract class AbstractLinkedListTest<T> extends AbstractListTest<T> {
 
@@ -206,7 +207,7 @@ public abstract class AbstractLinkedListTest<T> extends AbstractListTest<T> {
      */
     @Override
     public Collection<T> makeConfirmedCollection() {
-        return new LinkedList<>();
+        return new LinkedList<T>();
     }
 
     /**
@@ -214,7 +215,7 @@ public abstract class AbstractLinkedListTest<T> extends AbstractListTest<T> {
      */
     @Override
     public Collection<T> makeConfirmedFullCollection() {
-        final List<T> list = new LinkedList<>();
+        final List<T> list = new LinkedList<T>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }

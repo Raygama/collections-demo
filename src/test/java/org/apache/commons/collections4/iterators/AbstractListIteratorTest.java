@@ -29,6 +29,7 @@ import java.util.NoSuchElementException;
  * overriding the supportsXxx() methods if necessary.
  *
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractListIteratorTest<E> extends AbstractIteratorTest<E> {
 
@@ -121,7 +122,7 @@ public abstract class AbstractListIteratorTest<E> extends AbstractIteratorTest<E
      * Test navigation through the iterator.
      */
     public void testWalkForwardAndBack() {
-        final ArrayList<E> list = new ArrayList<>();
+        final ArrayList<E> list = new ArrayList<E>();
         final ListIterator<E> it = makeObject();
         while (it.hasNext()) {
             list.add(it.next());

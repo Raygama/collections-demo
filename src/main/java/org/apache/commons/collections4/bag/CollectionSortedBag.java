@@ -27,8 +27,8 @@ import org.apache.commons.collections4.SortedBag;
 /**
  * Decorates another {@link SortedBag} to comply with the Collection contract.
  *
- * @param <E> the type of elements in this bag
  * @since 4.0
+ * @version $Id$
  */
 public final class CollectionSortedBag<E> extends AbstractSortedBagDecorator<E> {
 
@@ -44,7 +44,7 @@ public final class CollectionSortedBag<E> extends AbstractSortedBagDecorator<E> 
      * @throws NullPointerException if bag is null
      */
     public static <E> SortedBag<E> collectionSortedBag(final SortedBag<E> bag) {
-        return new CollectionSortedBag<>(bag);
+        return new CollectionSortedBag<E>(bag);
     }
 
     //-----------------------------------------------------------------------
@@ -63,7 +63,7 @@ public final class CollectionSortedBag<E> extends AbstractSortedBagDecorator<E> 
      * Write the collection out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -74,8 +74,8 @@ public final class CollectionSortedBag<E> extends AbstractSortedBagDecorator<E> 
      * Read the collection in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      * @throws ClassCastException if deserialised object has wrong type
      */
     @SuppressWarnings("unchecked") // will throw CCE, see Javadoc
@@ -131,9 +131,10 @@ public final class CollectionSortedBag<E> extends AbstractSortedBagDecorator<E> 
                 result = result || changed;
             }
             return result;
+        } else {
+            // let the decorated bag handle the case of null argument
+            return decorated().removeAll(null);
         }
-        // let the decorated bag handle the case of null argument
-        return decorated().removeAll(null);
     }
 
     @Override
@@ -148,9 +149,10 @@ public final class CollectionSortedBag<E> extends AbstractSortedBagDecorator<E> 
                 }
             }
             return modified;
+        } else {
+            // let the decorated bag handle the case of null argument
+            return decorated().retainAll(null);
         }
-        // let the decorated bag handle the case of null argument
-        return decorated().retainAll(null);
     }
 
     //-----------------------------------------------------------------------

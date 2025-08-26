@@ -40,6 +40,7 @@ import org.apache.commons.collections4.functors.PrototypeFactory;
  * </ul>
  *
  * @since 3.0
+ * @version $Id$
  */
 public class FactoryUtils {
 
@@ -93,12 +94,11 @@ public class FactoryUtils {
      * Creates a Factory that will return a clone of the same prototype object
      * each time the factory is used. The prototype will be cloned using one of these
      * techniques (in order):
-     *
      * <ul>
-     * <li>public clone method</li>
-     * <li>public copy constructor</li>
-     * <li>serialization clone</li>
-     * </ul>
+     * <li>public clone method
+     * <li>public copy constructor
+     * <li>serialization clone
+     * <ul>
      *
      * @see org.apache.commons.collections4.functors.PrototypeFactory
      *

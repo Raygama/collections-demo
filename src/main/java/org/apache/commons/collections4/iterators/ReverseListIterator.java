@@ -34,6 +34,7 @@ import org.apache.commons.collections4.ResettableListIterator;
  * continues. The previous methods work similarly.
  *
  * @since 3.2
+ * @version $Id$
  */
 public class ReverseListIterator<E> implements ResettableListIterator<E> {
 

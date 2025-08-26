@@ -53,6 +53,7 @@ import java.util.ListIterator;
  *
  * @see java.util.LinkedList
  * @since 1.0
+ * @version $Id$
  */
 public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Serializable {
 
@@ -87,7 +88,7 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
     @Override
     protected void init() {
         super.init();
-        cursors = new ArrayList<>();
+        cursors = new ArrayList<WeakReference<Cursor<E>>>();
     }
 
     //-----------------------------------------------------------------------
@@ -201,7 +202,7 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
      *      (index &lt; 0 || index &gt; size()).
      */
     public CursorableLinkedList.Cursor<E> cursor(final int fromIndex) {
-        final Cursor<E> cursor = new Cursor<>(this, fromIndex);
+        final Cursor<E> cursor = new Cursor<E>(this, fromIndex);
         registerCursor(cursor);
         return cursor;
     }
@@ -276,7 +277,7 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
                 it.remove();
             }
         }
-        cursors.add(new WeakReference<>(cursor));
+        cursors.add(new WeakReference<Cursor<E>>(cursor));
     }
 
     /**
@@ -362,9 +363,6 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
     //-----------------------------------------------------------------------
     /**
      * Serializes the data held in this object to the stream specified.
-     *
-     * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -373,10 +371,6 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
 
     /**
      * Deserializes the data held in this object to the stream specified.
-     *
-     * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -393,7 +387,7 @@ public class CursorableLinkedList<E> extends AbstractLinkedList<E> implements Se
      */
     @Override
     protected ListIterator<E> createSubListListIterator(final LinkedSubList<E> subList, final int fromIndex) {
-        final SubCursor<E> cursor = new SubCursor<>(subList, fromIndex);
+        final SubCursor<E> cursor = new SubCursor<E>(subList, fromIndex);
         registerCursor(cursor);
         return cursor;
     }

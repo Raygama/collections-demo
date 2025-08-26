@@ -26,6 +26,7 @@ import org.apache.commons.collections4.IterableMap;
  * implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class FixedSizeMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
@@ -40,7 +41,7 @@ public class FixedSizeMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
     @Override
     public IterableMap<K, V> makeFullMap() {
-        final Map<K, V> map = new HashMap<>();
+        final Map<K, V> map = new HashMap<K, V>();
         addSampleMappings(map);
         return FixedSizeMap.fixedSizeMap(map);
     }

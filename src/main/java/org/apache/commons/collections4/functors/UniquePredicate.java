@@ -27,6 +27,7 @@ import org.apache.commons.collections4.Predicate;
  * passed into the predicate.
  *
  * @since 3.0
+ * @version $Id$
  */
 public final class UniquePredicate<T> implements Predicate<T>, Serializable {
 
@@ -34,7 +35,7 @@ public final class UniquePredicate<T> implements Predicate<T>, Serializable {
     private static final long serialVersionUID = -3319417438027438040L;
 
     /** The set of previously seen objects */
-    private final Set<T> iSet = new HashSet<>();
+    private final Set<T> iSet = new HashSet<T>();
 
     /**
      * Factory to create the predicate.
@@ -44,7 +45,7 @@ public final class UniquePredicate<T> implements Predicate<T>, Serializable {
      * @throws IllegalArgumentException if the predicate is null
      */
     public static <T> Predicate<T> uniquePredicate() {
-        return new UniquePredicate<>();
+        return new UniquePredicate<T>();
     }
 
     /**

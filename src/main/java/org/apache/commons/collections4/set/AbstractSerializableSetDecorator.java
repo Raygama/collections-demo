@@ -25,8 +25,8 @@ import java.util.Set;
 /**
  * Serializable subclass of AbstractSetDecorator.
  *
- * @param <E> the type of the elements in this set
  * @since 3.1
+ * @version $Id$
  */
 public abstract class AbstractSerializableSetDecorator<E>
         extends AbstractSetDecorator<E> {
@@ -49,7 +49,7 @@ public abstract class AbstractSerializableSetDecorator<E>
      * Write the set out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -60,8 +60,8 @@ public abstract class AbstractSerializableSetDecorator<E>
      * Read the set in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

@@ -33,8 +33,9 @@ import org.apache.commons.collections4.Unmodifiable;
 
 /**
  * Tests for UnmodifiableMultiValuedMap
- *
+ * 
  * @since 4.1
+ * @version $Id$
  */
 public class UnmodifiableMultiValuedMapTest<K, V> extends AbstractMultiValuedMapTest<K, V> {
 
@@ -45,7 +46,7 @@ public class UnmodifiableMultiValuedMapTest<K, V> extends AbstractMultiValuedMap
     public static Test suite() {
         return BulkTest.makeSuite(UnmodifiableMultiValuedMapTest.class);
     }
-
+    
     // -----------------------------------------------------------------------
     @Override
     public boolean isAddSupported() {
@@ -65,7 +66,7 @@ public class UnmodifiableMultiValuedMapTest<K, V> extends AbstractMultiValuedMap
 
     @Override
     protected MultiValuedMap<K, V> makeFullMap() {
-        final MultiValuedMap<K, V> map = new ArrayListValuedHashMap<>();
+        final MultiValuedMap<K, V> map = new ArrayListValuedHashMap<K, V>();
         addSampleMappings(map);
         return UnmodifiableMultiValuedMap.<K, V> unmodifiableMultiValuedMap(map);
     }

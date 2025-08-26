@@ -54,10 +54,11 @@ import org.apache.commons.collections4.set.AbstractSetTest;
  * <p>
  * In addition to the generic collection tests (prefix testCollection) inherited
  * from AbstractCollectionTest, there are test methods that test the "normal" Bag
- * interface (prefix testBag). For Bag specific tests use the {@link #makeObject()} and
+ * interface (prefix testBag). For Bag specific tests use the {@link #makeObject()} and 
  * {@link #makeFullCollection()} methods instead of {@link #resetEmpty()} and resetFull(),
  * otherwise the collection will be wrapped by a {@link CollectionBag} decorator.
  *
+ * @version $Id$
  */
 public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
 
@@ -76,7 +77,7 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
      */
     @Override
     public Collection<T> makeConfirmedCollection() {
-        final ArrayList<T> list = new ArrayList<>();
+        final ArrayList<T> list = new ArrayList<T>();
         return list;
     }
 
@@ -156,11 +157,11 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
     public void testBagEqualsSelf() {
         final Bag<T> bag = makeObject();
         assertTrue(bag.equals(bag));
-
+        
         if (!isAddSupported()) {
             return;
         }
-
+        
         bag.add((T) "elt");
         assertTrue(bag.equals(bag));
         bag.add((T) "elt"); // again
@@ -198,14 +199,14 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isRemoveSupported()) {
             return;
         }
-
+        
         final Bag<T> bag = makeObject();
         bag.add((T) "A", 2);
         assertEquals("Should have count of 2", 2, bag.getCount("A"));
         bag.add((T) "B");
         bag.add((T) "C");
         assertEquals("Should have count of 4", 4, bag.size());
-        final List<String> delete = new ArrayList<>();
+        final List<String> delete = new ArrayList<String>();
         delete.add("A");
         delete.add("B");
         bag.removeAll(delete);
@@ -220,7 +221,7 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
+        
         final Bag<T> bag = makeObject();
 
         assertEquals("Bag does not have at least 1 'A'", false, bag.contains("A"));
@@ -244,17 +245,17 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
+        
         final Bag<T> bag = makeObject();
-        final List<String> known = new ArrayList<>();
-        final List<String> known1A = new ArrayList<>();
+        final List<String> known = new ArrayList<String>();
+        final List<String> known1A = new ArrayList<String>();
         known1A.add("A");
-        final List<String> known2A = new ArrayList<>();
+        final List<String> known2A = new ArrayList<String>();
         known2A.add("A");
         known2A.add("A");
-        final List<String> known1B = new ArrayList<>();
+        final List<String> known1B = new ArrayList<String>();
         known1B.add("B");
-        final List<String> known1A1B = new ArrayList<>();
+        final List<String> known1A1B = new ArrayList<String>();
         known1A1B.add("A");
         known1A1B.add("B");
 
@@ -298,7 +299,7 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
+        
         final Bag<T> bag = makeObject();
         assertEquals("Should have 0 total items", 0, bag.size());
         bag.add((T) "A");
@@ -323,7 +324,7 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         if (!isAddSupported()) {
             return;
         }
-
+        
         final Bag<T> bag = makeObject();
         bag.add((T) "A");
         bag.add((T) "A");
@@ -331,7 +332,7 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         bag.add((T) "B");
         bag.add((T) "B");
         bag.add((T) "C");
-        final List<String> retains = new ArrayList<>();
+        final List<String> retains = new ArrayList<String>();
         retains.add("B");
         retains.add("C");
         bag.retainAll(retains);
@@ -546,7 +547,7 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         }
 
         final Bag<T> bag = makeObject();
-        final Bag<T> bag2 = new HashBag<>();
+        final Bag<T> bag2 = new HashBag<T>();
         assertEquals(true, bag.equals(bag2));
         bag.add((T) "A");
         assertEquals(false, bag.equals(bag2));
@@ -657,14 +658,14 @@ public abstract class AbstractBagTest<T> extends AbstractCollectionTest<T> {
         public void resetEmpty() {
             AbstractBagTest.this.resetEmpty();
             TestBagUniqueSet.this.setCollection(AbstractBagTest.this.getCollection().uniqueSet());
-            TestBagUniqueSet.this.setConfirmed(new HashSet<>(AbstractBagTest.this.getConfirmed()));
+            TestBagUniqueSet.this.setConfirmed(new HashSet<T>(AbstractBagTest.this.getConfirmed()));
         }
 
         @Override
         public void resetFull() {
             AbstractBagTest.this.resetFull();
             TestBagUniqueSet.this.setCollection(AbstractBagTest.this.getCollection().uniqueSet());
-            TestBagUniqueSet.this.setConfirmed(new HashSet<>(AbstractBagTest.this.getConfirmed()));
+            TestBagUniqueSet.this.setConfirmed(new HashSet<T>(AbstractBagTest.this.getConfirmed()));
         }
 
         @Override

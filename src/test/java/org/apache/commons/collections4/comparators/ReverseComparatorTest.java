@@ -30,6 +30,7 @@ import org.junit.Test;
 /**
  * Tests for ReverseComparator.
  *
+ * @version $Id$
  */
 public class ReverseComparatorTest extends AbstractComparatorTest<Integer> {
 
@@ -49,7 +50,7 @@ public class ReverseComparatorTest extends AbstractComparatorTest<Integer> {
      */
     @Override
     public Comparator<Integer> makeObject() {
-        return new ReverseComparator<>(Collections.<Integer>reverseOrder());
+        return new ReverseComparator<Integer>(Collections.<Integer>reverseOrder());
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ReverseComparatorTest extends AbstractComparatorTest<Integer> {
 
     @Override
     public List<Integer> getComparableObjectsOrdered() {
-        final List<Integer> list = new LinkedList<>();
+        final List<Integer> list = new LinkedList<Integer>();
         list.add(Integer.valueOf(1));
         list.add(Integer.valueOf(2));
         list.add(Integer.valueOf(3));
@@ -80,7 +81,7 @@ public class ReverseComparatorTest extends AbstractComparatorTest<Integer> {
     @Override
     @Test
     public void testSerializeDeserializeThenCompare() throws Exception {
-        final Comparator<?> comp = new ReverseComparator<>(new ComparableComparator<String>());
+        final Comparator<?> comp = new ReverseComparator<String>(new ComparableComparator<String>());
 
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final ObjectOutputStream out = new ObjectOutputStream(buffer);

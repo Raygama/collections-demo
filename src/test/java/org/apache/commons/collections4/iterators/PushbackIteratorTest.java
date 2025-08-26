@@ -27,7 +27,8 @@ import org.junit.Test;
 
 /**
  * Tests the PushbackIterator.
- *
+ * 
+ * @version $Id$
  */
 public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
 
@@ -46,7 +47,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        testList = new ArrayList<>(Arrays.asList((E[]) testArray));
+        testList = new ArrayList<E>(Arrays.asList((E[]) testArray));
     }
 
     @Override

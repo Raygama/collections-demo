@@ -31,6 +31,7 @@ import org.apache.commons.collections4.Transformer;
  * {@link IndexedCollection} implementation.
  *
  * @since 4.0
+ * @version $Id$
  */
 @SuppressWarnings("boxing")
 public class IndexedCollectionTest extends AbstractCollectionTest<String> {
@@ -65,7 +66,7 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
 
     @Override
     public Collection<String> makeConfirmedCollection() {
-        return new ArrayList<>();
+        return new ArrayList<String>();
     }
 
     @Override
@@ -80,14 +81,14 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
 
     @Override
     public Collection<String> makeFullCollection() {
-        final List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<String>();
         list.addAll(Arrays.asList(getFullElements()));
         return decorateCollection(list);
     }
 
     @Override
     public Collection<String> makeConfirmedFullCollection() {
-        final List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<String>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -147,7 +148,7 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
     }
 
     public void testReindexUpdatesIndexWhenDecoratedCollectionIsModifiedSeparately() throws Exception {
-        final Collection<String> original = new ArrayList<>();
+        final Collection<String> original = new ArrayList<String>();
         final IndexedCollection<Integer, String> indexed = decorateUniqueCollection(original);
 
         original.add("1");

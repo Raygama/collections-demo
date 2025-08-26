@@ -26,6 +26,7 @@ import org.apache.commons.collections4.ResettableListIterator;
 /**
  * Tests the ListIteratorWrapper to insure that it behaves as expected when wrapping a ListIterator.
  *
+ * @version $Id$
  */
 public class ListIteratorWrapper2Test<E> extends AbstractIteratorTest<E> {
 
@@ -42,7 +43,7 @@ public class ListIteratorWrapper2Test<E> extends AbstractIteratorTest<E> {
     @Override
     @SuppressWarnings("unchecked")
     public void setUp() {
-        list1 = new ArrayList<>();
+        list1 = new ArrayList<E>();
         list1.add((E) "One");
         list1.add((E) "Two");
         list1.add((E) "Three");
@@ -53,13 +54,13 @@ public class ListIteratorWrapper2Test<E> extends AbstractIteratorTest<E> {
 
     @Override
     public ResettableListIterator<E> makeEmptyIterator() {
-        final ArrayList<E> list = new ArrayList<>();
-        return new ListIteratorWrapper<>(list.listIterator());
+        final ArrayList<E> list = new ArrayList<E>();
+        return new ListIteratorWrapper<E>(list.listIterator());
     }
 
     @Override
     public ResettableListIterator<E> makeObject() {
-        return new ListIteratorWrapper<>(list1.listIterator());
+        return new ListIteratorWrapper<E>(list1.listIterator());
     }
 
     public void testIterator() {
@@ -135,7 +136,7 @@ public class ListIteratorWrapper2Test<E> extends AbstractIteratorTest<E> {
         //like we never started iterating:
         assertEquals(-1, iter.previousIndex());
         assertEquals(0, iter.nextIndex());
-
+ 
         try {
             iter.remove();
             fail("ListIteratorWrapper#remove() should fail; must be repositioned first");

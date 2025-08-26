@@ -39,6 +39,7 @@ import org.apache.commons.collections4.sequence.SequencesComparator;
  * Provides utility methods and decorators for {@link List} instances.
  *
  * @since 1.0
+ * @version $Id$
  */
 public class ListUtils {
 
@@ -86,7 +87,7 @@ public class ListUtils {
      * @throws NullPointerException if either list is null
      */
     public static <E> List<E> intersection(final List<? extends E> list1, final List<? extends E> list2) {
-        final List<E> result = new ArrayList<>();
+        final List<E> result = new ArrayList<E>();
 
         List<? extends E> smaller = list1;
         List<? extends E> larger = list2;
@@ -95,7 +96,7 @@ public class ListUtils {
             larger = list1;
         }
 
-        final HashSet<E> hashSet = new HashSet<>(smaller);
+        final HashSet<E> hashSet = new HashSet<E>(smaller);
 
         for (final E e : larger) {
             if (hashSet.contains(e)) {
@@ -123,8 +124,8 @@ public class ListUtils {
      * @throws NullPointerException if either list is null
      */
     public static <E> List<E> subtract(final List<E> list1, final List<? extends E> list2) {
-        final ArrayList<E> result = new ArrayList<>();
-        final HashBag<E> bag = new HashBag<>(list2);
+        final ArrayList<E> result = new ArrayList<E>();
+        final HashBag<E> bag = new HashBag<E>(list2);
         for (final E e : list1) {
             if (!bag.remove(e, 1)) {
                 result.add(e);
@@ -159,8 +160,7 @@ public class ListUtils {
      * @throws NullPointerException if either list is null
      */
     public static <E> List<E> union(final List<? extends E> list1, final List<? extends E> list2) {
-        final ArrayList<E> result = new ArrayList<>(list1.size() + list2.size());
-        result.addAll(list1);
+        final ArrayList<E> result = new ArrayList<E>(list1);
         result.addAll(list2);
         return result;
     }
@@ -309,7 +309,7 @@ public class ListUtils {
      * @since 3.2
      */
     public static <E> List<E> retainAll(final Collection<E> collection, final Collection<?> retain) {
-        final List<E> list = new ArrayList<>(Math.min(collection.size(), retain.size()));
+        final List<E> list = new ArrayList<E>(Math.min(collection.size(), retain.size()));
 
         for (final E obj : collection) {
             if (retain.contains(obj)) {
@@ -343,7 +343,7 @@ public class ListUtils {
      * @since 3.2
      */
     public static <E> List<E> removeAll(final Collection<E> collection, final Collection<?> remove) {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         for (final E obj : collection) {
             if (!remove.contains(obj)) {
                 list.add(obj);
@@ -545,9 +545,9 @@ public class ListUtils {
           throw new NullPointerException("Equator must not be null");
         }
 
-        final SequencesComparator<E> comparator = new SequencesComparator<>(a, b, equator);
+        final SequencesComparator<E> comparator = new SequencesComparator<E>(a, b, equator);
         final EditScript<E> script = comparator.getScript();
-        final LcsVisitor<E> visitor = new LcsVisitor<>();
+        final LcsVisitor<E> visitor = new LcsVisitor<E>();
         script.visit(visitor);
         return visitor.getSubSequence();
     }
@@ -583,7 +583,7 @@ public class ListUtils {
         private final ArrayList<E> sequence;
 
         public LcsVisitor() {
-            sequence = new ArrayList<>();
+            sequence = new ArrayList<E>();
         }
 
         @Override
@@ -655,7 +655,7 @@ public class ListUtils {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be greater than 0");
         }
-        return new Partition<>(list, size);
+        return new Partition<T>(list, size);
     }
 
     /**
@@ -674,6 +674,9 @@ public class ListUtils {
         @Override
         public List<T> get(final int index) {
             final int listSize = size();
+            if (listSize < 0) {
+                throw new IllegalArgumentException("negative size: " + listSize);
+            }
             if (index < 0) {
                 throw new IndexOutOfBoundsException("Index " + index + " must not be negative");
             }

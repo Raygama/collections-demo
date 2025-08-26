@@ -43,6 +43,7 @@ import org.apache.commons.collections4.iterators.AbstractListIteratorDecorator;
  * This class is Serializable from Commons Collections 3.1.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedList<E> extends PredicatedCollection<E> implements List<E> {
 
@@ -64,7 +65,7 @@ public class PredicatedList<E> extends PredicatedCollection<E> implements List<E
      * @since 4.0
      */
     public static <T> PredicatedList<T> predicatedList(final List<T> list, final Predicate<? super T> predicate) {
-        return new PredicatedList<>(list, predicate);
+        return new PredicatedList<T>(list, predicate);
     }
 
     //-----------------------------------------------------------------------
@@ -160,7 +161,7 @@ public class PredicatedList<E> extends PredicatedCollection<E> implements List<E
     @Override
     public List<E> subList(final int fromIndex, final int toIndex) {
         final List<E> sub = decorated().subList(fromIndex, toIndex);
-        return new PredicatedList<>(sub, predicate);
+        return new PredicatedList<E>(sub, predicate);
     }
 
     /**

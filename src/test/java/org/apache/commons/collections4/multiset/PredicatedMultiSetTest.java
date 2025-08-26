@@ -30,6 +30,7 @@ import org.apache.commons.collections4.functors.TruePredicate;
  * {@link PredicatedMultiSet} implementation.
  *
  * @since 4.1
+ * @version $Id$
  */
 public class PredicatedMultiSetTest<T> extends AbstractMultiSetTest<T> {
 
@@ -103,7 +104,7 @@ public class PredicatedMultiSetTest<T> extends AbstractMultiSetTest<T> {
 
     @SuppressWarnings("unchecked")
     public void testIllegalDecorate() {
-        final HashMultiSet<Object> elements = new HashMultiSet<>();
+        final HashMultiSet<Object> elements = new HashMultiSet<Object>();
         elements.add("one");
         elements.add("two");
         elements.add(Integer.valueOf(3));

@@ -51,9 +51,8 @@ import org.apache.commons.collections4.multiset.UnmodifiableMultiSet;
  * <p>
  * Subclasses specify a Map implementation to use as the internal storage.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 4.1
+ * @version $Id$
  */
 public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, V> {
 
@@ -261,10 +260,12 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
             if (coll.add(value)) {
                 map.put(key, coll);
                 return true;
+            } else {
+                return false;
             }
-            return false;
+        } else {
+            return coll.add(value);
         }
-        return coll.add(value);
     }
 
     /**
@@ -355,9 +356,10 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         if (values instanceof Collection<?>) {
             Collection<? extends V> valueCollection = (Collection<? extends V>) values;
             return !valueCollection.isEmpty() && get(key).addAll(valueCollection);
+        } else {
+            Iterator<? extends V> it = values.iterator();
+            return it.hasNext() && CollectionUtils.addAll(get(key), it);
         }
-        Iterator<? extends V> it = values.iterator();
-        return it.hasNext() && CollectionUtils.addAll(get(key), it);
     }
 
     @Override
@@ -617,7 +619,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
         public Iterator<Entry<K, V>> iterator() {
             return new LazyIteratorChain<Entry<K, V>>() {
 
-                final Collection<K> keysCol = new ArrayList<>(getMap().keySet());
+                final Collection<K> keysCol = new ArrayList<K>(getMap().keySet());
                 final Iterator<K> keyIterator = keysCol.iterator();
 
                 @Override
@@ -634,7 +636,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
                         }
 
                     };
-                    return new TransformIterator<>(new ValuesIterator(key), entryTransformer);
+                    return new TransformIterator<V, Entry<K, V>>(new ValuesIterator(key), entryTransformer);
                 }
             };
         }
@@ -723,7 +725,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
     private class Values extends AbstractCollection<V> {
         @Override
         public Iterator<V> iterator() {
-            final IteratorChain<V> chain = new IteratorChain<>();
+            final IteratorChain<V> chain = new IteratorChain<V>();
             for (final K k : keySet()) {
                 chain.addIterator(new ValuesIterator(k));
             }
@@ -894,7 +896,7 @@ public abstract class AbstractMultiValuedMap<K, V> implements MultiValuedMap<K, 
             public Map.Entry<K, Collection<V>> next() {
                 final Map.Entry<K, Collection<V>> entry = super.next();
                 final K key = entry.getKey();
-                return new UnmodifiableMapEntry<>(key, wrappedCollection(key));
+                return new UnmodifiableMapEntry<K, Collection<V>>(key, wrappedCollection(key));
             }
         }
     }

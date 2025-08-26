@@ -45,6 +45,7 @@ import org.apache.commons.collections4.iterators.UniqueFilterIterator;
  * </ul>
  *
  * @since 4.1
+ * @version $Id$
  */
 public class IterableUtils {
 
@@ -175,8 +176,9 @@ public class IterableUtils {
                     protected Iterator<? extends E> nextIterator(int count) {
                         if (count > iterables.length) {
                             return null;
+                        } else {
+                            return iterables[count - 1].iterator();
                         }
-                        return iterables[count - 1].iterator();
                     }
                 };
             }
@@ -327,8 +329,9 @@ public class IterableUtils {
                     protected Iterator<? extends E> nextIterator(int count) {
                         if (IterableUtils.isEmpty(iterable)) {
                             return null;
+                        } else {
+                            return iterable.iterator();
                         }
-                        return iterable.iterator();
                     }
                 };
             }
@@ -362,7 +365,7 @@ public class IterableUtils {
                 final List<E> list = (iterable instanceof List<?>) ?
                         (List<E>) iterable :
                         IteratorUtils.toList(iterable.iterator());
-                return new ReverseListIterator<>(list);
+                return new ReverseListIterator<E>(list);
             }
         };
     }
@@ -448,7 +451,7 @@ public class IterableUtils {
         return new FluentIterable<E>() {
             @Override
             public Iterator<E> iterator() {
-                return new UniqueFilterIterator<>(iterable.iterator());
+                return new UniqueFilterIterator<E>(iterable.iterator());
             }
         };
     }
@@ -471,7 +474,7 @@ public class IterableUtils {
         if (iterable instanceof UnmodifiableIterable<?>) {
             return iterable;
         }
-        return new UnmodifiableIterable<>(iterable);
+        return new UnmodifiableIterable<E>(iterable);
     }
 
     /**
@@ -688,8 +691,9 @@ public class IterableUtils {
     public static boolean isEmpty(final Iterable<?> iterable) {
         if (iterable instanceof Collection<?>) {
             return ((Collection<?>) iterable).isEmpty();
+        } else {
+            return IteratorUtils.isEmpty(emptyIteratorIfNull(iterable));
         }
-        return IteratorUtils.isEmpty(emptyIteratorIfNull(iterable));
     }
 
     /**
@@ -705,8 +709,9 @@ public class IterableUtils {
     public static <E> boolean contains(final Iterable<E> iterable, final Object object) {
         if (iterable instanceof Collection<?>) {
             return ((Collection<E>) iterable).contains(object);
+        } else {
+            return IteratorUtils.contains(emptyIteratorIfNull(iterable), object);
         }
-        return IteratorUtils.contains(emptyIteratorIfNull(iterable), object);
     }
 
     /**
@@ -784,8 +789,9 @@ public class IterableUtils {
     public static int size(final Iterable<?> iterable) {
         if (iterable instanceof Collection<?>) {
             return ((Collection<?>) iterable).size();
+        } else {
+            return IteratorUtils.size(emptyIteratorIfNull(iterable));
         }
-        return IteratorUtils.size(emptyIteratorIfNull(iterable));
     }
 
     /**
@@ -931,7 +937,7 @@ public class IterableUtils {
         // create the empty partitions
         final int numberOfPredicates = predicates.length;
         final int numberOfPartitions = numberOfPredicates + 1;
-        final List<R> partitions = new ArrayList<>(numberOfPartitions);
+        final List<R> partitions = new ArrayList<R>(numberOfPartitions);
         for (int i = 0; i < numberOfPartitions; ++i) {
             partitions.add(partitionFactory.create());
         }

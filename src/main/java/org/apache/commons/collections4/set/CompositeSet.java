@@ -43,8 +43,8 @@ import org.apache.commons.collections4.list.UnmodifiableList;
  * See <a href="https://issues.apache.org/jira/browse/COLLECTIONS-424">COLLECTIONS-424</a>
  * for more details.
  *
- * @param <E> the type of the elements in this set
  * @since 3.0
+ * @version $Id$
  */
 public class CompositeSet<E> implements Set<E>, Serializable {
 
@@ -55,7 +55,7 @@ public class CompositeSet<E> implements Set<E>, Serializable {
     private SetMutator<E> mutator;
 
     /** Sets in the composite */
-    private final List<Set<E>> all = new ArrayList<>();
+    private final List<Set<E>> all = new ArrayList<Set<E>>();
 
     /**
      * Create an empty CompositeSet.
@@ -151,7 +151,7 @@ public class CompositeSet<E> implements Set<E>, Serializable {
         if (all.isEmpty()) {
             return EmptyIterator.<E>emptyIterator();
         }
-        final IteratorChain<E> chain = new IteratorChain<>();
+        final IteratorChain<E> chain = new IteratorChain<E>();
         for (final Set<E> item : all) {
             chain.addIterator(item.iterator());
         }
@@ -410,7 +410,7 @@ public class CompositeSet<E> implements Set<E>, Serializable {
      *   The new collection is <i>not</i> backed by this composite.
      */
     public Set<E> toSet() {
-        return new HashSet<>(this);
+        return new HashSet<E>(this);
     }
 
     /**

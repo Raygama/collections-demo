@@ -23,6 +23,7 @@ import org.apache.commons.collections4.BulkTest;
 /**
  * JUnit tests.
  *
+ * @version $Id$
  */
 public class HashedMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
@@ -36,7 +37,7 @@ public class HashedMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
     @Override
     public HashedMap<K, V> makeObject() {
-        return new HashedMap<>();
+        return new HashedMap<K, V>();
     }
 
     @Override
@@ -46,7 +47,7 @@ public class HashedMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
     @SuppressWarnings("unchecked")
     public void testClone() {
-        final HashedMap<K, V> map = new HashedMap<>(10);
+        final HashedMap<K, V> map = new HashedMap<K, V>(10);
         map.put((K) "1", (V) "1");
         final HashedMap<K, V> cloned = map.clone();
         assertEquals(map.size(), cloned.size());
@@ -54,7 +55,7 @@ public class HashedMapTest<K, V> extends AbstractIterableMapTest<K, V> {
     }
 
     public void testInternalState() {
-        final HashedMap<K, V> map = new HashedMap<>(42, 0.75f);
+        final HashedMap<K, V> map = new HashedMap<K, V>(42, 0.75f);
         assertEquals(0.75f, map.loadFactor, 0.1f);
         assertEquals(0, map.size);
         assertEquals(64, map.data.length);
@@ -73,7 +74,7 @@ public class HashedMapTest<K, V> extends AbstractIterableMapTest<K, V> {
      * Test for <a href="https://issues.apache.org/jira/browse/COLLECTIONS-323">COLLECTIONS-323</a>.
      */
     public void testInitialCapacityZero() {
-        final HashedMap<String,String> map = new HashedMap<>(0);
+        final HashedMap<String,String> map = new HashedMap<String,String>(0);
         assertEquals(1, map.data.length);
     }
 }

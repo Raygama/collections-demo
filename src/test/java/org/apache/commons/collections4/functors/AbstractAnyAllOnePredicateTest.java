@@ -29,6 +29,7 @@ import java.util.Collections;
  * Base class for tests of AnyPredicate, AllPredicate, and OnePredicate.
  *
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractAnyAllOnePredicateTest<T> extends AbstractCompositePredicateTest<T> {
 
@@ -69,7 +70,7 @@ public abstract class AbstractAnyAllOnePredicateTest<T> extends AbstractComposit
 
     /**
      * Tests creating composite predicate instances with single predicates and verifies that the composite returns
-     * the same value as the single predicate does.
+     * the same value as the single predicate does. 
      */
     @SuppressWarnings("boxing")
     public final void singleValues() {

@@ -33,9 +33,8 @@ import org.apache.commons.collections4.SortedBidiMap;
  * it would provide a loophole around the validation.
  * But, you might want that loophole, so this class is kept simple.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractSortedBidiMapDecorator<K, V>
         extends AbstractOrderedBidiMapDecorator<K, V> implements SortedBidiMap<K, V> {

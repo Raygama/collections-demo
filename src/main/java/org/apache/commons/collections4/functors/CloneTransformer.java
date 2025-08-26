@@ -29,12 +29,13 @@ import org.apache.commons.collections4.Transformer;
  * for more details.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class CloneTransformer<T> implements Transformer<T, T> {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes") // the singleton instance works for all types
-    public static final Transformer INSTANCE = new CloneTransformer<>();
+    public static final Transformer INSTANCE = new CloneTransformer<Object>();
 
     /**
      * Factory returning the singleton instance.

@@ -28,6 +28,7 @@ import org.apache.commons.collections4.Transformer;
  * is passed to the second transformer and so on.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class ChainedTransformer<T> implements Transformer<T, T>, Serializable {
 
@@ -51,7 +52,7 @@ public class ChainedTransformer<T> implements Transformer<T, T>, Serializable {
         if (transformers.length == 0) {
             return NOPTransformer.<T>nopTransformer();
         }
-        return new ChainedTransformer<>(transformers);
+        return new ChainedTransformer<T>(transformers);
     }
 
     /**
@@ -77,7 +78,7 @@ public class ChainedTransformer<T> implements Transformer<T, T>, Serializable {
         // convert to array like this to guarantee iterator() ordering
         final Transformer<T, T>[] cmds = transformers.toArray(new Transformer[transformers.size()]);
         FunctorUtils.validate(cmds);
-        return new ChainedTransformer<>(false, cmds);
+        return new ChainedTransformer<T>(false, cmds);
     }
 
     /**

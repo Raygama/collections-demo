@@ -29,8 +29,8 @@ import org.apache.commons.collections4.Transformer;
  * For example, if the transformation converts Strings to Integers, you must
  * use the Integer form to remove objects.
  *
- * @param <E> the type of the elements in this set
  * @since 4.1
+ * @version $Id$
  */
 public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implements NavigableSet<E> {
 
@@ -52,7 +52,7 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
      */
     public static <E> TransformedNavigableSet<E> transformingNavigableSet(final NavigableSet<E> set,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedNavigableSet<>(set, transformer);
+        return new TransformedNavigableSet<E>(set, transformer);
     }
 
     /**
@@ -72,7 +72,7 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
     public static <E> TransformedNavigableSet<E> transformedNavigableSet(final NavigableSet<E> set,
             final Transformer<? super E, ? extends E> transformer) {
 
-        final TransformedNavigableSet<E> decorated = new TransformedNavigableSet<>(set, transformer);
+        final TransformedNavigableSet<E> decorated = new TransformedNavigableSet<E>(set, transformer);
         if (set.size() > 0) {
             @SuppressWarnings("unchecked") // set is type E
             final E[] values = (E[]) set.toArray(); // NOPMD - false positive for generics

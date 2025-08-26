@@ -44,9 +44,8 @@ import org.apache.commons.collections4.Predicate;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedMap<K, V>
         extends AbstractInputCheckedMapDecorator<K, V>
@@ -79,7 +78,7 @@ public class PredicatedMap<K, V>
     public static <K, V> PredicatedMap<K, V> predicatedMap(final Map<K, V> map,
                                                            final Predicate<? super K> keyPredicate,
                                                            final Predicate<? super V> valuePredicate) {
-        return new PredicatedMap<>(map, keyPredicate, valuePredicate);
+        return new PredicatedMap<K, V>(map, keyPredicate, valuePredicate);
     }
 
     //-----------------------------------------------------------------------
@@ -109,7 +108,7 @@ public class PredicatedMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -121,8 +120,8 @@ public class PredicatedMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      * @since 3.1
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect

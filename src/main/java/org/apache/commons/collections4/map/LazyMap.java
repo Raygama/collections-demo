@@ -56,9 +56,8 @@ import org.apache.commons.collections4.functors.FactoryTransformer;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public class LazyMap<K, V> extends AbstractMapDecorator<K, V> implements Serializable {
 
@@ -80,7 +79,7 @@ public class LazyMap<K, V> extends AbstractMapDecorator<K, V> implements Seriali
      * @since 4.0
      */
     public static <K, V> LazyMap<K, V> lazyMap(final Map<K, V> map, final Factory< ? extends V> factory) {
-        return new LazyMap<>(map, factory);
+        return new LazyMap<K,V>(map, factory);
     }
 
     /**
@@ -95,7 +94,7 @@ public class LazyMap<K, V> extends AbstractMapDecorator<K, V> implements Seriali
      * @since 4.0
      */
     public static <V, K> LazyMap<K, V> lazyMap(final Map<K, V> map, final Transformer<? super K, ? extends V> factory) {
-        return new LazyMap<>(map, factory);
+        return new LazyMap<K,V>(map, factory);
     }
 
     //-----------------------------------------------------------------------
@@ -134,7 +133,7 @@ public class LazyMap<K, V> extends AbstractMapDecorator<K, V> implements Seriali
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -146,8 +145,8 @@ public class LazyMap<K, V> extends AbstractMapDecorator<K, V> implements Seriali
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      * @since 3.1
      */
     @SuppressWarnings("unchecked")

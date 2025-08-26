@@ -25,5 +25,6 @@
  *   <li>MultiKey - a holder of multiple keys tied together
  * </ul>
  *
+ * @version $Id$
  */
 package org.apache.commons.collections4.keyvalue;

@@ -25,6 +25,7 @@ import java.util.List;
  * implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class FixedSizeListTest<E> extends AbstractListTest<E> {
 
@@ -39,7 +40,7 @@ public class FixedSizeListTest<E> extends AbstractListTest<E> {
 
     @Override
     public List<E> makeFullCollection() {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return FixedSizeList.fixedSizeList(list);
     }

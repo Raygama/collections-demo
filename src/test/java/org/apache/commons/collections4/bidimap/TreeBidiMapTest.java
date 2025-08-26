@@ -25,6 +25,7 @@ import org.apache.commons.collections4.BulkTest;
 /**
  * JUnit tests.
  *
+ * @version $Id$
  */
 public class TreeBidiMapTest<K extends Comparable<K>, V extends Comparable<V>> extends AbstractOrderedBidiMapTest<K, V> {
 
@@ -38,12 +39,12 @@ public class TreeBidiMapTest<K extends Comparable<K>, V extends Comparable<V>> e
 
     @Override
     public BidiMap<K, V> makeObject() {
-        return new TreeBidiMap<>();
+        return new TreeBidiMap<K, V>();
     }
 
     @Override
     public TreeMap<K, V> makeConfirmedMap() {
-        return new TreeMap<>();
+        return new TreeMap<K, V>();
     }
 
     /**

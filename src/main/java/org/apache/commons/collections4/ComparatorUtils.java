@@ -36,6 +36,7 @@ import org.apache.commons.collections4.comparators.TransformingComparator;
  * in the <code>comparators</code> subpackage.
  *
  * @since 2.1
+ * @version $Id$
  */
 public class ComparatorUtils {
 
@@ -74,7 +75,7 @@ public class ComparatorUtils {
      * @see ComparatorChain
      */
     public static <E> Comparator<E> chainedComparator(final Comparator<E>... comparators) {
-        final ComparatorChain<E> chain = new ComparatorChain<>();
+        final ComparatorChain<E> chain = new ComparatorChain<E>();
         for (final Comparator<E> comparator : comparators) {
             if (comparator == null) {
                 throw new NullPointerException("Comparator cannot be null");
@@ -112,7 +113,7 @@ public class ComparatorUtils {
      * @see ReverseComparator
      */
     public static <E> Comparator<E> reversedComparator(final Comparator<E> comparator) {
-        return new ReverseComparator<>(comparator);
+        return new ReverseComparator<E>(comparator);
     }
 
     /**
@@ -148,7 +149,7 @@ public class ComparatorUtils {
         if (comparator == null) {
             comparator = NATURAL_COMPARATOR;
         }
-        return new NullComparator<>(comparator, false);
+        return new NullComparator<E>(comparator, false);
     }
 
     /**
@@ -168,7 +169,7 @@ public class ComparatorUtils {
         if (comparator == null) {
             comparator = NATURAL_COMPARATOR;
         }
-        return new NullComparator<>(comparator, true);
+        return new NullComparator<E>(comparator, true);
     }
 
     /**
@@ -192,7 +193,7 @@ public class ComparatorUtils {
         if (comparator == null) {
             comparator = NATURAL_COMPARATOR;
         }
-        return new TransformingComparator<>(transformer, comparator);
+        return new TransformingComparator<I, O>(transformer, comparator);
     }
 
     /**

@@ -35,6 +35,7 @@ import org.apache.commons.collections4.OrderedMapIterator;
  * overriding the supportsXxx() methods if necessary.
  *
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractOrderedMapIteratorTest<K, V> extends AbstractMapIteratorTest<K, V> {
 
@@ -91,7 +92,7 @@ public abstract class AbstractOrderedMapIteratorTest<K, V> extends AbstractMapIt
 
         assertEquals(true, it.hasNext());
         assertEquals(false, it.hasPrevious());
-        final Set<K> set = new HashSet<>();
+        final Set<K> set = new HashSet<K>();
         while (it.hasNext()) {
             // getKey
             final K key = it.next();
@@ -142,12 +143,12 @@ public abstract class AbstractOrderedMapIteratorTest<K, V> extends AbstractMapIt
         final OrderedMapIterator<K, V> it = makeObject();
         final Map<K, V> map = getMap();
 
-        assertEquals("keySet() not consistent", new ArrayList<>(map.keySet()), new ArrayList<>(map.keySet()));
+        assertEquals("keySet() not consistent", new ArrayList<K>(map.keySet()), new ArrayList<K>(map.keySet()));
 
         final Iterator<K> it2 = map.keySet().iterator();
         assertEquals(true, it.hasNext());
         assertEquals(true, it2.hasNext());
-        final List<K> list = new ArrayList<>();
+        final List<K> list = new ArrayList<K>();
         while (it.hasNext()) {
             final K key = it.next();
             assertEquals(it2.next(), key);

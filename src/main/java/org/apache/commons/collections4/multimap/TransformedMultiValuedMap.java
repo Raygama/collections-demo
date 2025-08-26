@@ -34,9 +34,8 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * <strong>Note that TransformedMultiValuedMap is not synchronized and is not thread-safe.</strong>
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 4.1
+ * @version $Id$
  */
 public class TransformedMultiValuedMap<K, V> extends AbstractMultiValuedMapDecorator<K, V> {
 
@@ -67,7 +66,7 @@ public class TransformedMultiValuedMap<K, V> extends AbstractMultiValuedMapDecor
     public static <K, V> TransformedMultiValuedMap<K, V> transformingMap(final MultiValuedMap<K, V> map,
             final Transformer<? super K, ? extends K> keyTransformer,
             final Transformer<? super V, ? extends V> valueTransformer) {
-        return new TransformedMultiValuedMap<>(map, keyTransformer, valueTransformer);
+        return new TransformedMultiValuedMap<K, V>(map, keyTransformer, valueTransformer);
     }
 
     /**
@@ -90,9 +89,9 @@ public class TransformedMultiValuedMap<K, V> extends AbstractMultiValuedMapDecor
             final Transformer<? super K, ? extends K> keyTransformer,
             final Transformer<? super V, ? extends V> valueTransformer) {
         final TransformedMultiValuedMap<K, V> decorated =
-                new TransformedMultiValuedMap<>(map, keyTransformer, valueTransformer);
+                new TransformedMultiValuedMap<K, V>(map, keyTransformer, valueTransformer);
         if (!map.isEmpty()) {
-            final MultiValuedMap<K, V> mapCopy = new ArrayListValuedHashMap<>(map);
+            final MultiValuedMap<K, V> mapCopy = new ArrayListValuedHashMap<K, V>(map);
             decorated.clear();
             decorated.putAll(mapCopy);
         }

@@ -24,8 +24,7 @@ import org.apache.commons.collections4.OrderedBidiMap;
 /**
  * Test class for AbstractOrderedBidiMapDecorator.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
+ * @version $Id$
  */
 public class AbstractOrderedBidiMapDecoratorTest<K, V>
         extends AbstractOrderedBidiMapTest<K, V> {
@@ -39,12 +38,12 @@ public class AbstractOrderedBidiMapDecoratorTest<K, V>
      */
     @Override
     public OrderedBidiMap<K, V> makeObject() {
-        return new TestOrderedBidiMap<>();
+        return new TestOrderedBidiMap<K, V>();
     }
 
     @Override
     public SortedMap<K, V> makeConfirmedMap() {
-        return new TreeMap<>();
+        return new TreeMap<K, V>();
     }
 
     @Override
@@ -80,7 +79,7 @@ public class AbstractOrderedBidiMapDecoratorTest<K, V>
         @Override
         public OrderedBidiMap<V, K> inverseBidiMap() {
             if (inverse == null) {
-                inverse = new TestOrderedBidiMap<>(decorated().inverseBidiMap());
+                inverse = new TestOrderedBidiMap<V, K>(decorated().inverseBidiMap());
                 inverse.inverse = this;
             }
             return inverse;

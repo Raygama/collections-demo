@@ -26,6 +26,7 @@ import org.apache.commons.collections4.BulkTest;
 /**
  * Test class for NodeCachingLinkedList, a performance optimised LinkedList.
  *
+ * @version $Id$
  */
 public class NodeCachingLinkedListTest<E> extends AbstractLinkedListTest<E> {
 
@@ -40,7 +41,7 @@ public class NodeCachingLinkedListTest<E> extends AbstractLinkedListTest<E> {
     //-----------------------------------------------------------------------
     @Override
     public NodeCachingLinkedList<E> makeObject() {
-        return new NodeCachingLinkedList<>();
+        return new NodeCachingLinkedList<E>();
     }
 
     @Override
@@ -72,8 +73,8 @@ public class NodeCachingLinkedListTest<E> extends AbstractLinkedListTest<E> {
 
     //-----------------------------------------------------------------------
     public static void compareSpeed() {
-        final NodeCachingLinkedList<Object> ncll = new NodeCachingLinkedList<>();
-        final LinkedList<Object> ll = new LinkedList<>();
+        final NodeCachingLinkedList<Object> ncll = new NodeCachingLinkedList<Object>();
+        final LinkedList<Object> ll = new LinkedList<Object>();
 
         final Object o1 = new Object();
         final Object o2 = new Object();

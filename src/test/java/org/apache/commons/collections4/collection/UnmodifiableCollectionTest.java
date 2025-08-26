@@ -28,6 +28,7 @@ import org.apache.commons.collections4.Unmodifiable;
  * {@link UnmodifiableCollection} implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class UnmodifiableCollectionTest<E> extends AbstractCollectionTest<E> {
 
@@ -43,19 +44,19 @@ public class UnmodifiableCollectionTest<E> extends AbstractCollectionTest<E> {
 
     @Override
     public Collection<E> makeFullCollection() {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return UnmodifiableCollection.unmodifiableCollection(list);
     }
 
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new ArrayList<>();
+        return new ArrayList<E>();
     }
 
     @Override
     public Collection<E> makeConfirmedFullCollection() {
-        final ArrayList<E> list = new ArrayList<>();
+        final ArrayList<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -71,12 +72,12 @@ public class UnmodifiableCollectionTest<E> extends AbstractCollectionTest<E> {
     }
 
     //-----------------------------------------------------------------------
-
+    
     public void testUnmodifiable() {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-
+    
     public void testDecorateFactory() {
         final Collection<E> coll = makeFullCollection();
         assertSame(coll, UnmodifiableCollection.unmodifiableCollection(coll));

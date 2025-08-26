@@ -33,6 +33,7 @@ import org.apache.commons.collections4.functors.TruePredicate;
  * {@link PredicatedSortedSet} implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
 
@@ -55,7 +56,7 @@ public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
 
     @Override
     public SortedSet<E> makeFullCollection() {
-        final TreeSet<E> set = new TreeSet<>();
+        final TreeSet<E> set = new TreeSet<E>();
         set.addAll(Arrays.asList(getFullElements()));
         return PredicatedSortedSet.predicatedSortedSet(set, truePredicate);
     }
@@ -95,7 +96,7 @@ public class PredicatedSortedSetTest<E> extends AbstractSortedSetTest<E> {
     @SuppressWarnings("unchecked")
     public void testIllegalAddAll() {
         final SortedSet<E> set = makeTestSet();
-        final Set<E> elements = new TreeSet<>();
+        final Set<E> elements = new TreeSet<E>();
         elements.add((E) "Aone");
         elements.add((E) "Atwo");
         elements.add((E) "Bthree");

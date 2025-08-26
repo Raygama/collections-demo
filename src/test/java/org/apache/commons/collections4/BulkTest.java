@@ -133,6 +133,7 @@ import junit.framework.TestSuite;
  *  The ordinary {@link TestSuite} constructor doesn't know how to
  *  interpret bulk test methods.
  *
+ *  @version $Id$
  */
 public class BulkTest extends TestCase implements Cloneable {
 
@@ -313,7 +314,7 @@ class BulkTestSuiteMaker {
          result.setName(prefix);
 
          final BulkTest bulk = makeFirstTestCase(startingClass);
-         ignored = new ArrayList<>();
+         ignored = new ArrayList<String>();
          final String[] s = bulk.ignoredTests();
          if (s != null) {
              ignored.addAll(Arrays.asList(s));

@@ -31,7 +31,7 @@ import org.apache.commons.collections4.iterators.IteratorEnumeration;
  * <p>
  * Overrides {@link Properties#keys()} to sort keys. Allows other methods on the superclass to work with sorted keys.
  * </p>
- *
+ * 
  * @since 4.2
  */
 public class SortedProperties extends Properties {
@@ -41,7 +41,7 @@ public class SortedProperties extends Properties {
     @Override
     public synchronized Enumeration<Object> keys() {
         final Set<Object> keySet = keySet();
-        final List<String> keys = new ArrayList<>(keySet.size());
+        final List<String> keys = new ArrayList<String>(keySet.size());
         for (final Object key : keySet) {
             keys.add(key.toString());
         }

@@ -26,6 +26,7 @@ import org.apache.commons.collections4.MultiSet;
  * {@link HashMultiSet} implementation.
  *
  * @since 4.1
+ * @version $Id$
  */
 public class HashMultiSetTest<T> extends AbstractMultiSetTest<T> {
 
@@ -41,7 +42,7 @@ public class HashMultiSetTest<T> extends AbstractMultiSetTest<T> {
 
     @Override
     public MultiSet<T> makeObject() {
-        return new HashMultiSet<>();
+        return new HashMultiSet<T>();
     }
 
     @Override

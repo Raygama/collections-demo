@@ -32,8 +32,8 @@ import org.apache.commons.collections4.collection.PredicatedCollection;
  * One usage would be to ensure that no null entries are added to the queue.
  * <pre>Queue queue = PredicatedQueue.predicatedQueue(new UnboundedFifoQueue(), NotNullPredicate.INSTANCE);</pre>
  *
- * @param <E> the type of elements held in this queue
  * @since 4.0
+ * @version $Id$
  */
 public class PredicatedQueue<E> extends PredicatedCollection<E> implements Queue<E> {
 
@@ -55,7 +55,7 @@ public class PredicatedQueue<E> extends PredicatedCollection<E> implements Queue
      */
     public static <E> PredicatedQueue<E> predicatedQueue(final Queue<E> Queue,
                                                           final Predicate<? super E> predicate) {
-        return new PredicatedQueue<>(Queue, predicate);
+        return new PredicatedQueue<E>(Queue, predicate);
     }
 
     //-----------------------------------------------------------------------

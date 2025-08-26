@@ -25,6 +25,7 @@ import java.util.List;
  * Extension of {@link AbstractListTest} for exercising the {@link GrowthList}.
  *
  * @since 3.2
+ * @version $Id$
  */
 public class GrowthListTest<E> extends AbstractListTest<E> {
 
@@ -34,12 +35,12 @@ public class GrowthListTest<E> extends AbstractListTest<E> {
 
     @Override
     public List<E> makeObject() {
-        return new GrowthList<>();
+        return new GrowthList<E>();
     }
 
     @Override
     public List<E> makeFullCollection() {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return GrowthList.growthList(list);
     }
@@ -47,7 +48,7 @@ public class GrowthListTest<E> extends AbstractListTest<E> {
     //-----------------------------------------------------------------------
     public void testGrowthAdd() {
         final Integer one = Integer.valueOf(1);
-        final GrowthList<Integer> grower = new GrowthList<>();
+        final GrowthList<Integer> grower = new GrowthList<Integer>();
         assertEquals(0, grower.size());
         grower.add(1, one);
         assertEquals(2, grower.size());
@@ -58,10 +59,10 @@ public class GrowthListTest<E> extends AbstractListTest<E> {
     public void testGrowthAddAll() {
         final Integer one = Integer.valueOf(1);
         final Integer two = Integer.valueOf(2);
-        final Collection<Integer> coll = new ArrayList<>();
+        final Collection<Integer> coll = new ArrayList<Integer>();
         coll.add(one);
         coll.add(two);
-        final GrowthList<Integer> grower = new GrowthList<>();
+        final GrowthList<Integer> grower = new GrowthList<Integer>();
         assertEquals(0, grower.size());
         grower.addAll(1, coll);
         assertEquals(3, grower.size());
@@ -72,7 +73,7 @@ public class GrowthListTest<E> extends AbstractListTest<E> {
 
     public void testGrowthSet1() {
         final Integer one = Integer.valueOf(1);
-        final GrowthList<Integer> grower = new GrowthList<>();
+        final GrowthList<Integer> grower = new GrowthList<Integer>();
         assertEquals(0, grower.size());
         grower.set(1, one);
         assertEquals(2, grower.size());
@@ -82,7 +83,7 @@ public class GrowthListTest<E> extends AbstractListTest<E> {
 
     public void testGrowthSet2() {
         final Integer one = Integer.valueOf(1);
-        final GrowthList<Integer> grower = new GrowthList<>();
+        final GrowthList<Integer> grower = new GrowthList<Integer>();
         assertEquals(0, grower.size());
         grower.set(0, one);
         assertEquals(1, grower.size());
@@ -149,7 +150,7 @@ public class GrowthListTest<E> extends AbstractListTest<E> {
             fail("List.set should throw IndexOutOfBoundsException [-1]");
         } catch(final IndexOutOfBoundsException e) {
             // expected
-        }
+        } 
     }
 
     //-----------------------------------------------------------------------

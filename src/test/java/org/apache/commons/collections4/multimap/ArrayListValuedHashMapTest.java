@@ -29,6 +29,7 @@ import org.apache.commons.collections4.MultiValuedMap;
  * Test ArrayListValuedHashMap
  *
  * @since 4.1
+ * @version $Id$
  */
 public class ArrayListValuedHashMapTest<K, V> extends AbstractMultiValuedMapTest<K, V> {
 
@@ -43,7 +44,7 @@ public class ArrayListValuedHashMapTest<K, V> extends AbstractMultiValuedMapTest
     // -----------------------------------------------------------------------
     @Override
     public ListValuedMap<K, V> makeObject() {
-        return new ArrayListValuedHashMap<>();
+        return new ArrayListValuedHashMap<K, V>();
     }
 
     // -----------------------------------------------------------------------

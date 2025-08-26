@@ -35,8 +35,8 @@ import org.apache.commons.collections4.iterators.AbstractIteratorDecorator;
  * map will be used to map multiset elements to a number; the number represents the
  * number of occurrences of that element in the multiset.
  *
- * @param <E> the type held in the multiset
  * @since 4.1
+ * @version $Id$
  */
 public abstract class AbstractMapMultiSet<E> extends AbstractMultiSet<E> {
 
@@ -145,7 +145,7 @@ public abstract class AbstractMapMultiSet<E> extends AbstractMultiSet<E> {
      */
     @Override
     public Iterator<E> iterator() {
-        return new MapBasedMultiSetIterator<>(this);
+        return new MapBasedMultiSetIterator<E>(this);
     }
 
     /**
@@ -303,7 +303,7 @@ public abstract class AbstractMapMultiSet<E> extends AbstractMultiSet<E> {
     //-----------------------------------------------------------------------
     @Override
     protected Iterator<E> createUniqueSetIterator() {
-        return new UniqueSetIterator<>(getMap().keySet().iterator(), this);
+        return new UniqueSetIterator<E>(getMap().keySet().iterator(), this);
     }
 
     @Override
@@ -313,7 +313,7 @@ public abstract class AbstractMapMultiSet<E> extends AbstractMultiSet<E> {
 
     @Override
     protected Iterator<Entry<E>> createEntrySetIterator() {
-        return new EntrySetIterator<>(map.entrySet().iterator(), this);
+        return new EntrySetIterator<E>(map.entrySet().iterator(), this);
     }
 
     //-----------------------------------------------------------------------
@@ -395,7 +395,7 @@ public abstract class AbstractMapMultiSet<E> extends AbstractMultiSet<E> {
 
         @Override
         public Entry<E> next() {
-            last = new MultiSetEntry<>(decorated.next());
+            last = new MultiSetEntry<E>(decorated.next());
             canRemove = true;
             return last;
         }

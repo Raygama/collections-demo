@@ -34,12 +34,13 @@ import org.apache.commons.collections4.map.AbstractSortedMapTest;
 /**
  * Abstract test class for {@link SortedBidiMap} methods and contracts.
  *
+ * @version $Id$
  */
 public abstract class AbstractSortedBidiMapTest<K extends Comparable<K>, V extends Comparable<V>> extends AbstractOrderedBidiMapTest<K, V> {
 
     protected List<K> sortedKeys;
-    protected List<V> sortedValues = new ArrayList<>();
-    protected SortedSet<V> sortedNewValues = new TreeSet<>();
+    protected List<V> sortedValues = new ArrayList<V>();
+    protected SortedSet<V> sortedNewValues = new TreeSet<V>();
 
     public AbstractSortedBidiMapTest(final String testName) {
         super(testName);
@@ -47,7 +48,7 @@ public abstract class AbstractSortedBidiMapTest<K extends Comparable<K>, V exten
         Collections.sort(sortedKeys);
         sortedKeys = Collections.unmodifiableList(sortedKeys);
 
-        final Map<K, V> map = new TreeMap<>();
+        final Map<K, V> map = new TreeMap<K, V>();
         addSampleMappings(map);
 
         sortedValues.addAll(map.values());
@@ -99,7 +100,7 @@ public abstract class AbstractSortedBidiMapTest<K extends Comparable<K>, V exten
 
     @Override
     public SortedMap<K, V> makeConfirmedMap() {
-        return new TreeMap<>();
+        return new TreeMap<K, V>();
     }
 
     //-----------------------------------------------------------------------
@@ -645,15 +646,15 @@ public abstract class AbstractSortedBidiMapTest<K extends Comparable<K>, V exten
 
     //-----------------------------------------------------------------------
     public BulkTest bulkTestHeadMap() {
-        return new AbstractSortedMapTest.TestHeadMap<>(this);
+        return new AbstractSortedMapTest.TestHeadMap<K, V>(this);
     }
 
     public BulkTest bulkTestTailMap() {
-        return new AbstractSortedMapTest.TestTailMap<>(this);
+        return new AbstractSortedMapTest.TestTailMap<K, V>(this);
     }
 
     public BulkTest bulkTestSubMap() {
-        return new AbstractSortedMapTest.TestSubMap<>(this);
+        return new AbstractSortedMapTest.TestSubMap<K, V>(this);
     }
 
 }

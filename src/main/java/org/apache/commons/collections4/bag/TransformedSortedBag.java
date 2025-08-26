@@ -31,8 +31,8 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of elements in this bag
  * @since 3.0
+ * @version $Id$
  */
 public class TransformedSortedBag<E> extends TransformedBag<E> implements SortedBag<E> {
 
@@ -54,7 +54,7 @@ public class TransformedSortedBag<E> extends TransformedBag<E> implements Sorted
      */
     public static <E> TransformedSortedBag<E> transformingSortedBag(final SortedBag<E> bag,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedSortedBag<>(bag, transformer);
+        return new TransformedSortedBag<E>(bag, transformer);
     }
 
     /**
@@ -75,7 +75,7 @@ public class TransformedSortedBag<E> extends TransformedBag<E> implements Sorted
     public static <E> TransformedSortedBag<E> transformedSortedBag(final SortedBag<E> bag,
             final Transformer<? super E, ? extends E> transformer) {
 
-        final TransformedSortedBag<E>  decorated = new TransformedSortedBag<>(bag, transformer);
+        final TransformedSortedBag<E>  decorated = new TransformedSortedBag<E>(bag, transformer);
         if (bag.size() > 0) {
             @SuppressWarnings("unchecked") // bag is type E
             final E[] values = (E[]) bag.toArray(); // NOPMD - false positive for generics

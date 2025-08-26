@@ -29,6 +29,7 @@ import org.junit.Test;
  * Base class for tests of composite predicates.
  *
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractCompositePredicateTest<T> extends AbstractMockPredicateTest<T> {
 
@@ -68,7 +69,7 @@ public abstract class AbstractCompositePredicateTest<T> extends AbstractMockPred
      * @return a predicate to test.
      */
     protected final Predicate<T> getPredicateInstance(final Boolean... mockReturnValues) {
-        final List<Predicate<T>> predicates = new ArrayList<>();
+        final List<Predicate<T>> predicates = new ArrayList<Predicate<T>>();
         for (final Boolean returnValue : mockReturnValues) {
             predicates.add(createMockPredicate(returnValue));
         }
@@ -136,7 +137,7 @@ public abstract class AbstractCompositePredicateTest<T> extends AbstractMockPred
      */
     @Test(expected = NullPointerException.class)
     public final void nullElementsInCollectionToGetInstance() {
-        final Collection<Predicate<T>> coll = new ArrayList<>();
+        final Collection<Predicate<T>> coll = new ArrayList<Predicate<T>>();
         coll.add(null);
         coll.add(null);
         getPredicateInstance(coll);
