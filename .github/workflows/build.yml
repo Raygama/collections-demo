@@ -262,8 +262,8 @@ jobs:
 
           # ---- Tunables ----
           MAX_SUMMARY_CHARS=20000
-          MAX_QUESTION_CHARS=25000
-          MAX_PAYLOAD_BYTES=150000       # final JSON size safety cap
+          MAX_QUESTION_CHARS=20000
+          MAX_PAYLOAD_BYTES=100000       # final JSON size safety cap (~180 KB)
           MAX_EXEMPLARS_PER_RULE=3       # if we switch to summary mode
           # -------------------
 
