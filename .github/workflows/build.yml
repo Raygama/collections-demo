@@ -268,7 +268,7 @@ jobs:
           # -------------------
 
           ISSUES_JSON=$(cat issues.json)
-          CHANGED_FILES=$(cat changed.json)
+          CHANGED_FILES=$(cat changed.json) 
 
           if [[ "$ISSUES_JSON" == "[]" ]]; then
             echo '{"text": "No potential Technical Debt was detected in the current PR."}' > flowise_output.json
