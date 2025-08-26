@@ -209,17 +209,18 @@ jobs:
             ' all-issues.json
           )
 
-          # Enforce per-rule & per-file caps
+          # Enforce per-rule & per-file caps (use flatten so we never leave nested arrays)
           TRIMMED=$(
-            echo "$PRIORITIZED" | jq -c --argjson maxPerRule "$MAX_ISSUES_PER_RULE" --argjson maxPerFile "$MAX_ISSUES_PER_FILE" '
-              # group, then take first N from each bucket to avoid domination
-              (group_by(.rule) | map(.[0:$maxPerRule]) | add) as $byRule
-              | ($byRule | group_by(.component) | map(.[0:$maxPerFile]) | add)
-            '
+            echo "$PRIORITIZED" \
+            | jq -c --argjson maxPerRule "$MAX_ISSUES_PER_RULE" --argjson maxPerFile "$MAX_ISSUES_PER_FILE" '
+                (group_by(.rule)       | map(.[0:$maxPerRule])       | flatten) as $byRule
+                | ($byRule | group_by(.component) | map(.[0:$maxPerFile]) | flatten)
+              '
           )
 
           # Apply global cap
           TRIMMED=$(echo "$TRIMMED" | jq -c --argjson maxIssues "$MAX_ISSUES" '.[0:$maxIssues]')
+
 
           echo "$TRIMMED" > trimmed-issues.json
           echo "After trimming: $(jq 'length' trimmed-issues.json) issues"
@@ -300,17 +301,38 @@ jobs:
 
           echo "Source length: $(jq 'length' "$SRC")"
 
-          # Filter (jq 1.6-safe): non-empty strings, optional drop tests, blocklist rules
+          # Normalize every element to a small object (drop non-objects, drop nested arrays)
+          NORM=$(
+            jq -c '
+              ( if type=="array" then . else [.] end )
+              | map(
+                  if    type=="object" then .
+                  elif  type=="array"  then empty         # drop any accidental nested arrays
+                  else  empty
+                  end
+                )
+              | map({
+                  rule:      (.rule      // ""),
+                  component: (.component // ""),
+                  severity:  (.severity  // "UNKNOWN"),
+                  line:      (.line      // 0),
+                  message:   (.message   // "")
+                })
+            ' "$SRC"
+          )
+          echo "Normalized length: $(jq 'length' <<<"$NORM")"
+
+          # Filter (non-empty rule/component, optional drop tests, blocklist)
           FILTERED=$(
             jq -c \
               --argjson block "$RULE_BLOCKLIST" \
               --arg ntest "$NON_TEST_ONLY" '
                 [ .[]
-                  | select((.rule // "") != "" and (.component // "") != "")
-                  | select( ( ($ntest=="true") | not ) or ( ((.component // "") | test("^src/test/") | not) ) )
-                  | select( ($block | index((.rule // ""))) == null )
+                  | select(.rule != "" and .component != "")
+                  | select( ( ($ntest=="true") | not ) or ( (.component | test("^src/test/") | not) ) )
+                  | select( ($block | index(.rule)) == null )
                 ]
-              ' "$SRC"
+              ' <<<"$NORM"
           )
           echo "Filtered length: $(jq 'length' <<<"$FILTERED")"
 
@@ -320,7 +342,7 @@ jobs:
             exit 0
           fi
 
-          # Sort and cap (per-rule, per-file, then global)
+          # Sort & cap
           SORTED=$(
             jq -c '
               def rank:
@@ -328,7 +350,7 @@ jobs:
                 elif .severity=="CRITICAL" then 2
                 elif .severity=="MAJOR" then 1
                 else 0 end;
-              sort_by([ - (rank), (.rule // ""), (.component // ""), (.line // 0) ])
+              sort_by([ - (rank), .rule, .component, (.line // 0) ])
             ' <<<"$FILTERED"
           )
 
@@ -336,9 +358,8 @@ jobs:
             jq -c \
               --argjson maxRule "$MAX_PER_RULE" \
               --argjson maxFile "$MAX_PER_FILE" '
-                (group_by(.rule) | map(.[0:$maxRule]) | add) as $byRule
-                | ($byRule | group_by(.component) | map(.[0:$maxFile]) | add)
-                | ( . // [] )
+                (group_by(.rule) | map(.[0:$maxRule]) | flatten) as $byRule
+                | ($byRule | group_by(.component) | map(.[0:$maxFile]) | flatten)
               ' <<<"$SORTED" \
             | jq -c --argjson m "$MAX_TOTAL_ISSUES" '.[0:$m]'
           )
@@ -353,7 +374,7 @@ jobs:
                 rule: .[0].rule,
                 severity: (.[0].severity // "UNKNOWN"),
                 count: length,
-                samples: (.[0:$k] | map("\((.component // "")):\((.line // 0))"))
+                samples: (.[0:$k] | map("\(.component):\(.line)"))
               })
             | sort_by(.rule)
             | map("• \(.rule) [\(.severity)] — \(.count) hits; e.g. \(.samples|join(", "))")
@@ -362,8 +383,6 @@ jobs:
 
           echo "Summary preview:"
           head -n 10 question_summary.txt || true
-
-
 
 
       - name: Send issues to Technical Debt Analyzer (compact + robust)
