@@ -251,6 +251,33 @@ jobs:
           HAS_ISSUES=$(jq 'length > 0' issues.json)
           echo "has_issues=$HAS_ISSUES" >> $GITHUB_OUTPUT
 
+      - name: DEBUG: inspect issues.json shapes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "===== RAW issues.json (first 4000 bytes) ====="
+          head -c 4000 issues.json || true
+          echo
+          echo "===== Top-level type & length ====="
+          jq -r 'type as $t | "type=\($t) len=\(if $t=="array" then length else 1 end)"' issues.json
+
+          echo "===== If object, show keys ====="
+          jq -r 'if type=="object" then ("keys: " + (keys|join(", "))) else "not an object" end' issues.json
+
+          echo "===== If array, show element types histogram ====="
+          jq -r 'if type=="array" then (map(type) | reduce .[] as $t ({}; .[$t] += 1) | to_entries | map("\(.key): \(.value)") | .[] ) else "not an array" end' issues.json
+
+          echo "===== First 5 non-objects (if top-level is array) ====="
+          jq -c 'if type=="array" then [ .[] | select(type!="object") ][0:5] else [] end' issues.json
+
+          echo "===== First 5 objects missing rule or component ====="
+          jq -c 'if type=="array" then [ .[] | select(type=="object" and ( (has("rule")|not) or (has("component")|not) )) ][0:5] else [] end' issues.json
+
+          echo "===== First 5 objects where rule/component are not strings ====="
+          jq -c 'if type=="array" then [ .[] | select(type=="object" and ((.rule|type)!="string" or (.component|type)!="string")) ][0:5] else [] end' issues.json
+
+
       - name: Build compact issues + tiny summary
         shell: bash
         run: |
