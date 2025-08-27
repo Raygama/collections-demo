@@ -16,6 +16,7 @@
  */
 package org.apache.commons.collections4.functors;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,16 +25,14 @@ import org.apache.commons.collections4.FunctorException;
 
 /**
  * Factory implementation that creates a new object instance by reflection.
- * <p>
- * <b>WARNING:</b> from v4.1 onwards this class will <b>not</b> be serializable anymore
- * in order to prevent potential remote code execution exploits. Please refer to
- * <a href="https://issues.apache.org/jira/browse/COLLECTIONS-580">COLLECTIONS-580</a>
- * for more details.
  *
  * @since 3.0
  * @version $Id$
  */
-public class InstantiateFactory<T> implements Factory<T> {
+public class InstantiateFactory<T> implements Factory<T>, Serializable {
+
+    /** The serial version */
+    private static final long serialVersionUID = -7732226881069447957L;
 
     /** The class to create */
     private final Class<T> iClassToInstantiate;
@@ -119,7 +118,6 @@ public class InstantiateFactory<T> implements Factory<T> {
      *
      * @return the new object
      */
-    @Override
     public T create() {
         // needed for post-serialization
         if (iConstructor == null) {

@@ -16,6 +16,7 @@
  */
 package org.apache.commons.collections4.functors;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,16 +25,14 @@ import org.apache.commons.collections4.Transformer;
 
 /**
  * Transformer implementation that creates a new object instance by reflection.
- * <p>
- * <b>WARNING:</b> from v4.1 onwards this class will <b>not</b> be serializable anymore
- * in order to prevent potential remote code execution exploits. Please refer to
- * <a href="https://issues.apache.org/jira/browse/COLLECTIONS-580">COLLECTIONS-580</a>
- * for more details.
  *
  * @since 3.0
  * @version $Id$
  */
-public class InstantiateTransformer<T> implements Transformer<Class<? extends T>, T> {
+public class InstantiateTransformer<T> implements Transformer<Class<? extends T>, T>, Serializable {
+
+    /** The serial version */
+    private static final long serialVersionUID = 3786388740793356347L;
 
     /** Singleton instance that uses the no arg constructor */
     @SuppressWarnings("rawtypes")
@@ -52,7 +51,7 @@ public class InstantiateTransformer<T> implements Transformer<Class<? extends T>
      */
     @SuppressWarnings("unchecked")
     public static <T> Transformer<Class<? extends T>, T> instantiateTransformer() {
-        return NO_ARG_INSTANCE;
+        return (Transformer<Class<? extends T>, T>) NO_ARG_INSTANCE;
     }
 
     /**
@@ -108,7 +107,6 @@ public class InstantiateTransformer<T> implements Transformer<Class<? extends T>
      * @param input  the input object to transform
      * @return the transformed result
      */
-    @Override
     public T transform(final Class<? extends T> input) {
         try {
             if (input == null) {

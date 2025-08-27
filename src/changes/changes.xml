@@ -22,30 +22,6 @@
   <body>
 
   <release version="4.1" date="TBD" description="">
-    <action issue="COLLECTIONS-551" dev="tn" type="update">
-      Deprecated various method in "CollectionUtils" in favor of similar
-      methods in the newly introduced "IterableUtils".
-    </action>
-    <action issue="COLLECTIONS-580" dev="tn" type="update">
-      Serialization support for unsafe classes in the functor package
-      has been removed as this can be exploited for remote code execution
-      attacks. Classes considered to be unsafe are: CloneTransformer,
-      ForClosure, InstantiateFactory, InstantiateTransformer, InvokerTransformer,
-      PrototypeCloneFactory, PrototypeSerializationFactory, WhileClosure.
-    </action>
-    <action issue="COLLECTIONS-580" dev="tn" type="fix">
-      Added validation when de-serializing a "MultiValueMap#ReflectionFactory":
-      only Collection classes are allowed, otherwise an UnsupportedOperationException
-      will be thrown during de-serialization.
-    </action>
-    <action issue="COLLECTIONS-567" dev="tn" type="add">
-      Added new MultiSet interface which is intended to be a replacement for
-      the Bag interface. The main difference is that a MultiSet is fully compatible
-      to the Collection contract.
-    </action>
-    <action issue="COLLECTIONS-576" dev="tn" type="fix" due-to="Stephan Roch">
-      Subclasses of MultiKey did not re-calculate their hashcode after de-serialization.
-    </action>
     <action issue="COLLECTIONS-572" dev="tn" type="add">
       Added set operations to "SetUtils": union, difference, intersection and disjunction.
       The operations return a view of the result that is backed by the input sets.

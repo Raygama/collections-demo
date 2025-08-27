@@ -267,7 +267,14 @@ public abstract class AbstractMapMultiSet<E> extends AbstractCollection<E> imple
 
     @Override
     public boolean remove(final Object object) {
-        return remove(object, 1) != 0;
+        final MutableInteger mut = map.get(object);
+        if (mut == null) {
+            return false;
+        }
+        modCount++;
+        map.remove(object);
+        size -= mut.value;
+        return true;
     }
 
     @Override
@@ -548,9 +555,9 @@ public abstract class AbstractMapMultiSet<E> extends AbstractCollection<E> imple
         private final AbstractMapMultiSet<E> parent;
 
         /**
-         * Constructs a new view of the MultiSet.
+         * Constructs a new view of the BidiMap.
          *
-         * @param parent  the parent MultiSet
+         * @param parent  the parent BidiMap
          */
         protected EntrySet(final AbstractMapMultiSet<E> parent) {
             this.parent = parent;
@@ -558,7 +565,7 @@ public abstract class AbstractMapMultiSet<E> extends AbstractCollection<E> imple
 
         @Override
         public int size() {
-            return parent.map.entrySet().size();
+            return parent.entrySet.size();
         }
 
         @Override

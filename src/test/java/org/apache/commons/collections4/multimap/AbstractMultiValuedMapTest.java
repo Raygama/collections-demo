@@ -104,12 +104,6 @@ public abstract class AbstractMultiValuedMapTest<K, V> extends AbstractObjectTes
         return true;
     }
 
-    // FIXME: tests ignore to fix serialization issues
-    @Override
-    public boolean isTestSerialization() {
-        return false;
-    }
-
     /**
      * Returns the set of keys in the mappings used to test the map. This method
      * must return an array with the same length as {@link #getSampleValues()}
@@ -762,17 +756,15 @@ public abstract class AbstractMultiValuedMapTest<K, V> extends AbstractObjectTes
     // extend the AbstractTestMap
     // -----------------------------------------------------------------------
 
-    // FIXME: tests ignore to fix serialization issues
-    public void xtestEmptyMapCompatibility() throws Exception {
+    public void testEmptyMapCompatibility() throws Exception {
         final MultiValuedMap<?, ?> map = makeObject();
         final MultiValuedMap<?, ?> map2 =
                 (MultiValuedMap<?, ?>) readExternalFormFromDisk(getCanonicalEmptyCollectionName(map));
         assertEquals("Map is empty", 0, map2.size());
     }
 
-    // FIXME: tests ignore to fix serialization issues
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void xtestFullMapCompatibility() throws Exception {
+    public void testFullMapCompatibility() throws Exception {
         final MultiValuedMap map = makeFullMap();
         final MultiValuedMap map2 =
                 (MultiValuedMap) readExternalFormFromDisk(getCanonicalFullCollectionName(map));
