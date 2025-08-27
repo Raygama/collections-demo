@@ -16,21 +16,25 @@
  */
 package org.apache.commons.collections4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListResourceBundle;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.commons.collections4.collection.TransformedCollectionTest;
 import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
@@ -64,8 +68,8 @@ public class MapUtilsTest {
         assertTrue("returned object should be a PredicatedMap", map instanceof PredicatedMap);
         try {
             MapUtils.predicatedMap(null, p, p);
-            fail("Expecting NullPointerException for null map.");
-        } catch (final NullPointerException e) {
+            fail("Expecting IllegalArgumentException for null map.");
+        } catch (final IllegalArgumentException e) {
             // expected
         }
     }
@@ -77,14 +81,14 @@ public class MapUtilsTest {
         assertTrue(map instanceof LazyMap);
         try {
             map = MapUtils.lazyMap(new HashMap<Object, Object>(), (Factory<Object>) null);
-            fail("Expecting NullPointerException for null factory");
-        } catch (final NullPointerException e) {
+            fail("Expecting IllegalArgumentException for null factory");
+        } catch (final IllegalArgumentException e) {
             // expected
         }
         try {
             map = MapUtils.lazyMap((Map<Object, Object>) null, factory);
-            fail("Expecting NullPointerException for null map");
-        } catch (final NullPointerException e) {
+            fail("Expecting IllegalArgumentException for null map");
+        } catch (final IllegalArgumentException e) {
             // expected
         }
         final Transformer<Object, Integer> transformer = TransformerUtils.asTransformer(factory);
@@ -92,14 +96,14 @@ public class MapUtilsTest {
         assertTrue(map instanceof LazyMap);
         try {
             map = MapUtils.lazyMap(new HashMap<Object, Object>(), (Transformer<Object, Object>) null);
-            fail("Expecting NullPointerException for null transformer");
-        } catch (final NullPointerException e) {
+            fail("Expecting IllegalArgumentException for null transformer");
+        } catch (final IllegalArgumentException e) {
             // expected
         }
         try {
             map = MapUtils.lazyMap((Map<Object, Object>) null, transformer);
-            fail("Expecting NullPointerException for null map");
-        } catch (final NullPointerException e) {
+            fail("Expecting IllegalArgumentException for null map");
+        } catch (final IllegalArgumentException e) {
             // expected
         }
     }
@@ -855,8 +859,8 @@ public class MapUtilsTest {
     public void testIterableMap() {
         try {
             MapUtils.iterableMap(null);
-            fail("Should throw NullPointerException");
-        } catch (final NullPointerException e) {
+            fail("Should throw IllegalArgumentException");
+        } catch (final IllegalArgumentException e) {
         }
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put("foo", "foov");
@@ -873,8 +877,8 @@ public class MapUtilsTest {
     public void testIterableSortedMap() {
         try {
             MapUtils.iterableSortedMap(null);
-            fail("Should throw NullPointerException");
-        } catch (final NullPointerException e) {
+            fail("Should throw IllegalArgumentException");
+        } catch (final IllegalArgumentException e) {
         }
         final TreeMap<String, String> map = new TreeMap<String, String>();
         map.put("foo", "foov");

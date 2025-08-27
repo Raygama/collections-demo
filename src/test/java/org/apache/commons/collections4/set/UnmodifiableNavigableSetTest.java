@@ -101,7 +101,7 @@ public class UnmodifiableNavigableSetTest<E> extends AbstractNavigableSetTest<E>
         try {
             UnmodifiableNavigableSet.unmodifiableNavigableSet(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     /**

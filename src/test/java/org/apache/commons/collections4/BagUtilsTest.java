@@ -16,7 +16,9 @@
  */
 package org.apache.commons.collections4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.commons.collections4.bag.HashBag;
 import org.apache.commons.collections4.bag.PredicatedBag;
@@ -50,8 +52,8 @@ public class BagUtilsTest {
             bag instanceof SynchronizedBag);
         try {
             BagUtils.synchronizedBag(null);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
     }
@@ -63,8 +65,8 @@ public class BagUtilsTest {
             bag instanceof UnmodifiableBag);
         try {
             BagUtils.unmodifiableBag(null);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
         
@@ -78,14 +80,14 @@ public class BagUtilsTest {
             bag instanceof PredicatedBag);
         try {
             BagUtils.predicatedBag(null,truePredicate);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
         try {
             BagUtils.predicatedBag(new HashBag<Object>(), null);
-            fail("Expecting NullPointerException for null predicate.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null predicate.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
     }
@@ -97,14 +99,14 @@ public class BagUtilsTest {
             bag instanceof TransformedBag);
         try {
             BagUtils.transformingBag(null, nopTransformer);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
         try {
             BagUtils.transformingBag(new HashBag<Object>(), null);
-            fail("Expecting NullPointerException for null transformer.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null transformer.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
     }
@@ -116,8 +118,8 @@ public class BagUtilsTest {
             bag instanceof SynchronizedSortedBag);
         try {
             BagUtils.synchronizedSortedBag(null);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
     }
@@ -129,8 +131,8 @@ public class BagUtilsTest {
             bag instanceof UnmodifiableSortedBag);
         try {
             BagUtils.unmodifiableSortedBag(null);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
         
@@ -144,14 +146,14 @@ public class BagUtilsTest {
             bag instanceof PredicatedSortedBag);
         try {
             BagUtils.predicatedSortedBag(null, truePredicate);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
         try {
             BagUtils.predicatedSortedBag(new TreeBag<Object>(), null);
-            fail("Expecting NullPointerException for null predicate.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null predicate.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
     }
@@ -163,14 +165,14 @@ public class BagUtilsTest {
             bag instanceof TransformedSortedBag);
         try {
             BagUtils.transformingSortedBag(null, nopTransformer);
-            fail("Expecting NullPointerException for null bag.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null bag.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
         try {
             BagUtils.transformingSortedBag(new TreeBag<Object>(), null);
-            fail("Expecting NullPointerException for null transformer.");
-        } catch (final NullPointerException ex) {
+            fail("Expecting IllegalArgumentException for null transformer.");
+        } catch (final IllegalArgumentException ex) {
             // expected
         }
     }

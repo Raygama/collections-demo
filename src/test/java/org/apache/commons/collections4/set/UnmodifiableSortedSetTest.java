@@ -96,7 +96,7 @@ public class UnmodifiableSortedSetTest<E> extends AbstractSortedSetTest<E> {
         try {
             UnmodifiableSortedSet.unmodifiableSortedSet(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     /**

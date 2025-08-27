@@ -23,11 +23,13 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.apache.commons.collections4.MultiSet;
+
 /**
- * Implements {@code MultiSet}, using a {@link HashMap} to provide the
+ * Implements {@link MultiSet}, using a {@link HashMap} to provide the
  * data storage. This is the standard implementation of a multiset.
  * <p>
- * A {@code MultiSet} stores each object in the collection together with a
+ * A {@link MultiSet} stores each object in the collection together with a
  * count of occurrences. Extra methods on the interface allow multiple copies
  * of an object to be added or removed at once.
  *

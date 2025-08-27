@@ -76,12 +76,12 @@ public class PredicatedSortedBagTest<T> extends AbstractSortedBagTest<T> {
         ((PredicatedSortedBag<T>) bag).decorated();
         try {
             decorateBag(new TreeBag<T>(), null);
-            fail("Expecting NullPointerException for null predicate");
-        } catch (final NullPointerException e) {}
+            fail("Expecting IllegalArgumentException for null predicate");
+        } catch (final IllegalArgumentException e) {}
         try {
             decorateBag(nullBag, stringPredicate());
-            fail("Expecting NullPointerException for null bag");
-        } catch (final NullPointerException e) {}
+            fail("Expecting IllegalArgumentException for null bag");
+        } catch (final IllegalArgumentException e) {}
     }
 
     @SuppressWarnings("unchecked")

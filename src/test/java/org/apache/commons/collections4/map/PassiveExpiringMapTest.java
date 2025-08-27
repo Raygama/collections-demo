@@ -106,7 +106,7 @@ public class PassiveExpiringMapTest<K, V> extends AbstractMapTest<K, V> {
             final Map<String, String> map = null;
             new PassiveExpiringMap<String, String>(map);
             fail("constructor - exception should have been thrown.");
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
             // success
         }
 
@@ -114,7 +114,7 @@ public class PassiveExpiringMapTest<K, V> extends AbstractMapTest<K, V> {
             final ExpirationPolicy<String, String> policy = null;
             new PassiveExpiringMap<String, String>(policy);
             fail("constructor - exception should have been thrown.");
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
             // success
         }
 
@@ -122,7 +122,7 @@ public class PassiveExpiringMapTest<K, V> extends AbstractMapTest<K, V> {
             final TimeUnit unit = null;
             new PassiveExpiringMap<String, String>(10L, unit);
             fail("constructor - exception should have been thrown.");
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
             // success
         }
     }

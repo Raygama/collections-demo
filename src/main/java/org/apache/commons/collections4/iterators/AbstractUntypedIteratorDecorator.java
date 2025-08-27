@@ -36,12 +36,11 @@ public abstract class AbstractUntypedIteratorDecorator<I, O> implements Iterator
      * Create a new AbstractUntypedIteratorDecorator.
      *
      * @param iterator  the iterator to decorate
-     * @throws NullPointerException if the iterator is null
      */
     protected AbstractUntypedIteratorDecorator(final Iterator<I> iterator) {
         super();
         if (iterator == null) {
-            throw new NullPointerException("Iterator must not be null");
+            throw new IllegalArgumentException("Iterator must not be null");
         }
         this.iterator = iterator;
     }

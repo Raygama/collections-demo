@@ -79,7 +79,7 @@ public class UnmodifiableSetTest<E> extends AbstractSetTest<E> {
         try {
             UnmodifiableSet.unmodifiableSet(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     //-----------------------------------------------------------------------

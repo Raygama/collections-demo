@@ -22,18 +22,6 @@
   <body>
 
   <release version="4.1" date="TBD" description="">
-    <action issue="COLLECTIONS-572" dev="tn" type="add">
-      Added set operations to "SetUtils": union, difference, intersection and disjunction.
-      The operations return a view of the result that is backed by the input sets.
-    </action>
-    <action issue="COLLECTIONS-570" dev="tn" type="update">
-      All constructors and static factory methods will now throw a "NullPointerException" if
-      a required input argument is null. Previously sometimes a "IllegalArgumentException" was used.
-    </action>
-    <action issue="COLLECTIONS-571" dev="tn" type="update">
-      Deprecated methods "synchronizedCollection(Collection)" and "unmodifiableCollection(Collection)"
-      in class "CollectionUtils", the corresponding methods in "java.util.Collections" should be used instead.
-    </action>
     <action issue="COLLECTIONS-566" dev="tn" type="fix">
       "IteratorUtils#collate(...)" methods did not use natural ordering when a
       null comparator was provided.
@@ -44,7 +32,7 @@
     <action issue="COLLECTIONS-565" dev="tn" type="add">
       Added decorators for "NavigableSet" interface.
     </action>
-    <action issue="COLLECTIONS-464,COLLECTIONS-442" dev="tn" type="add">
+    <action issue="COLLECTIONS-464" dev="tn" type="add">
       Added new class "FluentIterable" to support a fluent API for manipulating
       Iterable instances. Additionally various supporting methods have been
       added to "IterableUtils" and "IteratorUtils".

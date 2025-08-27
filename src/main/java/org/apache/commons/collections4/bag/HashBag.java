@@ -23,11 +23,13 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.apache.commons.collections4.Bag;
+
 /**
- * Implements {@code Bag}, using a {@link HashMap} to provide the
+ * Implements {@link Bag}, using a {@link HashMap} to provide the
  * data storage. This is the standard implementation of a bag.
  * <p>
- * A {@code Bag} stores each object in the collection together with a
+ * A {@link Bag} stores each object in the collection together with a
  * count of occurrences. Extra methods on the interface allow multiple copies
  * of an object to be added or removed at once. It is important to read the
  * interface javadoc carefully as several methods violate the

@@ -19,10 +19,8 @@ package org.apache.commons.collections4;
 import java.io.PrintStream;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -920,7 +918,7 @@ public class MapUtils {
      * @throws NullPointerException if the stream is <code>null</code>
      */
     public static void verbosePrint(final PrintStream out, final Object label, final Map<?, ?> map) {
-        verbosePrintInternal(out, label, map, new ArrayDeque<Map<?, ?>>(), false);
+        verbosePrintInternal(out, label, map, new ArrayStack<Map<?, ?>>(), false);
     }
 
     /**
@@ -942,7 +940,7 @@ public class MapUtils {
      * @throws NullPointerException if the stream is <code>null</code>
      */
     public static void debugPrint(final PrintStream out, final Object label, final Map<?, ?> map) {
-        verbosePrintInternal(out, label, map, new ArrayDeque<Map<?, ?>>(), true);
+        verbosePrintInternal(out, label, map, new ArrayStack<Map<?, ?>>(), true);
     }
 
     // Implementation methods
@@ -971,7 +969,7 @@ public class MapUtils {
      * @throws NullPointerException if the stream is <code>null</code>
      */
     private static void verbosePrintInternal(final PrintStream out, final Object label, final Map<?, ?> map,
-                                             final Deque<Map<?, ?>> lineage, final boolean debug) {
+                                             final ArrayStack<Map<?, ?>> lineage, final boolean debug) {
         printIndent(out, lineage.size());
 
         if (map == null) {
@@ -990,7 +988,7 @@ public class MapUtils {
         printIndent(out, lineage.size());
         out.println("{");
 
-        lineage.addLast(map);
+        lineage.push(map);
 
         for (final Map.Entry<?, ?> entry : map.entrySet()) {
             final Object childKey = entry.getKey();
@@ -1007,9 +1005,7 @@ public class MapUtils {
                 out.print(childKey);
                 out.print(" = ");
 
-                final int lineageIndex =
-                        IterableUtils.indexOf(lineage,
-                                              PredicateUtils.equalPredicate(childValue));
+                final int lineageIndex = lineage.indexOf(childValue);
                 if (lineageIndex == -1) {
                     out.print(childValue);
                 } else if (lineage.size() - 1 == lineageIndex) {
@@ -1030,7 +1026,7 @@ public class MapUtils {
             }
         }
 
-        lineage.removeLast();
+        lineage.pop();
 
         printIndent(out, lineage.size());
         out.println(debug ? "} " + map.getClass().getName() : "}");
@@ -1266,7 +1262,7 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map  the map to make unmodifiable, must not be null
      * @return an unmodifiable map backed by the given map
-     * @throws NullPointerException  if the map is null
+     * @throws IllegalArgumentException  if the map is null
      */
     public static <K, V> Map<K, V> unmodifiableMap(final Map<? extends K, ? extends V> map) {
         return UnmodifiableMap.unmodifiableMap(map);
@@ -1287,7 +1283,7 @@ public class MapUtils {
      * @param keyPred  the predicate for keys, null means no check
      * @param valuePred  the predicate for values, null means no check
      * @return a predicated map backed by the given map
-     * @throws NullPointerException  if the Map is null
+     * @throws IllegalArgumentException  if the Map is null
      */
     public static <K, V> IterableMap<K, V> predicatedMap(final Map<K, V> map, final Predicate<? super K> keyPred,
                                                          final Predicate<? super V> valuePred) {
@@ -1315,7 +1311,7 @@ public class MapUtils {
      * @param keyTransformer  the transformer for the map keys, null means no transformation
      * @param valueTransformer  the transformer for the map values, null means no transformation
      * @return a transformed map backed by the given map
-     * @throws NullPointerException  if the Map is null
+     * @throws IllegalArgumentException  if the Map is null
      */
     public static <K, V> IterableMap<K, V> transformedMap(final Map<K, V> map,
             final Transformer<? super K, ? extends K> keyTransformer,
@@ -1333,7 +1329,7 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map  the map whose size to fix, must not be null
      * @return a fixed-size map backed by that map
-     * @throws NullPointerException  if the Map is null
+     * @throws IllegalArgumentException  if the Map is null
      */
     public static <K, V> IterableMap<K, V> fixedSizeMap(final Map<K, V> map) {
         return FixedSizeMap.fixedSizeMap(map);
@@ -1367,7 +1363,7 @@ public class MapUtils {
      * @param map  the map to make lazy, must not be null
      * @param factory  the factory for creating new objects, must not be null
      * @return a lazy map backed by the given map
-     * @throws NullPointerException  if the Map or Factory is null
+     * @throws IllegalArgumentException  if the Map or Factory is null
      */
     public static <K, V> IterableMap<K, V> lazyMap(final Map<K, V> map, final Factory<? extends V> factory) {
         return LazyMap.lazyMap(map, factory);
@@ -1408,7 +1404,7 @@ public class MapUtils {
      * @param map  the map to make lazy, must not be null
      * @param transformerFactory  the factory for creating new objects, must not be null
      * @return a lazy map backed by the given map
-     * @throws NullPointerException  if the Map or Transformer is null
+     * @throws IllegalArgumentException  if the Map or Transformer is null
      */
     public static <K, V> IterableMap<K, V> lazyMap(final Map<K, V> map,
             final Transformer<? super K, ? extends V> transformerFactory) {
@@ -1426,7 +1422,7 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map  the map to order, must not be null
      * @return an ordered map backed by the given map
-     * @throws NullPointerException  if the Map is null
+     * @throws IllegalArgumentException  if the Map is null
      */
     public static <K, V> OrderedMap<K, V> orderedMap(final Map<K, V> map) {
         return ListOrderedMap.listOrderedMap(map);
@@ -1516,7 +1512,7 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map  the map to synchronize, must not be null
      * @return a synchronized map backed by the given map
-     * @throws NullPointerException  if the map is null
+     * @throws IllegalArgumentException  if the map is null
      */
     public static <K, V> SortedMap<K, V> synchronizedSortedMap(final SortedMap<K, V> map) {
         return Collections.synchronizedSortedMap(map);
@@ -1531,7 +1527,7 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map  the sorted map to make unmodifiable, must not be null
      * @return an unmodifiable map backed by the given map
-     * @throws NullPointerException  if the map is null
+     * @throws IllegalArgumentException  if the map is null
      */
     public static <K, V> SortedMap<K, V> unmodifiableSortedMap(final SortedMap<K, ? extends V> map) {
         return UnmodifiableSortedMap.unmodifiableSortedMap(map);
@@ -1552,7 +1548,7 @@ public class MapUtils {
      * @param keyPred  the predicate for keys, null means no check
      * @param valuePred  the predicate for values, null means no check
      * @return a predicated map backed by the given map
-     * @throws NullPointerException  if the SortedMap is null
+     * @throws IllegalArgumentException  if the SortedMap is null
      */
     public static <K, V> SortedMap<K, V> predicatedSortedMap(final SortedMap<K, V> map,
             final Predicate<? super K> keyPred, final Predicate<? super V> valuePred) {
@@ -1580,7 +1576,7 @@ public class MapUtils {
      * @param keyTransformer  the transformer for the map keys, null means no transformation
      * @param valueTransformer  the transformer for the map values, null means no transformation
      * @return a transformed map backed by the given map
-     * @throws NullPointerException  if the SortedMap is null
+     * @throws IllegalArgumentException  if the SortedMap is null
      */
     public static <K, V> SortedMap<K, V> transformedSortedMap(final SortedMap<K, V> map,
             final Transformer<? super K, ? extends K> keyTransformer,
@@ -1598,7 +1594,7 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map  the map whose size to fix, must not be null
      * @return a fixed-size map backed by that map
-     * @throws NullPointerException  if the SortedMap is null
+     * @throws IllegalArgumentException  if the SortedMap is null
      */
     public static <K, V> SortedMap<K, V> fixedSizeSortedMap(final SortedMap<K, V> map) {
         return FixedSizeSortedMap.fixedSizeSortedMap(map);
@@ -1633,7 +1629,7 @@ public class MapUtils {
      * @param map  the map to make lazy, must not be null
      * @param factory  the factory for creating new objects, must not be null
      * @return a lazy map backed by the given map
-     * @throws NullPointerException  if the SortedMap or Factory is null
+     * @throws IllegalArgumentException  if the SortedMap or Factory is null
      */
     public static <K, V> SortedMap<K, V> lazySortedMap(final SortedMap<K, V> map, final Factory<? extends V> factory) {
         return LazySortedMap.lazySortedMap(map, factory);
@@ -1674,7 +1670,7 @@ public class MapUtils {
      * @param map  the map to make lazy, must not be null
      * @param transformerFactory  the factory for creating new objects, must not be null
      * @return a lazy map backed by the given map
-     * @throws NullPointerException  if the Map or Transformer is null
+     * @throws IllegalArgumentException  if the Map or Transformer is null
      */
     public static <K, V> SortedMap<K, V> lazySortedMap(final SortedMap<K, V> map,
             final Transformer<? super K, ? extends V> transformerFactory) {
@@ -1766,12 +1762,11 @@ public class MapUtils {
      * @param <V>  the value type
      * @param map to wrap if necessary.
      * @return IterableMap<K, V>
-     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> IterableMap<K, V> iterableMap(final Map<K, V> map) {
         if (map == null) {
-            throw new NullPointerException("Map must not be null");
+            throw new IllegalArgumentException("Map must not be null");
         }
         return map instanceof IterableMap ? (IterableMap<K, V>) map : new AbstractMapDecorator<K, V>(map) {};
     }
@@ -1783,12 +1778,11 @@ public class MapUtils {
      * @param <V>  the value type
      * @param sortedMap to wrap if necessary
      * @return {@link IterableSortedMap}<K, V>
-     * @throws NullPointerException if sortedMap is null
      * @since 4.0
      */
     public static <K, V> IterableSortedMap<K, V> iterableSortedMap(final SortedMap<K, V> sortedMap) {
         if (sortedMap == null) {
-            throw new NullPointerException("Map must not be null");
+            throw new IllegalArgumentException("Map must not be null");
         }
         return sortedMap instanceof IterableSortedMap ? (IterableSortedMap<K, V>) sortedMap :
                                                         new AbstractSortedMapDecorator<K, V>(sortedMap) {};

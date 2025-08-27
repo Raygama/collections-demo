@@ -77,7 +77,7 @@ public class UnmodifiableOrderedMapTest<K, V> extends AbstractOrderedMapTest<K, 
         try {
             UnmodifiableOrderedMap.unmodifiableOrderedMap(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     //-----------------------------------------------------------------------

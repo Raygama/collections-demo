@@ -16,7 +16,10 @@
  */
 package org.apache.commons.collections4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -149,7 +152,7 @@ public class TransformerUtilsTest {
         assertEquals(cInteger, TransformerUtils.asTransformer(ClosureUtils.nopClosure()).transform(cInteger));
         try {
             TransformerUtils.asTransformer((Closure<Object>) null);
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
             return;
         }
         fail();
@@ -183,7 +186,7 @@ public class TransformerUtilsTest {
         assertEquals(null, TransformerUtils.asTransformer(FactoryUtils.nullFactory()).transform(cInteger));
         try {
             TransformerUtils.asTransformer((Factory<Object>) null);
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
             return;
         }
         fail();
@@ -212,26 +215,26 @@ public class TransformerUtilsTest {
         try {
             TransformerUtils.chainedTransformer(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.chainedTransformer((Transformer[]) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.chainedTransformer((Collection<Transformer<Object, Object>>) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.chainedTransformer(new Transformer[] {null, null});
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             coll = new ArrayList<Transformer<Object, Object>>();
             coll.add(null);
             coll.add(null);
             TransformerUtils.chainedTransformer(coll);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     // ifTransformer
@@ -263,19 +266,19 @@ public class TransformerUtilsTest {
         try {
             TransformerUtils.ifTransformer(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.ifTransformer(TruePredicate.truePredicate(), null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.ifTransformer(null, ConstantTransformer.constantTransformer("A"));
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.ifTransformer(null, null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
     
     // switchTransformer
@@ -323,19 +326,19 @@ public class TransformerUtilsTest {
         try {
             TransformerUtils.switchTransformer(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.switchTransformer((Predicate[]) null, (Transformer[]) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.switchTransformer((Map<Predicate<Object>, Transformer<Object, Object>>) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.switchTransformer(new Predicate[2], new Transformer[2]);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.switchTransformer(
                     new Predicate[] { TruePredicate.truePredicate() },
@@ -370,7 +373,7 @@ public class TransformerUtilsTest {
         try {
             TransformerUtils.switchMapTransformer(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     // invokerTransformer
@@ -387,7 +390,7 @@ public class TransformerUtilsTest {
         try {
             TransformerUtils.invokerTransformer(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.invokerTransformer("noSuchMethod").transform(new Object());
             fail();
@@ -411,7 +414,7 @@ public class TransformerUtilsTest {
         try {
             TransformerUtils.invokerTransformer(null, null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             TransformerUtils.invokerTransformer("noSuchMethod", new Class[] { Object.class },
                     new Object[] { cString }).transform(new Object());

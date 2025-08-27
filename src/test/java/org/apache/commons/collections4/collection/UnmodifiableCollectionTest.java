@@ -85,7 +85,7 @@ public class UnmodifiableCollectionTest<E> extends AbstractCollectionTest<E> {
         try {
             UnmodifiableCollection.unmodifiableCollection(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     //-----------------------------------------------------------------------

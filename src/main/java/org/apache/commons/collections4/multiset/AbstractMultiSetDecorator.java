@@ -46,7 +46,7 @@ public abstract class AbstractMultiSetDecorator<E>
      * Constructor that wraps (not copies).
      *
      * @param multiset  the multiset to decorate, must not be null
-     * @throws NullPointerException if multiset is null
+     * @throws IllegalArgumentException if multiset is null
      */
     protected AbstractMultiSetDecorator(final MultiSet<E> multiset) {
         super(multiset);
@@ -103,5 +103,5 @@ public abstract class AbstractMultiSetDecorator<E>
     public Set<Entry<E>> entrySet() {
         return decorated().entrySet();
     }
-
+    
 }

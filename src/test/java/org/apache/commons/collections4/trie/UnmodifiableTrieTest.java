@@ -83,7 +83,7 @@ public class UnmodifiableTrieTest<V> extends AbstractSortedMapTest<String, V> {
         try {
             UnmodifiableTrie.unmodifiableTrie(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     //-----------------------------------------------------------------------

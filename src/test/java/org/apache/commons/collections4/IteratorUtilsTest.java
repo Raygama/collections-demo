@@ -16,16 +16,9 @@
  */
 package org.apache.commons.collections4;
 
-import static org.apache.commons.collections4.functors.EqualPredicate.equalPredicate;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.apache.commons.collections4.functors.EqualPredicate.*;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +64,7 @@ public class IteratorUtilsTest {
 
     private Iterable<Integer> iterableA = null;
 
-    private final Collection<Integer> emptyCollection = new ArrayList<Integer>(1);
+    private Collection<Integer> emptyCollection = new ArrayList<Integer>(1);
 
     @Before
     public void setUp() {
@@ -915,11 +908,9 @@ public class IteratorUtilsTest {
      */
     private NodeList createNodeList(final Node[] nodes) {
         return new NodeList() {
-            @Override
             public Node item(final int index) {
                 return nodes[index];
             }
-            @Override
             public int getLength() {
                 return nodes.length;
             }
@@ -966,8 +957,8 @@ public class IteratorUtilsTest {
         final Comparator<Integer> reverseComparator =
                 ComparatorUtils.reversedComparator(ComparatorUtils.<Integer>naturalComparator());
 
-        Collections.reverse(collectionOdd);
-        Collections.reverse(collectionEven);
+        Collections.reverse((List<Integer>) collectionOdd);
+        Collections.reverse((List<Integer>) collectionEven);
         Collections.reverse(combinedList);
 
         it = IteratorUtils.collatedIterator(reverseComparator,
@@ -1049,23 +1040,6 @@ public class IteratorUtilsTest {
         assertNull(IteratorUtils.find(null,testPredicate));
         try {
             assertNull(IteratorUtils.find(iterableA.iterator(), null));
-            fail("expecting NullPointerException");
-        } catch (final NullPointerException npe) {
-            // expected
-        }
-    }
-
-    @Test
-    public void indexOf() {
-        Predicate<Number> testPredicate = equalPredicate((Number) 4);
-        int index = IteratorUtils.indexOf(iterableA.iterator(), testPredicate);
-        assertEquals(6, index);
-        testPredicate = equalPredicate((Number) 45);
-        index = IteratorUtils.indexOf(iterableA.iterator(), testPredicate);
-        assertEquals(-1, index);
-        assertEquals(-1, IteratorUtils.indexOf(null, testPredicate));
-        try {
-            assertNull(IteratorUtils.indexOf(iterableA.iterator(), null));
             fail("expecting NullPointerException");
         } catch (final NullPointerException npe) {
             // expected

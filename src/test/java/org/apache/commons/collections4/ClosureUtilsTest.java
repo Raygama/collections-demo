@@ -16,7 +16,10 @@
  */
 package org.apache.commons.collections4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,15 +140,15 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.whileClosure(null, ClosureUtils.nopClosure());
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.whileClosure(FalsePredicate.falsePredicate(), null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.whileClosure(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     // doWhileClosure
@@ -164,7 +167,7 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.doWhileClosure(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     // chainedClosure
@@ -201,26 +204,26 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.chainedClosure(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<Object>chainedClosure((Closure[]) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<Object>chainedClosure((Collection<Closure<Object>>) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<Object>chainedClosure(new Closure[] {null, null});
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             coll = new ArrayList<Closure<Object>>();
             coll.add(null);
             coll.add(null);
             ClosureUtils.chainedClosure(coll);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     // ifClosure
@@ -321,19 +324,19 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.switchClosure(null, null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<String>switchClosure((Predicate<String>[]) null, (Closure<String>[]) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<String>switchClosure((Map<Predicate<String>, Closure<String>>) null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<String>switchClosure(new Predicate[2], new Closure[2]);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
         try {
             ClosureUtils.<String>switchClosure(
                     new Predicate[] { TruePredicate.<String>truePredicate() },
@@ -382,7 +385,7 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.switchMapClosure(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     // asClosure

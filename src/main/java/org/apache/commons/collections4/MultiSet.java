@@ -50,7 +50,7 @@ public interface MultiSet<E> extends Collection<E> {
      * <p>
      * If the provided count is zero, the object will be removed from the
      * {@link #uniqueSet()}.
-     *
+     * 
      * @param object  the object to update
      * @param count  the number of occurrences of the object
      * @return the number of occurrences of the object before this operation, zero
@@ -122,9 +122,7 @@ public interface MultiSet<E> extends Collection<E> {
      * Uniqueness constraints are the same as those in {@link java.util.Set}.
      * <p>
      * The returned set is backed by this multiset, so any change to either
-     * is immediately reflected in the other. Only removal operations are
-     * supporting, in which case all occurrences of the removed elements
-     * are removed from the backing multiset.
+     * is immediately reflected in the other.
      *
      * @return the Set of unique MultiSet elements
      */

@@ -89,7 +89,7 @@ public class UnmodifiableBagTest<E> extends AbstractBagTest<E> {
         try {
             UnmodifiableBag.unmodifiableBag(null);
             fail();
-        } catch (final NullPointerException ex) {}
+        } catch (final IllegalArgumentException ex) {}
     }
 
     //-----------------------------------------------------------------------

@@ -16,12 +16,9 @@
  */
 package org.apache.commons.collections4;
 
-import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -71,7 +68,7 @@ public class SetUtils {
      */
     @SuppressWarnings("unchecked") // empty set is OK for any type
     public static <E> SortedSet<E> emptySortedSet() {
-        return EMPTY_SORTED_SET;
+        return (SortedSet<E>) EMPTY_SORTED_SET;
     }
 
     /**
@@ -205,7 +202,7 @@ public class SetUtils {
      * @param <E> the element type
      * @param set  the set to synchronize, must not be null
      * @return a synchronized set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @throws IllegalArgumentException  if the set is null
      */
     public static <E> Set<E> synchronizedSet(final Set<E> set) {
         return Collections.synchronizedSet(set);
@@ -219,7 +216,7 @@ public class SetUtils {
      * @param <E> the element type
      * @param set  the set to make unmodifiable, must not be null
      * @return an unmodifiable set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @throws IllegalArgumentException  if the set is null
      */
     public static <E> Set<E> unmodifiableSet(final Set<? extends E> set) {
         return UnmodifiableSet.unmodifiableSet(set);
@@ -237,7 +234,7 @@ public class SetUtils {
      * @param set  the set to predicate, must not be null
      * @param predicate  the predicate for the set, must not be null
      * @return a predicated set backed by the given set
-     * @throws NullPointerException if the set or predicate is null
+     * @throws IllegalArgumentException  if the Set or Predicate is null
      */
     public static <E> Set<E> predicatedSet(final Set<E> set, final Predicate<? super E> predicate) {
         return PredicatedSet.predicatedSet(set, predicate);
@@ -257,7 +254,7 @@ public class SetUtils {
      * @param set  the set to transform, must not be null
      * @param transformer  the transformer for the set, must not be null
      * @return a transformed set backed by the given set
-     * @throws NullPointerException if the set or transformer is null
+     * @throws IllegalArgumentException  if the Set or Transformer is null
      */
     public static <E> Set<E> transformedSet(final Set<E> set,
                                             final Transformer<? super E, ? extends E> transformer) {
@@ -274,7 +271,7 @@ public class SetUtils {
      * @param <E> the element type
      * @param set  the set to order, must not be null
      * @return an ordered set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @throws IllegalArgumentException  if the Set is null
      */
     public static <E> Set<E> orderedSet(final Set<E> set) {
         return ListOrderedSet.listOrderedSet(set);
@@ -303,7 +300,7 @@ public class SetUtils {
      * @param <E> the element type
      * @param set  the sorted set to synchronize, must not be null
      * @return a synchronized set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @throws IllegalArgumentException  if the set is null
      */
     public static <E> SortedSet<E> synchronizedSortedSet(final SortedSet<E> set) {
         return Collections.synchronizedSortedSet(set);
@@ -317,7 +314,7 @@ public class SetUtils {
      * @param <E> the element type
      * @param set  the sorted set to make unmodifiable, must not be null
      * @return an unmodifiable set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @throws IllegalArgumentException  if the set is null
      */
     public static <E> SortedSet<E> unmodifiableSortedSet(final SortedSet<E> set) {
         return UnmodifiableSortedSet.unmodifiableSortedSet(set);
@@ -335,7 +332,7 @@ public class SetUtils {
      * @param set  the sorted set to predicate, must not be null
      * @param predicate  the predicate for the sorted set, must not be null
      * @return a predicated sorted set backed by the given sorted set
-     * @throws NullPointerException if the set or predicate is null
+     * @throws IllegalArgumentException  if the Set or Predicate is null
      */
     public static <E> SortedSet<E> predicatedSortedSet(final SortedSet<E> set,
                                                        final Predicate<? super E> predicate) {
@@ -356,7 +353,7 @@ public class SetUtils {
      * @param set  the set to transform, must not be null
      * @param transformer  the transformer for the set, must not be null
      * @return a transformed set backed by the given set
-     * @throws NullPointerException if the set or transformer is null
+     * @throws IllegalArgumentException  if the Set or Transformer is null
      */
     public static <E> SortedSet<E> transformedSortedSet(final SortedSet<E> set,
                                                         final Transformer<? super E, ? extends E> transformer) {
@@ -373,7 +370,7 @@ public class SetUtils {
      * @param <E> the element type
      * @param set  the navigable set to make unmodifiable, must not be null
      * @return an unmodifiable set backed by the given set
-     * @throws NullPointerException if the set is null
+     * @throws IllegalArgumentException  if the set is null
      * @since 4.1
      */
     public static <E> SortedSet<E> unmodifiableNavigableSet(final NavigableSet<E> set) {
@@ -392,7 +389,7 @@ public class SetUtils {
      * @param set  the navigable set to predicate, must not be null
      * @param predicate  the predicate for the navigable set, must not be null
      * @return a predicated navigable set backed by the given navigable set
-     * @throws NullPointerException if the set or predicate is null
+     * @throws IllegalArgumentException  if the Set or Predicate is null
      * @since 4.1
      */
     public static <E> SortedSet<E> predicatedNavigableSet(final NavigableSet<E> set,
@@ -414,7 +411,7 @@ public class SetUtils {
      * @param set  the navigable set to transform, must not be null
      * @param transformer  the transformer for the set, must not be null
      * @return a transformed set backed by the given set
-     * @throws NullPointerException if the set or transformer is null
+     * @throws IllegalArgumentException  if the Set or Transformer is null
      * @since 4.1
      */
     public static <E> SortedSet<E> transformedNavigableSet(final NavigableSet<E> set,
@@ -422,224 +419,4 @@ public class SetUtils {
         return TransformedNavigableSet.transformingNavigableSet(set, transformer);
     }
 
-    // Set operations
-    //-----------------------------------------------------------------------
-
-    /**
-     * Returns a unmodifiable <b>view</b> of the union of the given {@link Set}s.
-     * <p>
-     * The returned view contains all elements of {@code a} and {@code b}.
-     *
-     * @param <E> the generic type that is able to represent the types contained
-     *   in both input sets.
-     * @param a  the first set, must not be null
-     * @param b  the second set, must not be null
-     * @return a view of the union of the two set
-     * @throws NullPointerException if either input set is null
-     * @since 4.1
-     */
-    public static <E> SetView<E> union(final Set<? extends E> a, final Set<? extends E> b) {
-        if (a == null || b == null) {
-            throw new NullPointerException("Sets must not be null.");
-        }
-
-        final SetView<E> bMinusA = difference(b, a);
-
-        return new SetView<E>() {
-            @Override
-            public boolean contains(Object o) {
-                return a.contains(o) || b.contains(o);
-            }
-
-            @Override
-            public Iterator<E> createIterator() {
-                return IteratorUtils.chainedIterator(a.iterator(), bMinusA.iterator());
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return a.isEmpty() && b.isEmpty();
-            }
-
-            @Override
-            public int size() {
-                return a.size() + bMinusA.size();
-            }
-        };
-    }
-
-    /**
-     * Returns a unmodifiable <b>view</b> containing the difference of the given
-     * {@link Set}s, denoted by {@code a \ b} (or {@code a - b}).
-     * <p>
-     * The returned view contains all elements of {@code a} that are not a member
-     * of {@code b}.
-     *
-     * @param <E> the generic type that is able to represent the types contained
-     *   in both input sets.
-     * @param a  the set to subtract from, must not be null
-     * @param b  the set to subtract, must not be null
-     * @return a view of the relative complement of  of the two sets
-     * @since 4.1
-     */
-    public static <E> SetView<E> difference(final Set<? extends E> a, final Set<? extends E> b) {
-        if (a == null || b == null) {
-            throw new NullPointerException("Sets must not be null.");
-        }
-
-        final Predicate<E> notContainedInB = new Predicate<E>() {
-            @Override
-            public boolean evaluate(E object) {
-                return !b.contains(object);
-            }
-        };
-
-        return new SetView<E>() {
-            @Override
-            public boolean contains(Object o) {
-                return a.contains(o) && !b.contains(o);
-            }
-
-            @Override
-            public Iterator<E> createIterator() {
-                return IteratorUtils.filteredIterator(a.iterator(), notContainedInB);
-            }
-        };
-    }
-
-    /**
-     * Returns a unmodifiable <b>view</b> of the intersection of the given {@link Set}s.
-     * <p>
-     * The returned view contains all elements that are members of both input sets
-     * ({@code a} and {@code b}).
-     *
-     * @param <E> the generic type that is able to represent the types contained
-     *   in both input sets.
-     * @param a  the first set, must not be null
-     * @param b  the second set, must not be null
-     * @return a view of the intersection of the two sets
-     * @since 4.1
-     */
-    public static <E> SetView<E> intersection(final Set<? extends E> a, final Set<? extends E> b) {
-        if (a == null || b == null) {
-            throw new NullPointerException("Sets must not be null.");
-        }
-
-        final Predicate<E> containedInB = new Predicate<E>() {
-            @Override
-            public boolean evaluate(E object) {
-                return b.contains(object);
-            }
-        };
-
-        return new SetView<E>() {
-            @Override
-            public boolean contains(Object o) {
-                return a.contains(o) && b.contains(o);
-            }
-
-            @Override
-            public Iterator<E> createIterator() {
-                return IteratorUtils.filteredIterator(a.iterator(), containedInB);
-            }
-        };
-    }
-
-    /**
-     * Returns a unmodifiable <b>view</b> of the symmetric difference of the given
-     * {@link Set}s.
-     * <p>
-     * The returned view contains all elements of {@code a} and {@code b} that are
-     * not a member of the other set.
-     * <p>
-     * This is equivalent to {@code union(difference(a, b), difference(b, a))}.
-     *
-     * @param <E> the generic type that is able to represent the types contained
-     *   in both input sets.
-     * @param a  the first set, must not be null
-     * @param b  the second set, must not be null
-     * @return a view of the symmetric difference of the two sets
-     * @since 4.1
-     */
-    public static <E> SetView<E> disjunction(final Set<? extends E> a, final Set<? extends E> b) {
-        if (a == null || b == null) {
-            throw new NullPointerException("Sets must not be null.");
-        }
-
-        final SetView<E> aMinusB = difference(a, b);
-        final SetView<E> bMinusA = difference(b, a);
-
-        return new SetView<E>() {
-            @Override
-            public boolean contains(Object o) {
-                return a.contains(o) ^ b.contains(o);
-            }
-
-            @Override
-            public Iterator<E> createIterator() {
-                return IteratorUtils.chainedIterator(aMinusB.iterator(), bMinusA.iterator());
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return aMinusB.isEmpty() && bMinusA.isEmpty();
-            }
-
-            @Override
-            public int size() {
-                return aMinusB.size() + bMinusA.size();
-            }
-        };
-    }
-
-    /**
-     * An unmodifiable <b>view</b> of a set that may be backed by other sets.
-     * <p>
-     * If the decorated sets change, this view will change as well. The contents
-     * of this view can be transferred to another instance via the {@link #copyInto(Set)}
-     * and {@link #toSet()} methods.
-     *
-     * @param <E> the element type
-     * @since 4.1
-     */
-    public static abstract class SetView<E> extends AbstractSet<E> {
-
-        @Override
-        public Iterator<E> iterator() {
-            return IteratorUtils.unmodifiableIterator(createIterator());
-        }
-
-        /**
-         * Return an iterator for this view; the returned iterator is
-         * not required to be unmodifiable.
-         * @return a new iterator for this view
-         */
-        protected abstract Iterator<E> createIterator();
-
-        @Override
-        public int size() {
-            return IteratorUtils.size(iterator());
-        }
-
-        /**
-         * Copies the contents of this view into the provided set.
-         *
-         * @param <S> the set type
-         * @param set  the set for copying the contents
-         */
-        public <S extends Set<E>> void copyInto(final S set) {
-            CollectionUtils.addAll(set, this);
-        }
-
-        /**
-         * Returns a new set containing the contents of this view.
-         *
-         * @return a new set containing all elements of this view
-         */
-        public Set<E> toSet() {
-            final Set<E> set = new HashSet<E>(size());
-            copyInto(set);
-            return set;
-        }
-    }
 }

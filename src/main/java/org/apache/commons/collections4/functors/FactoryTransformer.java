@@ -42,11 +42,11 @@ public class FactoryTransformer<I, O> implements Transformer<I, O>, Serializable
      * @param <O>  the output type
      * @param factory  the factory to call, not null
      * @return the <code>factory</code> transformer
-     * @throws NullPointerException if the factory is null
+     * @throws IllegalArgumentException if the factory is null
      */
     public static <I, O> Transformer<I, O> factoryTransformer(final Factory<? extends O> factory) {
         if (factory == null) {
-            throw new NullPointerException("Factory must not be null");
+            throw new IllegalArgumentException("Factory must not be null");
         }
         return new FactoryTransformer<I, O>(factory);
     }

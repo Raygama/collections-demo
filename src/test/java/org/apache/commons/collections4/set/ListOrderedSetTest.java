@@ -253,27 +253,27 @@ public class ListOrderedSetTest<E>
         try {
             ListOrderedSet.listOrderedSet((List<E>) null);
             fail();
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
         }
         try {
             ListOrderedSet.listOrderedSet((Set<E>) null);
             fail();
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
         }
         try {
             ListOrderedSet.listOrderedSet(null, null);
             fail();
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
         }
         try {
             ListOrderedSet.listOrderedSet(new HashSet<E>(), null);
             fail();
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
         }
         try {
             ListOrderedSet.listOrderedSet(null, new ArrayList<E>());
             fail();
-        } catch (final NullPointerException ex) {
+        } catch (final IllegalArgumentException ex) {
         }
     }
 
