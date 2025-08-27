@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections4.bag.HashBag;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+import org.apache.commons.collections4.multimap.MultiValuedHashMap;
 import org.apache.commons.collections4.multimap.TransformedMultiValuedMap;
 import org.apache.commons.collections4.multimap.UnmodifiableMultiValuedMap;
 
@@ -53,7 +52,7 @@ public class MultiMapUtils {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static final MultiValuedMap EMPTY_MULTI_VALUED_MAP =
-            UnmodifiableMultiValuedMap.unmodifiableMultiValuedMap(new ArrayListValuedHashMap(0, 0));
+            UnmodifiableMultiValuedMap.unmodifiableMultiValuedMap(new MultiValuedHashMap());
 
     /**
      * Returns immutable EMPTY_MULTI_VALUED_MAP with generic type safety.
@@ -189,7 +188,21 @@ public class MultiMapUtils {
      * @return a new <code>ListValuedMap</code>
      */
     public static <K, V> ListValuedMap<K, V> newListValuedHashMap() {
-        return new ArrayListValuedHashMap<K, V>();
+        return MultiValuedHashMap.<K, V>listValuedHashMap();
+    }
+
+    /**
+     * Creates a {@link ListValuedMap} with a {@link java.util.HashMap HashMap} as its internal
+     * storage which maps the keys to list of type <code>listClass</code>.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param <C> the List class type
+     * @param listClass the class of the list
+     * @return a new {@link ListValuedMap}
+     */
+    public static <K, V, C extends List<V>> ListValuedMap<K, V> newListValuedHashMap(final Class<C> listClass) {
+        return MultiValuedHashMap.<K, V, C>listValuedHashMap(listClass);
     }
 
     /**
@@ -201,7 +214,21 @@ public class MultiMapUtils {
      * @return a new {@link SetValuedMap}
      */
     public static <K, V> SetValuedMap<K, V> newSetValuedHashMap() {
-        return new HashSetValuedHashMap<K, V>();
+        return MultiValuedHashMap.<K, V>setValuedHashMap();
+    }
+
+    /**
+     * Creates a {@link SetValuedMap} with a {@link java.util.HashMap HashMap} as its internal
+     * storage which maps the keys to a set of type <code>setClass</code>
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param <C> the Set class type
+     * @param setClass  the class of the set
+     * @return a new {@link SetValuedMap}
+     */
+    public static <K, V, C extends Set<V>> SetValuedMap<K, V> newSetValuedHashMap(final Class<C> setClass) {
+        return MultiValuedHashMap.<K, V, C>setValuedHashMap(setClass);
     }
 
     // MultiValuedMap Decorators

@@ -70,8 +70,7 @@ public class HashMultiSet<E> extends AbstractMapMultiSet<E> implements Serializa
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        setMap(new HashMap<E, MutableInteger>());
-        super.doReadObject(in);
+        super.doReadObject(new HashMap<E, MutableInteger>(), in);
     }
 
 }

@@ -289,17 +289,8 @@ public interface MultiValuedMap<K, V> {
     Collection<V> values();
 
     /**
-     * Returns a view of this multi-valued map as a {@code Map} from each distinct
-     * key to the non-empty collection of that key's associated values.
-     * <p>
-     * Note that {@code this.asMap().get(k)} is equivalent to {@code this.get(k)}
-     * only when {@code k} is a key contained in the multi-valued map; otherwise it
-     * returns {@code null} as opposed to an empty collection.
-     * <p>
-     * Changes to the returned map or the collections that serve as its values
-     * will update the underlying multi-valued map, and vice versa. The map does
-     * not support {@code put} or {@code putAll}, nor do its entries support
-     * {@link Map.Entry#setValue setValue}.
+     * Returns a {@link Map} view of this MultiValuedMap with a Collection as
+     * its value. The Collection holds all the values mapped to that key.
      *
      * @return a map view of the mappings in this multi-valued map
      */
