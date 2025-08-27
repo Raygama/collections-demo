@@ -443,7 +443,6 @@ public class LRUMap<K, V>
      *
      * @return <code>true</code> if the map is full
      */
-    @Override
     public boolean isFull() {
         return size >= maxSize;
     }
@@ -453,7 +452,6 @@ public class LRUMap<K, V>
      *
      * @return the maximum number of elements the map can hold
      */
-    @Override
     public int maxSize() {
         return maxSize;
     }

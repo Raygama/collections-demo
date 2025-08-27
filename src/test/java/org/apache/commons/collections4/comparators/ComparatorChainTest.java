@@ -105,7 +105,6 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
         // test that ComparatorChain handles this edge case correctly
         final ComparatorChain<Integer> chain = new ComparatorChain<Integer>();
         chain.addComparator(new Comparator<Integer>() {
-            @Override
             public int compare(final Integer a, final Integer b) {
                 final int result = a.compareTo(b);
                 if (result < 0) {
@@ -202,7 +201,6 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
             this.colIndex = colIndex;
         }
 
-        @Override
         public int compare(final PseudoRow o1, final PseudoRow o2) {
 
             final int col1 = o1.getColumn(colIndex);

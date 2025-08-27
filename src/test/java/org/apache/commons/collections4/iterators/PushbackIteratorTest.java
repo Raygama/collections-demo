@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
 
-    private final String[] testArray = { "a", "b", "c" };
+    private String[] testArray = { "a", "b", "c" };
 
     private List<E> testList;
 

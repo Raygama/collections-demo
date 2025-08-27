@@ -95,7 +95,6 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      *
      * @return true if there is a previous element to return
      */
-    @Override
     public boolean hasPrevious() {
         return this.index > getStartIndex();
     }
@@ -106,7 +105,6 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * @return the previous element
      * @throws NoSuchElementException if there is no previous element
      */
-    @Override
     public E previous() {
         if (hasPrevious() == false) {
             throw new NoSuchElementException();
@@ -135,7 +133,6 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
-    @Override
     public int nextIndex() {
         return this.index - getStartIndex();
     }
@@ -145,7 +142,6 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
-    @Override
     public int previousIndex() {
         return this.index - getStartIndex() - 1;
     }
@@ -157,7 +153,6 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * @param obj  the object to add
      * @throws UnsupportedOperationException always thrown.
      */
-    @Override
     public void add(final E obj) {
         throw new UnsupportedOperationException("add() method is not supported");
     }
@@ -179,7 +174,6 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * @throws IllegalStateException if next() has not yet been called.
      * @throws ClassCastException if the object type is unsuitable for the array
      */
-    @Override
     public void set(final E obj) {
         if (this.lastItemIndex == -1) {
             throw new IllegalStateException("must call next() or previous() before a call to set()");

@@ -159,7 +159,6 @@ public class FilterIteratorTest<E> extends AbstractIteratorTest<E> {
 
     private void verifyElementsInPredicate(final String[] elements) {
         final Predicate<E> pred = new Predicate<E>() {
-            @Override
             public boolean evaluate(final E x) {
                 for (final String element : elements) {
                     if (element.equals(x)) {
@@ -201,7 +200,6 @@ public class FilterIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     protected FilterIterator<E> makePassThroughFilter(final Iterator<E> i) {
         final Predicate<E> pred = new Predicate<E>() {
-                @Override
                 public boolean evaluate(final E x) { return true; }
         };
         return new FilterIterator<E>(i, pred);
@@ -216,7 +214,6 @@ public class FilterIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     protected FilterIterator<E> makeBlockAllFilter(final Iterator<E> i) {
         final Predicate<E> pred = new Predicate<E>() {
-                @Override
                 public boolean evaluate(final E x) { return false; }
         };
         return new FilterIterator<E>(i, pred);

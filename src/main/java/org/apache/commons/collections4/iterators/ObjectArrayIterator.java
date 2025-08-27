@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.collections4.ResettableIterator;
 
 /**
- * An {@link java.util.Iterator Iterator} over an array of objects.
+ * An {@link Iterator} over an array of objects.
  * <p>
  * This iterator does not support {@link #remove}, as the object array cannot be
  * structurally modified.
@@ -29,7 +29,6 @@ import org.apache.commons.collections4.ResettableIterator;
  * The iterator implements a {@link #reset} method, allowing the reset of the iterator
  * back to the start if required.
  *
- * @param <E> the type to iterate over
  * @since 3.0
  * @version $Id$
  */
@@ -108,7 +107,6 @@ public class ObjectArrayIterator<E> implements ResettableIterator<E> {
      *
      * @return true if there is a next element to return
      */
-    @Override
     public boolean hasNext() {
         return this.index < this.endIndex;
     }
@@ -120,7 +118,6 @@ public class ObjectArrayIterator<E> implements ResettableIterator<E> {
      * @throws NoSuchElementException if all the elements in the array
      *    have already been returned
      */
-    @Override
     public E next() {
         if (hasNext() == false) {
             throw new NoSuchElementException();
@@ -133,7 +130,6 @@ public class ObjectArrayIterator<E> implements ResettableIterator<E> {
      *
      * @throws UnsupportedOperationException always
      */
-    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() method is not supported for an ObjectArrayIterator");
     }
@@ -171,7 +167,6 @@ public class ObjectArrayIterator<E> implements ResettableIterator<E> {
     /**
      * Resets the iterator back to the start index.
      */
-    @Override
     public void reset() {
         this.index = this.startIndex;
     }

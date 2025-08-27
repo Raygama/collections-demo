@@ -78,7 +78,6 @@ public class EnumerationIterator<E> implements Iterator<E> {
      * @return true if the underlying enumeration has more elements
      * @throws NullPointerException  if the underlying enumeration is null
      */
-    @Override
     public boolean hasNext() {
         return enumeration.hasMoreElements();
     }
@@ -89,7 +88,6 @@ public class EnumerationIterator<E> implements Iterator<E> {
      * @return the next object from the enumeration
      * @throws NullPointerException if the enumeration is null
      */
-    @Override
     public E next() {
         last = enumeration.nextElement();
         return last;
@@ -105,7 +103,6 @@ public class EnumerationIterator<E> implements Iterator<E> {
      * @exception IllegalStateException <code>next()</code> not called.
      * @exception UnsupportedOperationException if no associated collection
      */
-    @Override
     public void remove() {
         if (collection != null) {
             if (last != null) {

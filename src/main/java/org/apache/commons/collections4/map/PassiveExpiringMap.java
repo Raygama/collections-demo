@@ -134,7 +134,6 @@ public class PassiveExpiringMap<K, V>
          *         {@link System#currentTimeMillis()} is returned. Otherwise, -1
          *         is returned indicating the entry never expires.
          */
-        @Override
         public long expirationTime(final K key, final V value) {
             if (timeToLiveMillis >= 0L) {
                 // avoid numerical overflow

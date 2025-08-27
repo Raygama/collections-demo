@@ -79,7 +79,6 @@ public final class TransformedPredicate<T> implements PredicateDecorator<T>, Ser
      * @param object  the input object which will be transformed
      * @return true if decorated predicate returns true
      */
-    @Override
     public boolean evaluate(final T object) {
         final T result = iTransformer.transform(object);
         return iPredicate.evaluate(result);
@@ -91,7 +90,6 @@ public final class TransformedPredicate<T> implements PredicateDecorator<T>, Ser
      * @return the predicate as the only element in an array
      * @since 3.1
      */
-    @Override
     @SuppressWarnings("unchecked")
     public Predicate<? super T>[] getPredicates() {
         return new Predicate[] {iPredicate};

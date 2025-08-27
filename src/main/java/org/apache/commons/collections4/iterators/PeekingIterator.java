@@ -93,7 +93,6 @@ public class PeekingIterator<E> implements Iterator<E> {
     }
 
     //-----------------------------------------------------------------------
-    @Override
     public boolean hasNext() {
         if (exhausted) {
             return false;
@@ -133,7 +132,6 @@ public class PeekingIterator<E> implements Iterator<E> {
         return slot;
     }
 
-    @Override
     public E next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -151,7 +149,6 @@ public class PeekingIterator<E> implements Iterator<E> {
      * @throws IllegalStateException if {@link #peek()} or {@link #element()} has been called
      *   prior to the call to {@link #remove()}
      */
-    @Override
     public void remove() {
         if (slotFilled) {
             throw new IllegalStateException("peek() or element() called before remove()");

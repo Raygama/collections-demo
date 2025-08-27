@@ -101,7 +101,6 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      *
      * @return true if there is a previous element to return
      */
-    @Override
     public boolean hasPrevious() {
         return this.index > this.startIndex;
     }
@@ -112,7 +111,6 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * @return the previous element
      * @throws NoSuchElementException if there is no previous element
      */
-    @Override
     @SuppressWarnings("unchecked")
     public E previous() {
         if (hasPrevious() == false) {
@@ -143,7 +141,6 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
-    @Override
     public int nextIndex() {
         return this.index - this.startIndex;
     }
@@ -153,7 +150,6 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
-    @Override
     public int previousIndex() {
         return this.index - this.startIndex - 1;
     }
@@ -166,7 +162,6 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * @throws UnsupportedOperationException always thrown.
      * @see java.util.ListIterator#set
      */
-    @Override
     public void add(final Object o) {
         throw new UnsupportedOperationException("add() method is not supported");
     }
@@ -189,7 +184,6 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * before {@link #set(Object)}
      * @see java.util.ListIterator#set
      */
-    @Override
     public void set(final Object o) {
         if (this.lastItemIndex == -1) {
             throw new IllegalStateException("must call next() or previous() before a call to set()");

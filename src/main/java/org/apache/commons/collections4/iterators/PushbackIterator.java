@@ -39,7 +39,7 @@ public class PushbackIterator<E> implements Iterator<E> {
     private final Iterator<? extends E> iterator;
 
     /** The LIFO queue containing the pushed back items. */
-    private final Deque<E> items = new ArrayDeque<E>();
+    private Deque<E> items = new ArrayDeque<E>();
 
     //-----------------------------------------------------------------------
     /**
@@ -87,12 +87,10 @@ public class PushbackIterator<E> implements Iterator<E> {
         items.push(item);
     }
 
-    @Override
     public boolean hasNext() {
         return !items.isEmpty() ? true : iterator.hasNext();
     }
 
-    @Override
     public E next() {
         return !items.isEmpty() ? items.pop() : iterator.next();
     }
@@ -102,7 +100,6 @@ public class PushbackIterator<E> implements Iterator<E> {
      *
      * @throws UnsupportedOperationException always
      */
-    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

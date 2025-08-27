@@ -51,7 +51,6 @@ public class MapUtilsTest {
 
     public Predicate<Object> getPredicate() {
         return new Predicate<Object>() {
-            @Override
             public boolean evaluate(final Object o) {
                 return o instanceof String;
             }
@@ -108,7 +107,6 @@ public class MapUtilsTest {
     @Test
     public void testLazyMapTransformer() {
         final Map<Object, Object> map = MapUtils.lazyMap(new HashMap<Object, Object>(), new Transformer<Object, Object>() {
-            @Override
             public Object transform(final Object mapKey) {
                 if (mapKey instanceof String) {
                     return Integer.valueOf((String) mapKey);
@@ -822,7 +820,6 @@ public class MapUtilsTest {
             this.name = name;
         }
 
-        @Override
         public int compareTo(X o) {
             return key - o.key | name.compareTo(o.name);
         }
@@ -842,7 +839,6 @@ public class MapUtilsTest {
         // Now test key transform population
         final MultiValueMap<Integer, X> map = MultiValueMap.multiValueMap(new TreeMap<Integer, Collection<X>>());
         MapUtils.populateMap(map, list, new Transformer<X, Integer>() {
-            @Override
             public Integer transform(X input) {
                 return input.key;
             }

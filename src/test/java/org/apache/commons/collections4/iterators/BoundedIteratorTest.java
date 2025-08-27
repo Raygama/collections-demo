@@ -30,7 +30,7 @@ import org.junit.Test;
 public class BoundedIteratorTest<E> extends AbstractIteratorTest<E> {
 
     /** Test array of size 7 */
-    private final String[] testArray = {
+    private String[] testArray = {
         "a", "b", "c", "d", "e", "f", "g"
     };
 
@@ -353,7 +353,6 @@ public class BoundedIteratorTest<E> extends AbstractIteratorTest<E> {
     @Test
     public void testRemoveUnsupported() {
         Iterator<E> mockIterator = new AbstractIteratorDecorator<E>(testList.iterator()) {
-            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }

@@ -56,17 +56,14 @@ public abstract class AbstractMapEntryDecorator<K, V> implements Map.Entry<K, V>
 
     //-----------------------------------------------------------------------
 
-    @Override
     public K getKey() {
         return entry.getKey();
     }
 
-    @Override
     public V getValue() {
         return entry.getValue();
     }
 
-    @Override
     public V setValue(final V object) {
         return entry.setValue(object);
     }

@@ -38,7 +38,6 @@ public class PredicatedSortedMapTest<K, V> extends AbstractSortedMapTest<K, V> {
     protected static final Predicate<Object> truePredicate = TruePredicate.truePredicate();
 
     protected static final Predicate<Object> testPredicate = new Predicate<Object>() {
-        @Override
         public boolean evaluate(final Object o) {
             return o instanceof String;
         }

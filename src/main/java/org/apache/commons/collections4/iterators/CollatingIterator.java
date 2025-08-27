@@ -227,7 +227,6 @@ public class CollatingIterator<E> implements Iterator<E> {
      *
      * @return true if this iterator has remaining elements
      */
-    @Override
     public boolean hasNext() {
         start();
         return anyValueSet(valueSet) || anyHasNext(iterators);
@@ -239,7 +238,6 @@ public class CollatingIterator<E> implements Iterator<E> {
      * @return the next ordered element
      * @throws NoSuchElementException if no child iterator has any more elements
      */
-    @Override
     public E next() throws NoSuchElementException {
         if (hasNext() == false) {
             throw new NoSuchElementException();
@@ -260,7 +258,6 @@ public class CollatingIterator<E> implements Iterator<E> {
      * @throws IllegalStateException if there is no last returned element, or if
      * the last returned element has already been removed
      */
-    @Override
     public void remove() {
         if (lastReturned == -1) {
             throw new IllegalStateException("No value can be removed at present");

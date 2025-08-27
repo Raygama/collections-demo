@@ -171,12 +171,10 @@ public class FixedSizeSortedMap<K, V>
         return new FixedSizeSortedMap<K, V>(getSortedMap().tailMap(fromKey));
     }
 
-    @Override
     public boolean isFull() {
         return true;
     }
 
-    @Override
     public int maxSize() {
         return size();
     }

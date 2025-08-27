@@ -73,7 +73,6 @@ public class ConstantFactory<T> implements Factory<T>, Serializable {
      *
      * @return the stored constant value
      */
-    @Override
     public T create() {
         return iConstant;
     }

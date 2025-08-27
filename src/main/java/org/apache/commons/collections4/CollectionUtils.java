@@ -147,7 +147,6 @@ public class CollectionUtils {
             newList = new ArrayList<O>(elements.size());
         }
 
-        @Override
         public Iterator<O> iterator() {
             return elements.iterator();
         }
@@ -562,7 +561,6 @@ public class CollectionUtils {
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         final Transformer<E, ?> transformer = new Transformer() {
-            @Override
             public EquatorWrapper<?> transform(final Object input) {
                 return new EquatorWrapper(equator, input);
             }
@@ -1695,7 +1693,6 @@ public class CollectionUtils {
                                               final Equator<? super E> equator) {
 
         final Transformer<E, EquatorWrapper<E>> transformer = new Transformer<E, EquatorWrapper<E>>() {
-            @Override
             public EquatorWrapper<E> transform(E input) {
                 return new EquatorWrapper<E>(equator, input);
             }
@@ -1771,7 +1768,6 @@ public class CollectionUtils {
                                               final Equator<? super E> equator) {
 
         final Transformer<E, EquatorWrapper<E>> transformer = new Transformer<E, EquatorWrapper<E>>() {
-            @Override
             public EquatorWrapper<E> transform(E input) {
                 return new EquatorWrapper<E>(equator, input);
             }

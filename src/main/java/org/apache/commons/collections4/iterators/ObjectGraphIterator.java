@@ -205,7 +205,6 @@ public class ObjectGraphIterator<E> implements Iterator<E> {
      *
      * @return true if elements remain in the iteration
      */
-    @Override
     public boolean hasNext() {
         updateCurrentIterator();
         return hasNext;
@@ -217,7 +216,6 @@ public class ObjectGraphIterator<E> implements Iterator<E> {
      * @return the next element from the iteration
      * @throws NoSuchElementException if all the Iterators are exhausted
      */
-    @Override
     public E next() {
         updateCurrentIterator();
         if (hasNext == false) {
@@ -243,7 +241,6 @@ public class ObjectGraphIterator<E> implements Iterator<E> {
      *   if the next method has not yet been called, or the remove method has
      *   already been called after the last call to the next method.
      */
-    @Override
     public void remove() {
         if (lastUsedIterator == null) {
             throw new IllegalStateException("Iterator remove() cannot be called at this time");

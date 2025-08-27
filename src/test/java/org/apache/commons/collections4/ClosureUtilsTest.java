@@ -44,7 +44,6 @@ public class ClosureUtilsTest {
     static class MockClosure<T> implements Closure<T> {
         int count = 0;
 
-        @Override
         public void execute(final T object) {
             count++;
         }
@@ -57,7 +56,6 @@ public class ClosureUtilsTest {
     static class MockTransformer<T> implements Transformer<T, T> {
         int count = 0;
 
-        @Override
         public T transform(final T object) {
             count++;
             return object;

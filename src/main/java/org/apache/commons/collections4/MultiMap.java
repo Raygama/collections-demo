@@ -75,7 +75,6 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      *
      * @return the number of key-collection mappings in this map
      */
-    @Override
     int size();
 
     /**
@@ -97,7 +96,6 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws ClassCastException if the key is of an invalid type
      * @throws NullPointerException if the key is null and null keys are invalid
      */
-    @Override
     Object get(Object key); // Cannot use get(K key) as that does not properly implement Map#get
 
     /**
@@ -111,7 +109,6 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws ClassCastException if the value is of an invalid type
      * @throws NullPointerException if the value is null and null value are invalid
      */
-    @Override
     boolean containsValue(Object value);
 
     /**
@@ -130,7 +127,6 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws NullPointerException if the key or value is null and null is invalid
      * @throws IllegalArgumentException if the key or value is invalid
      */
-    @Override
     Object put(K key, Object value);
 
     /**
@@ -146,7 +142,6 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws ClassCastException if the key is of an invalid type
      * @throws NullPointerException if the key is null and null keys are invalid
      */
-    @Override
     Object remove(Object key); // Cannot use remove(K key) as that does not properly implement Map#remove
 
     /**
@@ -158,7 +153,6 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      *
      * @return a collection view of the values contained in this map
      */
-    @Override
     Collection<Object> values();
 
 }

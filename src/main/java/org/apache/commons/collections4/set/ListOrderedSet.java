@@ -396,12 +396,10 @@ public class ListOrderedSet<E>
             last = null;
         }
 
-        @Override
         public boolean hasPrevious() {
             return ((ListIterator<E>) getIterator()).hasPrevious();
         }
 
-        @Override
         public E previous() {
             last = ((ListIterator<E>) getIterator()).previous();
             return last;

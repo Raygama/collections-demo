@@ -124,7 +124,6 @@ public class ListUtilsTest {
     @Test
     public void testPredicatedList() {
         final Predicate<Object> predicate = new Predicate<Object>() {
-            @Override
             public boolean evaluate(final Object o) {
                 return o instanceof String;
             }
@@ -151,7 +150,6 @@ public class ListUtilsTest {
 
             private int index;
 
-            @Override
             public Integer create() {
                 index++;
                 return Integer.valueOf(index);
@@ -429,7 +427,6 @@ public class ListUtilsTest {
     }
 
     private static Predicate<Number> EQUALS_TWO = new Predicate<Number>() {
-        @Override
         public boolean evaluate(final Number input) {
             return input.intValue() == 2;
         }

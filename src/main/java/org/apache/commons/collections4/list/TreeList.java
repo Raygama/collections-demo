@@ -1034,12 +1034,10 @@ public class TreeList<E> extends AbstractList<E> {
             }
         }
 
-        @Override
         public boolean hasNext() {
             return nextIndex < parent.size();
         }
 
-        @Override
         public E next() {
             checkModCount();
             if (!hasNext()) {
@@ -1055,12 +1053,10 @@ public class TreeList<E> extends AbstractList<E> {
             return value;
         }
 
-        @Override
         public boolean hasPrevious() {
             return nextIndex > 0;
         }
 
-        @Override
         public E previous() {
             checkModCount();
             if (!hasPrevious()) {
@@ -1077,17 +1073,14 @@ public class TreeList<E> extends AbstractList<E> {
             return value;
         }
 
-        @Override
         public int nextIndex() {
             return nextIndex;
         }
 
-        @Override
         public int previousIndex() {
             return nextIndex() - 1;
         }
 
-        @Override
         public void remove() {
             checkModCount();
             if (currentIndex == -1) {
@@ -1106,7 +1099,6 @@ public class TreeList<E> extends AbstractList<E> {
             expectedModCount++;
         }
 
-        @Override
         public void set(final E obj) {
             checkModCount();
             if (current == null) {
@@ -1115,7 +1107,6 @@ public class TreeList<E> extends AbstractList<E> {
             current.setValue(obj);
         }
 
-        @Override
         public void add(final E obj) {
             checkModCount();
             parent.add(nextIndex, obj);

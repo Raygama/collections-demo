@@ -100,17 +100,14 @@ public abstract class AbstractLinkedList<E> implements List<E> {
 
     //-----------------------------------------------------------------------
 
-    @Override
     public int size() {
         return size;
     }
 
-    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
-    @Override
     public E get(final int index) {
         final Node<E> node = getNode(index, false);
         return node.getValue();
@@ -118,24 +115,20 @@ public abstract class AbstractLinkedList<E> implements List<E> {
 
     //-----------------------------------------------------------------------
 
-    @Override
     public Iterator<E> iterator() {
         return listIterator();
     }
 
-    @Override
     public ListIterator<E> listIterator() {
         return new LinkedListIterator<E>(this, 0);
     }
 
-    @Override
     public ListIterator<E> listIterator(final int fromIndex) {
         return new LinkedListIterator<E>(this, fromIndex);
     }
 
     //-----------------------------------------------------------------------
 
-    @Override
     public int indexOf(final Object value) {
         int i = 0;
         for (Node<E> node = header.next; node != header; node = node.next) {
@@ -147,7 +140,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
         return -1;
     }
 
-    @Override
     public int lastIndexOf(final Object value) {
         int i = size - 1;
         for (Node<E> node = header.previous; node != header; node = node.previous) {
@@ -159,12 +151,10 @@ public abstract class AbstractLinkedList<E> implements List<E> {
         return -1;
     }
 
-    @Override
     public boolean contains(final Object value) {
         return indexOf(value) != -1;
     }
 
-    @Override
     public boolean containsAll(final Collection<?> coll) {
         for (final Object o : coll) {
             if (!contains(o)) {
@@ -176,12 +166,10 @@ public abstract class AbstractLinkedList<E> implements List<E> {
 
     //-----------------------------------------------------------------------
 
-    @Override
     public Object[] toArray() {
         return toArray(new Object[size]);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] array) {
         // Extend the array if needed
@@ -208,31 +196,26 @@ public abstract class AbstractLinkedList<E> implements List<E> {
      * @param toIndexExclusive  the index to end at
      * @return the new sublist
      */
-    @Override
     public List<E> subList(final int fromIndexInclusive, final int toIndexExclusive) {
         return new LinkedSubList<E>(this, fromIndexInclusive, toIndexExclusive);
     }
 
     //-----------------------------------------------------------------------
 
-    @Override
     public boolean add(final E value) {
         addLast(value);
         return true;
     }
 
-    @Override
     public void add(final int index, final E value) {
         final Node<E> node = getNode(index, true);
         addNodeBefore(node, value);
     }
 
-    @Override
     public boolean addAll(final Collection<? extends E> coll) {
         return addAll(size, coll);
     }
 
-    @Override
     public boolean addAll(final int index, final Collection<? extends E> coll) {
         final Node<E> node = getNode(index, true);
         for (final E e : coll) {
@@ -243,7 +226,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
 
     //-----------------------------------------------------------------------
 
-    @Override
     public E remove(final int index) {
         final Node<E> node = getNode(index, false);
         final E oldValue = node.getValue();
@@ -251,7 +233,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
         return oldValue;
     }
 
-    @Override
     public boolean remove(final Object value) {
         for (Node<E> node = header.next; node != header; node = node.next) {
             if (isEqualValue(node.getValue(), value)) {
@@ -271,7 +252,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
      * <code>coll</code> that provides a fast (e.g. O(1)) implementation of
      * {@link Collection#contains(Object)}.
      */
-    @Override
     public boolean removeAll(final Collection<?> coll) {
         boolean modified = false;
         final Iterator<E> it = iterator();
@@ -295,7 +275,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
      * <code>coll</code> that provides a fast (e.g. O(1)) implementation of
      * {@link Collection#contains(Object)}.
      */
-    @Override
     public boolean retainAll(final Collection<?> coll) {
         boolean modified = false;
         final Iterator<E> it = iterator();
@@ -308,7 +287,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
         return modified;
     }
 
-    @Override
     public E set(final int index, final E value) {
         final Node<E> node = getNode(index, false);
         final E oldValue = node.getValue();
@@ -316,7 +294,6 @@ public abstract class AbstractLinkedList<E> implements List<E> {
         return oldValue;
     }
 
-    @Override
     public void clear() {
         removeAllNodes();
     }
@@ -839,12 +816,10 @@ public abstract class AbstractLinkedList<E> implements List<E> {
             return current;
         }
 
-        @Override
         public boolean hasNext() {
             return next != parent.header;
         }
 
-        @Override
         public E next() {
             checkModCount();
             if (!hasNext()) {
@@ -857,12 +832,10 @@ public abstract class AbstractLinkedList<E> implements List<E> {
             return value;
         }
 
-        @Override
         public boolean hasPrevious() {
             return next.previous != parent.header;
         }
 
-        @Override
         public E previous() {
             checkModCount();
             if (!hasPrevious()) {
@@ -875,18 +848,15 @@ public abstract class AbstractLinkedList<E> implements List<E> {
             return value;
         }
 
-        @Override
         public int nextIndex() {
             return nextIndex;
         }
 
-        @Override
         public int previousIndex() {
             // not normally overridden, as relative to nextIndex()
             return nextIndex() - 1;
         }
 
-        @Override
         public void remove() {
             checkModCount();
             if (current == next) {
@@ -902,13 +872,11 @@ public abstract class AbstractLinkedList<E> implements List<E> {
             expectedModCount++;
         }
 
-        @Override
         public void set(final E obj) {
             checkModCount();
             getLastNodeReturned().setValue(obj);
         }
 
-        @Override
         public void add(final E obj) {
             checkModCount();
             parent.addNodeBefore(next, obj);

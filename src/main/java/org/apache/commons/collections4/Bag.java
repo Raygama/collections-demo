@@ -70,7 +70,6 @@ public interface Bag<E> extends Collection<E> {
      * @param object  the object to add
      * @return <code>true</code> if the object was not already in the <code>uniqueSet</code>
      */
-    @Override
     boolean add(E object);
 
     /**
@@ -99,7 +98,6 @@ public interface Bag<E> extends Collection<E> {
      * @param object  the object to remove
      * @return <code>true</code> if this call changed the collection
      */
-    @Override
     boolean remove(Object object);
 
     /**
@@ -128,7 +126,6 @@ public interface Bag<E> extends Collection<E> {
      *
      * @return the total size of the Bag
      */
-    @Override
     int size();
 
     /**
@@ -147,7 +144,6 @@ public interface Bag<E> extends Collection<E> {
      * @param coll  the collection to check against
      * @return <code>true</code> if the Bag contains all the collection
      */
-    @Override
     boolean containsAll(Collection<?> coll);
 
     /**
@@ -166,7 +162,6 @@ public interface Bag<E> extends Collection<E> {
      * @param coll  the collection to remove
      * @return <code>true</code> if this call changed the collection
      */
-    @Override
     boolean removeAll(Collection<?> coll);
 
     /**
@@ -188,7 +183,6 @@ public interface Bag<E> extends Collection<E> {
      * @param coll  the collection to retain
      * @return <code>true</code> if this call changed the collection
      */
-    @Override
     boolean retainAll(Collection<?> coll);
 
     /**
@@ -198,7 +192,6 @@ public interface Bag<E> extends Collection<E> {
      *
      * @return iterator over all elements in the Bag
      */
-    @Override
     Iterator<E> iterator();
 
     // The following is not part of the formal Bag interface, however where possible

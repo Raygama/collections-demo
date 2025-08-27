@@ -48,7 +48,6 @@ public class PredicatedSortedBagTest<T> extends AbstractSortedBagTest<T> {
 
     protected Predicate<T> stringPredicate() {
         return new Predicate<T>() {
-            @Override
             public boolean evaluate(final T o) {
                 return o instanceof String;
             }

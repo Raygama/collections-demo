@@ -70,7 +70,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      *
      * @return <code>true</code> if there are more elements
      */
-    @Override
     public boolean hasNext() {
         return !list.isEmpty();
     }
@@ -83,7 +82,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * @return the object after the last element returned
      * @throws NoSuchElementException if there are no elements in the list
      */
-    @Override
     public E next() {
         if (list.isEmpty()) {
             throw new NoSuchElementException(
@@ -106,7 +104,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * @return the index of the element that would be returned if next() were called
      * @throws NoSuchElementException if there are no elements in the list
      */
-    @Override
     public int nextIndex() {
         if (list.isEmpty()) {
             throw new NoSuchElementException(
@@ -126,7 +123,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      *
      * @return <code>true</code> if there are more elements
      */
-    @Override
     public boolean hasPrevious() {
         return !list.isEmpty();
     }
@@ -140,7 +136,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * @return the object before the last element returned
      * @throws NoSuchElementException if there are no elements in the list
      */
-    @Override
     public E previous() {
         if (list.isEmpty()) {
             throw new NoSuchElementException(
@@ -168,7 +163,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * @return the index of the element that would be returned if previous() were called
      * @throws NoSuchElementException if there are no elements in the list
      */
-    @Override
     public int previousIndex() {
         if (list.isEmpty()) {
             throw new NoSuchElementException(
@@ -198,7 +192,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * not supported by the iterator implementation of the underlying
      * list
      */
-    @Override
     public void remove() {
         iterator.remove();
     }
@@ -218,7 +211,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * @throws UnsupportedOperationException if the add method is not
      *  supported by the iterator implementation of the underlying list
      */
-    @Override
     public void add(final E obj) {
         iterator.add(obj);
     }
@@ -235,7 +227,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
      * @throws UnsupportedOperationException if the set method is not
      *  supported by the iterator implementation of the underlying list
      */
-    @Override
     public void set(final E obj) {
         iterator.set(obj);
     }
@@ -243,7 +234,6 @@ public class LoopingListIterator<E> implements ResettableListIterator<E> {
     /**
      * Resets the iterator back to the start of the list.
      */
-    @Override
     public void reset() {
         _reset();
     }

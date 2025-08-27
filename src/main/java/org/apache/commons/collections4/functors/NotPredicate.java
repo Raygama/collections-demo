@@ -66,7 +66,6 @@ public final class NotPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @param object  the input object
      * @return true if predicate returns false
      */
-    @Override
     public boolean evaluate(final T object) {
         return !iPredicate.evaluate(object);
     }
@@ -77,7 +76,6 @@ public final class NotPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @return the predicate as the only element in an array
      * @since 3.1
      */
-    @Override
     @SuppressWarnings("unchecked")
     public Predicate<? super T>[] getPredicates() {
         return new Predicate[] {iPredicate};

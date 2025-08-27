@@ -49,7 +49,6 @@ public abstract class AbstractKeyValue<K, V> implements KeyValue<K, V> {
      *
      * @return the key
      */
-    @Override
     public K getKey() {
         return key;
     }
@@ -65,7 +64,6 @@ public abstract class AbstractKeyValue<K, V> implements KeyValue<K, V> {
      *
      * @return the value
      */
-    @Override
     public V getValue() {
         return value;
     }

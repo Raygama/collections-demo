@@ -66,7 +66,6 @@ public final class InstanceofPredicate implements Predicate<Object>, Serializabl
      * @param object  the input object
      * @return true if input is of stored type
      */
-    @Override
     public boolean evaluate(final Object object) {
         return iType.isInstance(object);
     }

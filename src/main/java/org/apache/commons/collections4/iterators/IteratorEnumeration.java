@@ -56,7 +56,6 @@ public class IteratorEnumeration<E> implements Enumeration<E> {
      *
      * @return true if the underlying iterator has more elements
      */
-    @Override
     public boolean hasMoreElements() {
         return iterator.hasNext();
     }
@@ -68,7 +67,6 @@ public class IteratorEnumeration<E> implements Enumeration<E> {
      * @throws java.util.NoSuchElementException if the underlying iterator has
      * no more elements
      */
-    @Override
     public E nextElement() {
         return iterator.next();
     }

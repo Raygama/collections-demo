@@ -113,22 +113,18 @@ public class FilterListIterator<E> implements ListIterator<E> {
 
     //-----------------------------------------------------------------------
     /** Not supported. */
-    @Override
     public void add(final E o) {
         throw new UnsupportedOperationException("FilterListIterator.add(Object) is not supported.");
     }
 
-    @Override
     public boolean hasNext() {
         return nextObjectSet || setNextObject();
     }
 
-    @Override
     public boolean hasPrevious() {
         return previousObjectSet || setPreviousObject();
     }
 
-    @Override
     public E next() {
         if (!nextObjectSet) {
             if (!setNextObject()) {
@@ -141,12 +137,10 @@ public class FilterListIterator<E> implements ListIterator<E> {
         return temp;
     }
 
-    @Override
     public int nextIndex() {
         return nextIndex;
     }
 
-    @Override
     public E previous() {
         if (!previousObjectSet) {
             if (!setPreviousObject()) {
@@ -159,19 +153,16 @@ public class FilterListIterator<E> implements ListIterator<E> {
         return temp;
     }
 
-    @Override
     public int previousIndex() {
         return nextIndex-1;
     }
 
     /** Not supported. */
-    @Override
     public void remove() {
         throw new UnsupportedOperationException("FilterListIterator.remove() is not supported.");
     }
 
     /** Not supported. */
-    @Override
     public void set(final E o) {
         throw new UnsupportedOperationException("FilterListIterator.set(Object) is not supported.");
     }

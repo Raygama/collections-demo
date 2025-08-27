@@ -72,7 +72,6 @@ public final class AndPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @param object  the input object
      * @return true if both decorated predicates return true
      */
-    @Override
     public boolean evaluate(final T object) {
        return iPredicate1.evaluate(object) && iPredicate2.evaluate(object);
     }
@@ -83,7 +82,6 @@ public final class AndPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @return the predicates
      * @since 3.1
      */
-    @Override
     @SuppressWarnings("unchecked")
     public Predicate<? super T>[] getPredicates() {
         return new Predicate[] {iPredicate1, iPredicate2};

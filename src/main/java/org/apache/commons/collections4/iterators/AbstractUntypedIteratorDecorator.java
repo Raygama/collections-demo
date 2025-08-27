@@ -55,12 +55,10 @@ public abstract class AbstractUntypedIteratorDecorator<I, O> implements Iterator
         return iterator;
     }
 
-    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
-    @Override
     public void remove() {
         iterator.remove();
     }

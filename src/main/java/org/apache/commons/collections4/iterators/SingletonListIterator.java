@@ -51,7 +51,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      *
      * @return true if the single object hasn't been returned yet
      */
-    @Override
     public boolean hasNext() {
         return beforeFirst && !removed;
     }
@@ -63,7 +62,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      *
      * @return true if the single object has been returned
      */
-    @Override
     public boolean hasPrevious() {
         return !beforeFirst && !removed;
     }
@@ -74,7 +72,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      *
      * @return 0 or 1 depending on current state.
      */
-    @Override
     public int nextIndex() {
         return beforeFirst ? 0 : 1;
     }
@@ -86,7 +83,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      *
      * @return 0 or -1 depending on current state.
      */
-    @Override
     public int previousIndex() {
         return beforeFirst ? -1 : 0;
     }
@@ -100,7 +96,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      * @throws NoSuchElementException if the single object has already
      *    been returned
      */
-    @Override
     public E next() {
         if (!beforeFirst || removed) {
             throw new NoSuchElementException();
@@ -119,7 +114,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      * @throws NoSuchElementException if the single object has not already
      *    been returned
      */
-    @Override
     public E previous() {
         if (beforeFirst || removed) {
             throw new NoSuchElementException();
@@ -135,7 +129,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      *        has already been called after the last call to {@code next}
      *        or {@code previous}.
      */
-    @Override
     public void remove() {
         if(!nextCalled || removed) {
             throw new IllegalStateException();
@@ -150,7 +143,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      * @param obj  the object to add
      * @throws UnsupportedOperationException always
      */
-    @Override
     public void add(final E obj) {
         throw new UnsupportedOperationException("add() is not supported by this iterator");
     }
@@ -162,7 +154,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
      * @throws IllegalStateException if {@code next} has not been called
      *          or the object has been removed
      */
-    @Override
     public void set(final E obj) {
         if (!nextCalled || removed) {
             throw new IllegalStateException();
@@ -173,7 +164,6 @@ public class SingletonListIterator<E> implements ResettableListIterator<E> {
     /**
      * Reset the iterator back to the start.
      */
-    @Override
     public void reset() {
         beforeFirst = true;
         nextCalled = false;

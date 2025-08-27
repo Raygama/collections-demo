@@ -171,7 +171,6 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
      *
      * @return the eldest key
      */
-    @Override
     public K firstKey() {
         if (size == 0) {
             throw new NoSuchElementException("Map is empty");
@@ -184,7 +183,6 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
      *
      * @return the most recently inserted key
      */
-    @Override
     public K lastKey() {
         if (size == 0) {
             throw new NoSuchElementException("Map is empty");
@@ -198,7 +196,6 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
      * @param key  the key to get after
      * @return the next key
      */
-    @Override
     public K nextKey(final Object key) {
         final LinkEntry<K, V> entry = getEntry(key);
         return entry == null || entry.after == header ? null : entry.after.getKey();
@@ -215,7 +212,6 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
      * @param key  the key to get before
      * @return the previous key
      */
-    @Override
     public K previousKey(final Object key) {
         final LinkEntry<K, V> entry = getEntry(key);
         return entry == null || entry.before == header ? null : entry.before.getKey();
@@ -357,17 +353,14 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
             super(parent);
         }
 
-        @Override
         public K next() {
             return super.nextEntry().getKey();
         }
 
-        @Override
         public K previous() {
             return super.previousEntry().getKey();
         }
 
-        @Override
         public K getKey() {
             final LinkEntry<K, V> current = currentEntry();
             if (current == null) {
@@ -376,7 +369,6 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
             return current.getKey();
         }
 
-        @Override
         public V getValue() {
             final LinkEntry<K, V> current = currentEntry();
             if (current == null) {
@@ -385,7 +377,6 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
             return current.getValue();
         }
 
-        @Override
         public V setValue(final V value) {
             final LinkEntry<K, V> current = currentEntry();
             if (current == null) {
@@ -420,12 +411,10 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
             super(parent);
         }
 
-        @Override
         public Map.Entry<K, V> next() {
             return super.nextEntry();
         }
 
-        @Override
         public Map.Entry<K, V> previous() {
             return super.previousEntry();
         }
@@ -457,12 +446,10 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
             super((AbstractLinkedMap<K, Object>) parent);
         }
 
-        @Override
         public K next() {
             return super.nextEntry().getKey();
         }
 
-        @Override
         public K previous() {
             return super.previousEntry().getKey();
         }
@@ -494,12 +481,10 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
             super((AbstractLinkedMap<Object, V>) parent);
         }
 
-        @Override
         public V next() {
             return super.nextEntry().getValue();
         }
 
-        @Override
         public V previous() {
             return super.previousEntry().getValue();
         }

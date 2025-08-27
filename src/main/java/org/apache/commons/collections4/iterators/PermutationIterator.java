@@ -46,12 +46,12 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
     /**
      * Permutation is done on theses keys to handle equal objects.
      */
-    private final int[] keys;
+    private int[] keys;
 
     /**
      * Mapping between keys and objects.
      */
-    private final Map<Integer, E> objectMap;
+    private Map<Integer, E> objectMap;
 
     /**
      * Direction table used in the algorithm:
@@ -60,7 +60,7 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
      *   <li>true is right</li>
      * </ul>
      */
-    private final boolean[] direction;
+    private boolean[] direction;
 
     /**
      * Next permutation to return. When a permutation is requested
@@ -95,7 +95,6 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
      * Indicates if there are more permutation available.
      * @return true if there are more permutations, otherwise false
      */
-    @Override
     public boolean hasNext() {
         return nextPermutation != null;
     }
@@ -105,7 +104,6 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
      * @return a list of the permutator's elements representing a permutation
      * @throws NoSuchElementException if there are no more permutations
      */
-    @Override
     public List<E> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -151,7 +149,6 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         return result;
     }
 
-    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }
