@@ -16,10 +16,10 @@
  */
 package org.apache.commons.collections4.functors;
 
+import java.io.Serializable;
+
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.Transformer;
-
-import java.io.Serializable;
 
 /**
  * Transformer implementation that will call one of two closures based on whether a predicate evaluates
@@ -29,7 +29,6 @@ import java.io.Serializable;
  * @param <O> The output type for the transformer
  *
  * @since 4.1
- * @version $Id$
  */
 public class IfTransformer<I, O> implements Transformer<I, O>, Serializable {
 
@@ -52,18 +51,19 @@ public class IfTransformer<I, O> implements Transformer<I, O>, Serializable {
      * @param trueTransformer  transformer used if true
      * @param falseTransformer  transformer used if false
      * @return the <code>if</code> transformer
+     * @throws NullPointerException if either argument is null
      */
     public static <I, O> Transformer<I, O> ifTransformer(final Predicate<? super I> predicate,
                                                          final Transformer<? super I, ? extends O> trueTransformer,
                                                          final Transformer<? super I, ? extends O> falseTransformer) {
         if (predicate == null) {
-            throw new IllegalArgumentException("Predicate must not be null");
+            throw new NullPointerException("Predicate must not be null");
         }
         if (trueTransformer == null || falseTransformer == null) {
-            throw new IllegalArgumentException("Transformers must not be null");
+            throw new NullPointerException("Transformers must not be null");
         }
 
-        return new IfTransformer<I, O>(predicate, trueTransformer, falseTransformer);
+        return new IfTransformer<>(predicate, trueTransformer, falseTransformer);
     }
 
     /**
@@ -76,19 +76,20 @@ public class IfTransformer<I, O> implements Transformer<I, O>, Serializable {
      * @param predicate  predicate to switch on
      * @param trueTransformer  transformer used if true
      * @return the <code>if</code> transformer
+     * @throws NullPointerException if either argument is null
      */
     public static <T> Transformer<T, T> ifTransformer(
             final Predicate<? super T> predicate,
             final Transformer<? super T, ? extends T> trueTransformer) {
 
         if (predicate == null) {
-            throw new IllegalArgumentException("Predicate must not be null");
+            throw new NullPointerException("Predicate must not be null");
         }
         if (trueTransformer == null) {
-            throw new IllegalArgumentException("Transformer must not be null");
+            throw new NullPointerException("Transformer must not be null");
         }
 
-        return new IfTransformer<T, T>(predicate, trueTransformer, NOPTransformer.<T>nopTransformer());
+        return new IfTransformer<>(predicate, trueTransformer, NOPTransformer.<T>nopTransformer());
     }
 
     /**
@@ -115,12 +116,12 @@ public class IfTransformer<I, O> implements Transformer<I, O>, Serializable {
      * @param input  the input object to transform
      * @return the transformed result
      */
+    @Override
     public O transform(final I input) {
         if(iPredicate.evaluate(input)){
             return iTrueTransformer.transform(input);
-        } else {
-            return iFalseTransformer.transform(input);
         }
+        return iFalseTransformer.transform(input);
     }
 
     /**

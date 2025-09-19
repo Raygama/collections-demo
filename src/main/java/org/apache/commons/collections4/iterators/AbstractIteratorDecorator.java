@@ -24,7 +24,6 @@ import java.util.Iterator;
  * All methods are forwarded to the decorated iterator.
  *
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractIteratorDecorator<E> extends AbstractUntypedIteratorDecorator<E, E> {
 
@@ -33,13 +32,14 @@ public abstract class AbstractIteratorDecorator<E> extends AbstractUntypedIterat
      * Constructor that decorates the specified iterator.
      *
      * @param iterator  the iterator to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the iterator is null
      */
     protected AbstractIteratorDecorator(final Iterator<E> iterator) {
         super(iterator);
     }
 
     /** {@inheritDoc} */
+    @Override
     public E next() {
         return getIterator().next();
     }

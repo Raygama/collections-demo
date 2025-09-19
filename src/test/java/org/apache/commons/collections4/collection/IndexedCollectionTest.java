@@ -31,7 +31,6 @@ import org.apache.commons.collections4.Transformer;
  * {@link IndexedCollection} implementation.
  *
  * @since 4.0
- * @version $Id$
  */
 @SuppressWarnings("boxing")
 public class IndexedCollectionTest extends AbstractCollectionTest<String> {
@@ -53,6 +52,7 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
     private static final class IntegerTransformer implements Transformer<String, Integer>, Serializable {
         private static final long serialVersionUID = 809439581555072949L;
 
+        @Override
         public Integer transform(final String input) {
             return Integer.valueOf(input);
         }
@@ -65,7 +65,7 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
 
     @Override
     public Collection<String> makeConfirmedCollection() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -80,14 +80,14 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
 
     @Override
     public Collection<String> makeFullCollection() {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         list.addAll(Arrays.asList(getFullElements()));
         return decorateCollection(list);
     }
 
     @Override
     public Collection<String> makeConfirmedFullCollection() {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -147,7 +147,7 @@ public class IndexedCollectionTest extends AbstractCollectionTest<String> {
     }
 
     public void testReindexUpdatesIndexWhenDecoratedCollectionIsModifiedSeparately() throws Exception {
-        final Collection<String> original = new ArrayList<String>();
+        final Collection<String> original = new ArrayList<>();
         final IndexedCollection<Integer, String> indexed = decorateUniqueCollection(original);
 
         original.add("1");

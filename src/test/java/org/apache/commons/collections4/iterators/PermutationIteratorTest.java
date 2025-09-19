@@ -27,7 +27,6 @@ import java.util.Set;
 /**
  * Test class for PermutationIterator.
  *
- * @version $Id$
  * @since 4.0
  */
 public class PermutationIteratorTest extends AbstractIteratorTest<List<Character>> {
@@ -42,7 +41,7 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
 
     @Override
     public void setUp() {
-        testList = new ArrayList<Character>();
+        testList = new ArrayList<>();
         testList.addAll(Arrays.asList(testArray));
     }
 
@@ -60,12 +59,12 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
 
     @Override
     public PermutationIterator<Character> makeEmptyIterator() {
-        return new PermutationIterator<Character>(new ArrayList<Character>());
+        return new PermutationIterator<>(new ArrayList<Character>());
     }
 
     @Override
     public PermutationIterator<Character> makeObject() {
-        return new PermutationIterator<Character>(testList);
+        return new PermutationIterator<>(testList);
     }
 
     //-----------------------------------------------------------------------
@@ -74,11 +73,11 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
     public void testPermutationResultSize() {
         int factorial = 1;
         for (int i = 0; i < 8; i++, factorial*=i) {
-            List<Integer> list = new ArrayList<Integer>();
+            final List<Integer> list = new ArrayList<>();
             for (int j = 0; j < i; j++) {
                 list.add(j);
             }
-            Iterator<List<Integer>> it = new PermutationIterator<Integer>(list);
+            final Iterator<List<Integer>> it = new PermutationIterator<>(list);
             int count = 0;
             while (it.hasNext()) {
                 it.next();
@@ -93,12 +92,12 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
      */
     @SuppressWarnings("boxing") // OK in test code
     public void testPermutationExhaustivity() {
-        List<Character> perm1 = new ArrayList<Character>();
-        List<Character> perm2 = new ArrayList<Character>();
-        List<Character> perm3 = new ArrayList<Character>();
-        List<Character> perm4 = new ArrayList<Character>();
-        List<Character> perm5 = new ArrayList<Character>();
-        List<Character> perm6 = new ArrayList<Character>();
+        final List<Character> perm1 = new ArrayList<>();
+        final List<Character> perm2 = new ArrayList<>();
+        final List<Character> perm3 = new ArrayList<>();
+        final List<Character> perm4 = new ArrayList<>();
+        final List<Character> perm5 = new ArrayList<>();
+        final List<Character> perm6 = new ArrayList<>();
 
         perm1.add('A');
         perm2.add('A');
@@ -121,11 +120,11 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
         perm5.add('B');
         perm6.add('A');
 
-        List<List<Character>> results = new ArrayList<List<Character>>();
+        final List<List<Character>> results = new ArrayList<>();
 
-        PermutationIterator<Character> it = makeObject();
+        final PermutationIterator<Character> it = makeObject();
         while (it.hasNext()) {
-            List<Character> next = it.next();
+            final List<Character> next = it.next();
             results.add(next);
         }
         //3! permutation for 3 elements
@@ -142,12 +141,12 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
      * test checking that all the permutations are returned only once.
      */
     public void testPermutationUnicity() {
-        List<List<Character>> resultsList = new ArrayList<List<Character>>();
-        Set<List<Character>> resultsSet = new HashSet<List<Character>>();
+        final List<List<Character>> resultsList = new ArrayList<>();
+        final Set<List<Character>> resultsSet = new HashSet<>();
 
-        PermutationIterator<Character> it = makeObject();
+        final PermutationIterator<Character> it = makeObject();
         while (it.hasNext()) {
-            List<Character> permutation = it.next();
+            final List<Character> permutation = it.next();
             resultsList.add(permutation);
             resultsSet.add(permutation);
         }
@@ -157,24 +156,24 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
     }
 
     public void testPermutationException() {
-        List<List<Character>> resultsList = new ArrayList<List<Character>>();
+        final List<List<Character>> resultsList = new ArrayList<>();
 
-        PermutationIterator<Character> it = makeObject();
+        final PermutationIterator<Character> it = makeObject();
         while (it.hasNext()) {
-            List<Character> permutation = it.next();
+            final List<Character> permutation = it.next();
             resultsList.add(permutation);
         }
         //asking for another permutation should throw an exception
         try {
             it.next();
             fail();
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             // expected
         }
     }
 
     public void testPermutatorHasMore() {
-        PermutationIterator<Character> it = makeObject();
+        final PermutationIterator<Character> it = makeObject();
         for (int i = 0; i < 6; i++) {
             assertTrue(it.hasNext());
             it.next();
@@ -183,11 +182,11 @@ public class PermutationIteratorTest extends AbstractIteratorTest<List<Character
     }
 
     public void testEmptyCollection() {
-        PermutationIterator<Character> it = makeEmptyIterator();
+        final PermutationIterator<Character> it = makeEmptyIterator();
         // there is one permutation for an empty set: 0! = 1
         assertTrue(it.hasNext());
 
-        List<Character> nextPermutation = it.next();
+        final List<Character> nextPermutation = it.next();
         assertEquals(0, nextPermutation.size());
 
         assertFalse(it.hasNext());

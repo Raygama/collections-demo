@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.collections4.ResettableListIterator;
 
 /**
- * Implements a {@link ListIterator} over an array of objects.
+ * Implements a {@link java.util.ListIterator} over an array of objects.
  * <p>
  * This iterator does not support {@link #add} or {@link #remove}, as the object array
  * cannot be structurally modified. The {@link #set} method is supported however.
@@ -34,7 +34,6 @@ import org.apache.commons.collections4.ResettableListIterator;
  * @see java.util.ListIterator
  *
  * @since 3.0
- * @version $Id$
  */
 public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
         implements ResettableListIterator<E> {
@@ -95,6 +94,7 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      *
      * @return true if there is a previous element to return
      */
+    @Override
     public boolean hasPrevious() {
         return this.index > getStartIndex();
     }
@@ -105,6 +105,7 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * @return the previous element
      * @throws NoSuchElementException if there is no previous element
      */
+    @Override
     public E previous() {
         if (hasPrevious() == false) {
             throw new NoSuchElementException();
@@ -133,6 +134,7 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
+    @Override
     public int nextIndex() {
         return this.index - getStartIndex();
     }
@@ -142,6 +144,7 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
+    @Override
     public int previousIndex() {
         return this.index - getStartIndex() - 1;
     }
@@ -153,6 +156,7 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * @param obj  the object to add
      * @throws UnsupportedOperationException always thrown.
      */
+    @Override
     public void add(final E obj) {
         throw new UnsupportedOperationException("add() method is not supported");
     }
@@ -163,9 +167,9 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * This method sets the element that was returned by the last call
      * to {@link #next()} of {@link #previous()}.
      *
-     * <b>Note:</b> {@link ListIterator} implementations that support <code>add()</code>
+     * <b>Note:</b> {@link java.util.ListIterator} implementations that support <code>add()</code>
      * and <code>remove()</code> only allow <code>set()</code> to be called once per call
-     * to <code>next()</code> or <code>previous</code> (see the {@link ListIterator}
+     * to <code>next()</code> or <code>previous</code> (see the {@link java.util.ListIterator}
      * javadoc for more details). Since this implementation does not support
      * <code>add()</code> or <code>remove()</code>, <code>set()</code> may be
      * called as often as desired.
@@ -174,6 +178,7 @@ public class ObjectArrayListIterator<E> extends ObjectArrayIterator<E>
      * @throws IllegalStateException if next() has not yet been called.
      * @throws ClassCastException if the object type is unsuitable for the array
      */
+    @Override
     public void set(final E obj) {
         if (this.lastItemIndex == -1) {
             throw new IllegalStateException("must call next() or previous() before a call to set()");

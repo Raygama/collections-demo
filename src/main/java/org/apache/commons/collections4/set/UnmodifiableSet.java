@@ -30,8 +30,8 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <E> the type of the elements in this set
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableSet<E>
         extends AbstractSerializableSetDecorator<E>
@@ -46,7 +46,7 @@ public final class UnmodifiableSet<E>
      * @param <E> the element type
      * @param set  the set to decorate, must not be null
      * @return a new unmodifiable set
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if set is null
      * @since 4.0
      */
     public static <E> Set<E> unmodifiableSet(final Set<? extends E> set) {
@@ -55,7 +55,7 @@ public final class UnmodifiableSet<E>
             final Set<E> tmpSet = (Set<E>) set;
             return tmpSet;
         }
-        return new UnmodifiableSet<E>(set);
+        return new UnmodifiableSet<>(set);
     }
 
     //-----------------------------------------------------------------------
@@ -63,7 +63,7 @@ public final class UnmodifiableSet<E>
      * Constructor that wraps (not copies).
      *
      * @param set  the set to decorate, must not be null
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if set is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableSet(final Set<? extends E> set) {

@@ -25,7 +25,6 @@ import org.apache.commons.collections4.Predicate;
  * Predicate implementation that throws an exception if the input is null.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class NullIsExceptionPredicate<T> implements PredicateDecorator<T>, Serializable {
 
@@ -41,13 +40,13 @@ public final class NullIsExceptionPredicate<T> implements PredicateDecorator<T>,
      * @param <T> the type that the predicate queries
      * @param predicate  the predicate to decorate, not null
      * @return the predicate
-     * @throws IllegalArgumentException if the predicate is null
+     * @throws NullPointerException if the predicate is null
      */
     public static <T> Predicate<T> nullIsExceptionPredicate(final Predicate<? super T> predicate) {
         if (predicate == null) {
-            throw new IllegalArgumentException("Predicate must not be null");
+            throw new NullPointerException("Predicate must not be null");
         }
-        return new NullIsExceptionPredicate<T>(predicate);
+        return new NullIsExceptionPredicate<>(predicate);
     }
 
     /**
@@ -69,6 +68,7 @@ public final class NullIsExceptionPredicate<T> implements PredicateDecorator<T>,
      * @return true if decorated predicate returns true
      * @throws FunctorException if input is null
      */
+    @Override
     public boolean evaluate(final T object) {
         if (object == null) {
             throw new FunctorException("Input Object must not be null");
@@ -82,6 +82,7 @@ public final class NullIsExceptionPredicate<T> implements PredicateDecorator<T>,
      * @return the predicate as the only element in an array
      * @since 3.1
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Predicate<? super T>[] getPredicates() {
         return new Predicate[] { iPredicate };

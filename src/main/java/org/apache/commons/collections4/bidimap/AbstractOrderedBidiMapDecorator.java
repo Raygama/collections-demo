@@ -31,8 +31,9 @@ import org.apache.commons.collections4.OrderedMapIterator;
  * it would provide a loophole around the validation.
  * But, you might want that loophole, so this class is kept simple.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractOrderedBidiMapDecorator<K, V>
         extends AbstractBidiMapDecorator<K, V>
@@ -42,7 +43,7 @@ public abstract class AbstractOrderedBidiMapDecorator<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the collection is null
      */
     protected AbstractOrderedBidiMapDecorator(final OrderedBidiMap<K, V> map) {
         super(map);

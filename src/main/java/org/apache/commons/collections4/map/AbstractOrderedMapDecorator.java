@@ -31,8 +31,9 @@ import org.apache.commons.collections4.OrderedMapIterator;
  * it would provide a loophole around the validation.
  * But, you might want that loophole, so this class is kept simple.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractOrderedMapDecorator<K, V> extends AbstractMapDecorator<K, V>
         implements OrderedMap<K, V> {
@@ -49,7 +50,7 @@ public abstract class AbstractOrderedMapDecorator<K, V> extends AbstractMapDecor
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the map is null
      */
     public AbstractOrderedMapDecorator(final OrderedMap<K, V> map) {
         super(map);
@@ -66,18 +67,22 @@ public abstract class AbstractOrderedMapDecorator<K, V> extends AbstractMapDecor
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public K firstKey() {
         return decorated().firstKey();
     }
 
+    @Override
     public K lastKey() {
         return decorated().lastKey();
     }
 
+    @Override
     public K nextKey(final K key) {
         return decorated().nextKey(key);
     }
 
+    @Override
     public K previousKey(final K key) {
         return decorated().previousKey(key);
     }

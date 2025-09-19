@@ -27,8 +27,9 @@ import org.apache.commons.collections4.Trie;
  * This class provides some basic {@link Trie} functionality and
  * utility methods for actual bitwise {@link Trie} implementations.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 4.0
- * @version $Id$
  */
 public abstract class AbstractBitwiseTrie<K, V> extends AbstractMap<K, V>
         implements Trie<K, V>, Serializable {
@@ -169,14 +170,17 @@ public abstract class AbstractBitwiseTrie<K, V> extends AbstractMap<K, V>
             return setValue(value);
         }
 
+        @Override
         public K getKey() {
             return key;
         }
 
+        @Override
         public V getValue() {
             return value;
         }
 
+        @Override
         public V setValue(final V value) {
             final V previous = this.value;
             this.value = value;

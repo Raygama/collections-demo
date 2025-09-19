@@ -25,12 +25,11 @@ import org.junit.Test;
 /**
  * A unit test to test the basic functions of {@link SkippingIterator}.
  *
- * @version $Id$
  */
 public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
 
     /** Test array of size 7 */
-    private String[] testArray = {
+    private final String[] testArray = {
         "a", "b", "c", "d", "e", "f", "g"
     };
 
@@ -50,12 +49,12 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
 
     @Override
     public Iterator<E> makeEmptyIterator() {
-        return new SkippingIterator<E>(Collections.<E>emptyList().iterator(), 0);
+        return new SkippingIterator<>(Collections.<E>emptyList().iterator(), 0);
     }
 
     @Override
     public Iterator<E> makeObject() {
-        return new SkippingIterator<E>(new ArrayList<E>(testList).iterator(), 1);
+        return new SkippingIterator<>(new ArrayList<>(testList).iterator(), 1);
     }
 
     // ---------------- Tests ---------------------
@@ -67,7 +66,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testSkipping() {
-        Iterator<E> iter = new SkippingIterator<E>(testList.iterator(), 2);
+        final Iterator<E> iter = new SkippingIterator<>(testList.iterator(), 2);
 
         assertTrue(iter.hasNext());
         assertEquals("c", iter.next());
@@ -84,7 +83,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
     }
 
@@ -95,7 +94,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testSameAsDecorated() {
-        Iterator<E> iter = new SkippingIterator<E>(testList.iterator(), 0);
+        final Iterator<E> iter = new SkippingIterator<>(testList.iterator(), 0);
 
         assertTrue(iter.hasNext());
         assertEquals("a", iter.next());
@@ -116,7 +115,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
     }
 
@@ -127,12 +126,12 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testOffsetGreaterThanSize() {
-        Iterator<E> iter = new SkippingIterator<E>(testList.iterator(), 10);
+        final Iterator<E> iter = new SkippingIterator<>(testList.iterator(), 10);
         assertFalse(iter.hasNext());
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
     }
 
@@ -143,9 +142,9 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
     @Test
     public void testNegativeOffset() {
         try {
-            new SkippingIterator<E>(testList.iterator(), -1);
+            new SkippingIterator<>(testList.iterator(), -1);
             fail("Expected IllegalArgumentException.");
-        } catch (IllegalArgumentException iae) { /* Success case */
+        } catch (final IllegalArgumentException iae) { /* Success case */
         }
     }
 
@@ -155,13 +154,13 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveWithoutCallingNext() {
-        List<E> testListCopy = new ArrayList<E>(testList);
-        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 1);
+        final List<E> testListCopy = new ArrayList<>(testList);
+        final Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 1);
 
         try {
             iter.remove();
             fail("Expected IllegalStateException.");
-        } catch (IllegalStateException ise) { /* Success case */
+        } catch (final IllegalStateException ise) { /* Success case */
         }
     }
 
@@ -171,8 +170,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveCalledTwice() {
-        List<E> testListCopy = new ArrayList<E>(testList);
-        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 1);
+        final List<E> testListCopy = new ArrayList<>(testList);
+        final Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 1);
 
         assertTrue(iter.hasNext());
         assertEquals("b", iter.next());
@@ -181,7 +180,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.remove();
             fail("Expected IllegalStateException.");
-        } catch (IllegalStateException ise) { /* Success case */
+        } catch (final IllegalStateException ise) { /* Success case */
         }
     }
 
@@ -191,8 +190,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveFirst() {
-        List<E> testListCopy = new ArrayList<E>(testList);
-        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 4);
+        final List<E> testListCopy = new ArrayList<>(testList);
+        final Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 4);
 
         assertTrue(iter.hasNext());
         assertEquals("e", iter.next());
@@ -209,7 +208,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
     }
 
@@ -219,8 +218,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveMiddle() {
-        List<E> testListCopy = new ArrayList<E>(testList);
-        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 3);
+        final List<E> testListCopy = new ArrayList<>(testList);
+        final Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 3);
 
         assertTrue(iter.hasNext());
         assertEquals("d", iter.next());
@@ -239,7 +238,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
     }
 
@@ -249,8 +248,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveLast() {
-        List<E> testListCopy = new ArrayList<E>(testList);
-        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 5);
+        final List<E> testListCopy = new ArrayList<>(testList);
+        final Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 5);
 
         assertTrue(iter.hasNext());
         assertEquals("f", iter.next());
@@ -261,7 +260,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
 
         iter.remove();
@@ -271,7 +270,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
             fail("Expected NoSuchElementException.");
-        } catch (NoSuchElementException nsee) { /* Success case */
+        } catch (final NoSuchElementException nsee) { /* Success case */
         }
     }
 
@@ -281,20 +280,20 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveUnsupported() {
-        Iterator<E> mockIterator = new AbstractIteratorDecorator<E>(testList.iterator()) {
+        final Iterator<E> mockIterator = new AbstractIteratorDecorator<E>(testList.iterator()) {
             @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
         };
 
-        Iterator<E> iter = new SkippingIterator<E>(mockIterator, 1);
+        final Iterator<E> iter = new SkippingIterator<>(mockIterator, 1);
         assertTrue(iter.hasNext());
         assertEquals("b", iter.next());
         try {
             iter.remove();
             fail("Expected UnsupportedOperationException.");
-        } catch (UnsupportedOperationException usoe) { /* Success case */
+        } catch (final UnsupportedOperationException usoe) { /* Success case */
         }
     }
 }

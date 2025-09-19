@@ -42,7 +42,6 @@ import org.apache.commons.collections4.iterators.ListIteratorWrapper;
  * @param <K> the type of the keys in the map
  * @param <V> the type of the values in the map
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecorator<K, V> implements
         IterableSortedMap<K, V> {
@@ -59,7 +58,7 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the map is null
      */
     public AbstractSortedMapDecorator(final SortedMap<K, V> map) {
         super(map);
@@ -76,35 +75,43 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public Comparator<? super K> comparator() {
         return decorated().comparator();
     }
 
+    @Override
     public K firstKey() {
         return decorated().firstKey();
     }
 
+    @Override
     public K lastKey() {
         return decorated().lastKey();
     }
 
+    @Override
     public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
         return decorated().subMap(fromKey, toKey);
     }
 
+    @Override
     public SortedMap<K, V> headMap(final K toKey) {
         return decorated().headMap(toKey);
     }
 
+    @Override
     public SortedMap<K, V> tailMap(final K fromKey) {
         return decorated().tailMap(fromKey);
     }
 
+    @Override
     public K previousKey(final K key) {
         final SortedMap<K, V> headMap = headMap(key);
         return headMap.isEmpty() ? null : headMap.lastKey();
     }
 
+    @Override
     public K nextKey(final K key) {
         final Iterator<K> it = tailMap(key).keySet().iterator();
         it.next();
@@ -116,7 +123,7 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
      */
     @Override
     public OrderedMapIterator<K, V> mapIterator() {
-        return new SortedMapIterator<K, V>(entrySet());
+        return new SortedMapIterator<>(entrySet());
     }
 
     /**
@@ -142,12 +149,13 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
         @Override
         public synchronized void reset() {
             super.reset();
-            iterator = new ListIteratorWrapper<Map.Entry<K, V>>(iterator);
+            iterator = new ListIteratorWrapper<>(iterator);
         }
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean hasPrevious() {
             return ((ListIterator<Map.Entry<K, V>>) iterator).hasPrevious();
         }
@@ -155,6 +163,7 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
         /**
          * {@inheritDoc}
          */
+        @Override
         public K previous() {
             entry = ((ListIterator<Map.Entry<K, V>>) iterator).previous();
             return getKey();

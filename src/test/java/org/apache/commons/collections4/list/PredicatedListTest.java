@@ -23,11 +23,10 @@ import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.functors.TruePredicate;
 
 /**
- * Extension of {@link AbstractListTest} for exercising the 
+ * Extension of {@link AbstractListTest} for exercising the
  * {@link PredicatedList} implementation.
  *
  * @since 3.0
- * @version $Id$
  */
 public class PredicatedListTest<E> extends AbstractListTest<E> {
 
@@ -58,6 +57,7 @@ public class PredicatedListTest<E> extends AbstractListTest<E> {
 
     protected Predicate<E> testPredicate =
         new Predicate<E>() {
+            @Override
             public boolean evaluate(final E o) {
                 return o instanceof String;
             }
@@ -84,7 +84,7 @@ public class PredicatedListTest<E> extends AbstractListTest<E> {
     @SuppressWarnings("unchecked")
     public void testIllegalAddAll() {
         final List<E> list = makeTestList();
-        final List<E> elements = new ArrayList<E>();
+        final List<E> elements = new ArrayList<>();
         elements.add((E) "one");
         elements.add((E) "two");
         elements.add((E) Integer.valueOf(3));
@@ -120,7 +120,7 @@ public class PredicatedListTest<E> extends AbstractListTest<E> {
     public void testLegalAddAll() {
         final List<E> list = makeTestList();
         list.add((E) "zero");
-        final List<E> elements = new ArrayList<E>();
+        final List<E> elements = new ArrayList<>();
         elements.add((E) "one");
         elements.add((E) "two");
         elements.add((E) "three");

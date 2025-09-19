@@ -25,7 +25,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableOrderedMapIterator<K, V> implements OrderedMapIterator<K, V>,
         Unmodifiable {
@@ -41,20 +40,20 @@ public final class UnmodifiableOrderedMapIterator<K, V> implements OrderedMapIte
      * @param <V>  the value type
      * @param iterator  the iterator to decorate
      * @return a new unmodifiable ordered map iterator
-     * @throws IllegalArgumentException if the iterator is null
+     * @throws NullPointerException if the iterator is null
      */
     public static <K, V> OrderedMapIterator<K, V> unmodifiableOrderedMapIterator(
             final OrderedMapIterator<K, ? extends V> iterator) {
 
         if (iterator == null) {
-            throw new IllegalArgumentException("OrderedMapIterator must not be null");
+            throw new NullPointerException("OrderedMapIterator must not be null");
         }
         if (iterator instanceof Unmodifiable) {
             @SuppressWarnings("unchecked") // safe to upcast
             final OrderedMapIterator<K, V> tmpIterator = (OrderedMapIterator<K, V>) iterator;
             return tmpIterator;
         }
-        return new UnmodifiableOrderedMapIterator<K, V>(iterator);
+        return new UnmodifiableOrderedMapIterator<>(iterator);
     }
 
     //-----------------------------------------------------------------------
@@ -69,34 +68,42 @@ public final class UnmodifiableOrderedMapIterator<K, V> implements OrderedMapIte
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
+    @Override
     public K next() {
         return iterator.next();
     }
 
+    @Override
     public boolean hasPrevious() {
         return iterator.hasPrevious();
     }
 
+    @Override
     public K previous() {
         return iterator.previous();
     }
 
+    @Override
     public K getKey() {
         return iterator.getKey();
     }
 
+    @Override
     public V getValue() {
         return iterator.getValue();
     }
 
+    @Override
     public V setValue(final V value) {
         throw new UnsupportedOperationException("setValue() is not supported");
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }

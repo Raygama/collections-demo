@@ -50,7 +50,6 @@ import java.util.List;
  *
  * @see LazyList
  * @since 3.2
- * @version $Id$
  */
 public class GrowthList<E> extends AbstractSerializableListDecorator<E> {
 
@@ -63,11 +62,11 @@ public class GrowthList<E> extends AbstractSerializableListDecorator<E> {
      * @param <E> the type of the elements in the list
      * @param list  the list to decorate, must not be null
      * @return a new growth list
-     * @throws IllegalArgumentException if list is null
+     * @throws NullPointerException if list is null
      * @since 4.0
      */
     public static <E> GrowthList<E> growthList(final List<E> list) {
-        return new GrowthList<E>(list);
+        return new GrowthList<>(list);
     }
 
     //-----------------------------------------------------------------------
@@ -92,7 +91,7 @@ public class GrowthList<E> extends AbstractSerializableListDecorator<E> {
      * Constructor that wraps (not copies).
      *
      * @param list  the list to decorate, must not be null
-     * @throws IllegalArgumentException if list is null
+     * @throws NullPointerException if list is null
      */
     protected GrowthList(final List<E> list) {
         super(list);
@@ -154,7 +153,7 @@ public class GrowthList<E> extends AbstractSerializableListDecorator<E> {
             decorated().addAll(Collections.<E>nCopies(index - size, null));
             result = true;
         }
-        return decorated().addAll(index, coll) | result;
+        return decorated().addAll(index, coll) || result;
     }
 
     //-----------------------------------------------------------------------

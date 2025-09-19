@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.commons.collections4.queue.PredicatedQueue;
+import org.apache.commons.collections4.queue.SynchronizedQueue;
 import org.apache.commons.collections4.queue.TransformedQueue;
 import org.apache.commons.collections4.queue.UnmodifiableQueue;
 
@@ -27,7 +28,6 @@ import org.apache.commons.collections4.queue.UnmodifiableQueue;
  * Provides utility methods and decorators for {@link Queue} instances.
  *
  * @since 4.0
- * @version $Id$
  */
 public class QueueUtils {
 
@@ -35,7 +35,7 @@ public class QueueUtils {
      * An empty unmodifiable queue.
      */
     @SuppressWarnings("rawtypes") // OK, empty queue is compatible with any type
-    public static final Queue EMPTY_QUEUE = UnmodifiableQueue.unmodifiableQueue(new LinkedList<Object>());
+    public static final Queue EMPTY_QUEUE = UnmodifiableQueue.unmodifiableQueue(new LinkedList<>());
 
     /**
      * <code>QueueUtils</code> should not normally be instantiated.
@@ -45,12 +45,43 @@ public class QueueUtils {
     //-----------------------------------------------------------------------
 
     /**
+     * Returns a synchronized (thread-safe) queue backed by the given queue.
+     * In order to guarantee serial access, it is critical that all access to the
+     * backing queue is accomplished through the returned queue.
+     * <p>
+     * It is imperative that the user manually synchronize on the returned queue
+     * when iterating over it:
+     *
+     * <pre>
+     * Queue queue = QueueUtils.synchronizedQueue(new CircularFifoQueue());
+     * ...
+     * synchronized(queue) {
+     *     Iterator i = queue.iterator(); // Must be in synchronized block
+     *     while (i.hasNext())
+     *         foo(i.next());
+     *     }
+     * }
+     * </pre>
+     *
+     * Failure to follow this advice may result in non-deterministic behavior.
+     *
+     * @param <E> the element type
+     * @param queue the queue to synchronize, must not be null
+     * @return a synchronized queue backed by that queue
+     * @throws NullPointerException if the queue is null
+     * @since 4.2
+     */
+    public static <E> Queue<E> synchronizedQueue(final Queue<E> queue) {
+        return SynchronizedQueue.synchronizedQueue(queue);
+    }
+
+    /**
      * Returns an unmodifiable queue backed by the given queue.
      *
      * @param <E> the type of the elements in the queue
      * @param queue  the queue to make unmodifiable, must not be null
      * @return an unmodifiable queue backed by that queue
-     * @throws IllegalArgumentException  if the Queue is null
+     * @throws NullPointerException if the queue is null
      */
     public static <E> Queue<E> unmodifiableQueue(final Queue<? extends E> queue) {
         return UnmodifiableQueue.unmodifiableQueue(queue);
@@ -68,7 +99,7 @@ public class QueueUtils {
      * @param queue  the queue to predicate, must not be null
      * @param predicate  the predicate used to evaluate new elements, must not be null
      * @return a predicated queue
-     * @throws IllegalArgumentException  if the Queue or Predicate is null
+     * @throws NullPointerException if the queue or predicate is null
      */
     public static <E> Queue<E> predicatedQueue(final Queue<E> queue, final Predicate<? super E> predicate) {
         return PredicatedQueue.predicatedQueue(queue, predicate);
@@ -88,7 +119,7 @@ public class QueueUtils {
      * @param queue  the queue to predicate, must not be null
      * @param transformer  the transformer for the queue, must not be null
      * @return a transformed queue backed by the given queue
-     * @throws IllegalArgumentException  if the Queue or Transformer is null
+     * @throws NullPointerException if the queue or transformer is null
      */
     public static <E> Queue<E> transformingQueue(final Queue<E> queue,
                                                  final Transformer<? super E, ? extends E> transformer) {
@@ -103,6 +134,6 @@ public class QueueUtils {
      */
     @SuppressWarnings("unchecked") // OK, empty queue is compatible with any type
     public static <E> Queue<E> emptyQueue() {
-        return (Queue<E>) EMPTY_QUEUE;
+        return EMPTY_QUEUE;
     }
 }

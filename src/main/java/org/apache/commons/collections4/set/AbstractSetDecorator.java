@@ -25,9 +25,8 @@ import org.apache.commons.collections4.collection.AbstractCollectionDecorator;
  * <p>
  * Methods are forwarded directly to the decorated set.
  *
- * @param <E> the type of the elements in the set
+ * @param <E> the type of the elements in this set
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractSetDecorator<E> extends AbstractCollectionDecorator<E> implements
         Set<E> {
@@ -47,7 +46,7 @@ public abstract class AbstractSetDecorator<E> extends AbstractCollectionDecorato
      * Constructor that wraps (not copies).
      *
      * @param set  the set to decorate, must not be null
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if set is null
      */
     protected AbstractSetDecorator(final Set<E> set) {
         super(set);

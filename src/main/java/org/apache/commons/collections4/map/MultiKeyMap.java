@@ -71,8 +71,9 @@ import org.apache.commons.collections4.keyvalue.MultiKey;
  * appropriate synchronization. This class may throw exceptions when accessed
  * by concurrent threads without synchronization.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.1
- * @version $Id$
  */
 public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K>, V>
         implements Serializable, Cloneable {
@@ -89,17 +90,18 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
      * @param <V>  the value type
      * @param map  the map to decorate, not null
      * @return a new multi key map
-     * @throws IllegalArgumentException if the map is null or not empty
+     * @throws NullPointerException if map is null
+     * @throws IllegalArgumentException if the map is not empty
      * @since 4.0
      */
     public static <K, V> MultiKeyMap<K, V> multiKeyMap(final AbstractHashedMap<MultiKey<? extends K>, V> map) {
         if (map == null) {
-            throw new IllegalArgumentException("Map must not be null");
+            throw new NullPointerException("Map must not be null");
         }
         if (map.size() > 0) {
             throw new IllegalArgumentException("Map must be empty");
         }
-        return new MultiKeyMap<K, V>(map);
+        return new MultiKeyMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -184,7 +186,7 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
             }
             entry = entry.next;
         }
-        decorated().addMapping(index, hashCode, new MultiKey<K>(key1, key2), value);
+        decorated().addMapping(index, hashCode, new MultiKey<>(key1, key2), value);
         return null;
     }
 
@@ -316,7 +318,7 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
             }
             entry = entry.next;
         }
-        decorated().addMapping(index, hashCode, new MultiKey<K>(key1, key2, key3), value);
+        decorated().addMapping(index, hashCode, new MultiKey<>(key1, key2, key3), value);
         return null;
     }
 
@@ -458,7 +460,7 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
             }
             entry = entry.next;
         }
-        decorated().addMapping(index, hashCode, new MultiKey<K>(key1, key2, key3, key4), value);
+        decorated().addMapping(index, hashCode, new MultiKey<>(key1, key2, key3, key4), value);
         return null;
     }
 
@@ -611,7 +613,7 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
             }
             entry = entry.next;
         }
-        decorated().addMapping(index, hashCode, new MultiKey<K>(key1, key2, key3, key4, key5), value);
+        decorated().addMapping(index, hashCode, new MultiKey<>(key1, key2, key3, key4, key5), value);
         return null;
     }
 
@@ -884,7 +886,7 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -895,8 +897,8 @@ public class MultiKeyMap<K, V> extends AbstractMapDecorator<MultiKey<? extends K
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

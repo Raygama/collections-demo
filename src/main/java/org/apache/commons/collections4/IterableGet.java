@@ -19,9 +19,10 @@ package org.apache.commons.collections4;
 /**
  * The "read" subset of the {@link java.util.Map} interface.
  *
- * @since 4.0
- * @version $Id$
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  *
+ * @since 4.0
  * @see Put
  */
 public interface IterableGet<K, V> extends Get<K, V> {
@@ -31,8 +32,8 @@ public interface IterableGet<K, V> extends Get<K, V> {
      * A map iterator is an efficient way of iterating over maps.
      * There is no need to access the entry set or use Map Entry objects.
      * <pre>
-     * IterableMap<String,Integer> map = new HashedMap<String,Integer>();
-     * MapIterator<String,Integer> it = map.mapIterator();
+     * IterableMap&lt;String,Integer&gt; map = new HashedMap&lt;String,Integer&gt;();
+     * MapIterator&lt;String,Integer&gt; it = map.mapIterator();
      * while (it.hasNext()) {
      *   String key = it.next();
      *   Integer value = it.getValue();

@@ -23,7 +23,6 @@ import org.apache.commons.collections4.KeyValue;
  * and {@link java.util.Map.Entry Map.Entry} implementations.
  *
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractKeyValue<K, V> implements KeyValue<K, V> {
 
@@ -49,11 +48,12 @@ public abstract class AbstractKeyValue<K, V> implements KeyValue<K, V> {
      *
      * @return the key
      */
+    @Override
     public K getKey() {
         return key;
     }
 
-    protected K setKey(K key) {
+    protected K setKey(final K key) {
         final K old = this.key;
         this.key = key;
         return old;
@@ -64,11 +64,12 @@ public abstract class AbstractKeyValue<K, V> implements KeyValue<K, V> {
      *
      * @return the value
      */
+    @Override
     public V getValue() {
         return value;
     }
 
-    protected V setValue(V value) {
+    protected V setValue(final V value) {
         final V old = this.value;
         this.value = value;
         return old;

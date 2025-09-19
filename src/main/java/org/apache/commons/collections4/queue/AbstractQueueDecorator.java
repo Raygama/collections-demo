@@ -33,7 +33,6 @@ import org.apache.commons.collections4.collection.AbstractCollectionDecorator;
  *
  * @param <E> the type of the elements in the queue
  * @since 4.0
- * @version $Id$
  */
 public abstract class AbstractQueueDecorator<E> extends AbstractCollectionDecorator<E>
         implements Queue<E> {
@@ -52,7 +51,7 @@ public abstract class AbstractQueueDecorator<E> extends AbstractCollectionDecora
      * Constructor that wraps (not copies).
      *
      * @param queue  the queue to decorate, must not be null
-     * @throws IllegalArgumentException if list is null
+     * @throws NullPointerException if queue is null
      */
     protected AbstractQueueDecorator(final Queue<E> queue) {
         super(queue);
@@ -70,22 +69,27 @@ public abstract class AbstractQueueDecorator<E> extends AbstractCollectionDecora
 
     //-----------------------------------------------------------------------
 
+    @Override
     public boolean offer(final E obj) {
         return decorated().offer(obj);
     }
 
+    @Override
     public E poll() {
         return decorated().poll();
     }
 
+    @Override
     public E peek() {
         return decorated().peek();
     }
 
+    @Override
     public E element() {
         return decorated().element();
     }
 
+    @Override
     public E remove() {
         return decorated().remove();
     }

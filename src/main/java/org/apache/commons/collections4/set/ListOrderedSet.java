@@ -49,8 +49,8 @@ import org.apache.commons.collections4.list.UnmodifiableList;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <E> the type of the elements in this set
  * @since 3.0
- * @version $Id$
  */
 public class ListOrderedSet<E>
     extends AbstractSerializableSetDecorator<E> {
@@ -70,21 +70,21 @@ public class ListOrderedSet<E>
      * @param set the set to decorate, must be empty and not null
      * @param list the list to decorate, must be empty and not null
      * @return a new ordered set
-     * @throws IllegalArgumentException if set or list is null
+     * @throws NullPointerException if set or list is null
      * @throws IllegalArgumentException if either the set or list is not empty
      * @since 4.0
      */
     public static <E> ListOrderedSet<E> listOrderedSet(final Set<E> set, final List<E> list) {
         if (set == null) {
-            throw new IllegalArgumentException("Set must not be null");
+            throw new NullPointerException("Set must not be null");
         }
         if (list == null) {
-            throw new IllegalArgumentException("List must not be null");
+            throw new NullPointerException("List must not be null");
         }
         if (set.size() > 0 || list.size() > 0) {
             throw new IllegalArgumentException("Set and List must be empty");
         }
-        return new ListOrderedSet<E>(set, list);
+        return new ListOrderedSet<>(set, list);
     }
 
     /**
@@ -95,11 +95,11 @@ public class ListOrderedSet<E>
      * @param <E> the element type
      * @param set the set to decorate, must not be null
      * @return a new ordered set
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if set is null
      * @since 4.0
      */
     public static <E> ListOrderedSet<E> listOrderedSet(final Set<E> set) {
-        return new ListOrderedSet<E>(set);
+        return new ListOrderedSet<>(set);
     }
 
     /**
@@ -113,17 +113,17 @@ public class ListOrderedSet<E>
      * @param <E> the element type
      * @param list the list to decorate, must not be null
      * @return a new ordered set
-     * @throws IllegalArgumentException if list is null
+     * @throws NullPointerException if list is null
      * @since 4.0
      */
     public static <E> ListOrderedSet<E> listOrderedSet(final List<E> list) {
         if (list == null) {
-            throw new IllegalArgumentException("List must not be null");
+            throw new NullPointerException("List must not be null");
         }
         CollectionUtils.filter(list, UniquePredicate.uniquePredicate());
-        final Set<E> set = new HashSet<E>(list);
+        final Set<E> set = new HashSet<>(list);
 
-        return new ListOrderedSet<E>(set, list);
+        return new ListOrderedSet<>(set, list);
     }
 
     // -----------------------------------------------------------------------
@@ -135,7 +135,7 @@ public class ListOrderedSet<E>
      */
     public ListOrderedSet() {
         super(new HashSet<E>());
-        setOrder = new ArrayList<E>();
+        setOrder = new ArrayList<>();
     }
 
     /**
@@ -146,7 +146,7 @@ public class ListOrderedSet<E>
      */
     protected ListOrderedSet(final Set<E> set) {
         super(set);
-        setOrder = new ArrayList<E>(set);
+        setOrder = new ArrayList<>(set);
     }
 
     /**
@@ -157,12 +157,12 @@ public class ListOrderedSet<E>
      *
      * @param set the set to decorate, must not be null
      * @param list the list to decorate, must not be null
-     * @throws IllegalArgumentException if set or list is null
+     * @throws NullPointerException if set or list is null
      */
     protected ListOrderedSet(final Set<E> set, final List<E> list) {
         super(set);
         if (list == null) {
-            throw new IllegalArgumentException("List must not be null");
+            throw new NullPointerException("List must not be null");
         }
         setOrder = list;
     }
@@ -186,7 +186,7 @@ public class ListOrderedSet<E>
 
     @Override
     public OrderedIterator<E> iterator() {
-        return new OrderedSetIterator<E>(setOrder.listIterator(), decorated());
+        return new OrderedSetIterator<>(setOrder.listIterator(), decorated());
     }
 
     @Override
@@ -236,14 +236,14 @@ public class ListOrderedSet<E>
      */
     @Override
     public boolean retainAll(final Collection<?> coll) {
-        boolean result = decorated().retainAll(coll);
+        final boolean result = decorated().retainAll(coll);
         if (result == false) {
             return false;
         }
         if (decorated().size() == 0) {
             setOrder.clear();
         } else {
-            for (Iterator<E> it = setOrder.iterator(); it.hasNext();) {
+            for (final Iterator<E> it = setOrder.iterator(); it.hasNext();) {
                 if (!decorated().contains(it.next())) {
                     it.remove();
                 }
@@ -320,7 +320,7 @@ public class ListOrderedSet<E>
     public boolean addAll(final int index, final Collection<? extends E> coll) {
         boolean changed = false;
         // collect all elements to be added for performance reasons
-        final List<E> toAdd = new ArrayList<E>();
+        final List<E> toAdd = new ArrayList<>();
         for (final E e : coll) {
             if (contains(e)) {
                 continue;
@@ -396,10 +396,12 @@ public class ListOrderedSet<E>
             last = null;
         }
 
+        @Override
         public boolean hasPrevious() {
             return ((ListIterator<E>) getIterator()).hasPrevious();
         }
 
+        @Override
         public E previous() {
             last = ((ListIterator<E>) getIterator()).previous();
             return last;

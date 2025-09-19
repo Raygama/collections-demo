@@ -39,8 +39,10 @@ import java.util.Collection;
  * These were added solely for documentation purposes and do not change the interface
  * as they were defined in the superinterface <code>Map</code> anyway.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
+ *
  * @since 2.0
- * @version $Id$
  * @deprecated since 4.1, use {@link MultiValuedMap} instead
  */
 @Deprecated
@@ -75,6 +77,7 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      *
      * @return the number of key-collection mappings in this map
      */
+    @Override
     int size();
 
     /**
@@ -96,6 +99,7 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws ClassCastException if the key is of an invalid type
      * @throws NullPointerException if the key is null and null keys are invalid
      */
+    @Override
     Object get(Object key); // Cannot use get(K key) as that does not properly implement Map#get
 
     /**
@@ -109,6 +113,7 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws ClassCastException if the value is of an invalid type
      * @throws NullPointerException if the value is null and null value are invalid
      */
+    @Override
     boolean containsValue(Object value);
 
     /**
@@ -127,6 +132,7 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws NullPointerException if the key or value is null and null is invalid
      * @throws IllegalArgumentException if the key or value is invalid
      */
+    @Override
     Object put(K key, Object value);
 
     /**
@@ -142,6 +148,7 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      * @throws ClassCastException if the key is of an invalid type
      * @throws NullPointerException if the key is null and null keys are invalid
      */
+    @Override
     Object remove(Object key); // Cannot use remove(K key) as that does not properly implement Map#remove
 
     /**
@@ -153,6 +160,7 @@ public interface MultiMap<K, V> extends IterableMap<K, Object> {
      *
      * @return a collection view of the values contained in this map
      */
+    @Override
     Collection<Object> values();
 
 }

@@ -26,15 +26,20 @@ import org.apache.commons.collections4.functors.PrototypeFactory;
  * for the Factory functor interface. The supplied factories are:
  * <ul>
  * <li>Prototype - clones a specified object
- * <li>Reflection - creates objects using reflection
+ * <li>Instantiate - creates objects using reflection
  * <li>Constant - always returns the same object
  * <li>Null - always returns null
  * <li>Exception - always throws an exception
  * </ul>
- * All the supplied factories are Serializable.
+ * <p>
+ * Since v4.1 only factories which are considered to be safe are
+ * Serializable. Factories considered to be unsafe for serialization are:
+ * <ul>
+ * <li>Prototype
+ * <li>Instantiate
+ * </ul>
  *
  * @since 3.0
- * @version $Id$
  */
 public class FactoryUtils {
 
@@ -88,11 +93,12 @@ public class FactoryUtils {
      * Creates a Factory that will return a clone of the same prototype object
      * each time the factory is used. The prototype will be cloned using one of these
      * techniques (in order):
+     *
      * <ul>
-     * <li>public clone method
-     * <li>public copy constructor
-     * <li>serialization clone
-     * <ul>
+     * <li>public clone method</li>
+     * <li>public copy constructor</li>
+     * <li>serialization clone</li>
+     * </ul>
      *
      * @see org.apache.commons.collections4.functors.PrototypeFactory
      *
@@ -115,7 +121,7 @@ public class FactoryUtils {
      * @param <T> the type that the factory creates
      * @param classToInstantiate  the Class to instantiate each time in the factory
      * @return the <code>reflection</code> factory
-     * @throws IllegalArgumentException if the classToInstantiate is null
+     * @throws NullPointerException if the classToInstantiate is null
      */
     public static <T> Factory<T> instantiateFactory(final Class<T> classToInstantiate) {
         return InstantiateFactory.instantiateFactory(classToInstantiate, null, null);
@@ -132,7 +138,7 @@ public class FactoryUtils {
      * @param paramTypes  parameter types for the constructor, can be null
      * @param args  the arguments to pass to the constructor, can be null
      * @return the <code>reflection</code> factory
-     * @throws IllegalArgumentException if the classToInstantiate is null
+     * @throws NullPointerException if the classToInstantiate is null
      * @throws IllegalArgumentException if the paramTypes and args don't match
      * @throws IllegalArgumentException if the constructor doesn't exist
      */

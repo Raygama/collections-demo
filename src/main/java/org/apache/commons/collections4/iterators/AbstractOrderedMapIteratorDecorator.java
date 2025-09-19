@@ -24,7 +24,6 @@ import org.apache.commons.collections4.OrderedMapIterator;
  * All methods are forwarded to the decorated map iterator.
  *
  * @since 3.0
- * @version $Id$
  */
 public class AbstractOrderedMapIteratorDecorator<K, V> implements OrderedMapIterator<K, V> {
 
@@ -36,12 +35,12 @@ public class AbstractOrderedMapIteratorDecorator<K, V> implements OrderedMapIter
      * Constructor that decorates the specified iterator.
      *
      * @param iterator  the iterator to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the iterator is null
      */
     public AbstractOrderedMapIteratorDecorator(final OrderedMapIterator<K, V> iterator) {
         super();
         if (iterator == null) {
-            throw new IllegalArgumentException("OrderedMapIterator must not be null");
+            throw new NullPointerException("OrderedMapIterator must not be null");
         }
         this.iterator = iterator;
     }
@@ -58,41 +57,49 @@ public class AbstractOrderedMapIteratorDecorator<K, V> implements OrderedMapIter
     //-----------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
     /** {@inheritDoc} */
+    @Override
     public K next() {
         return iterator.next();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasPrevious() {
         return iterator.hasPrevious();
     }
 
     /** {@inheritDoc} */
+    @Override
     public K previous() {
         return iterator.previous();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void remove() {
         iterator.remove();
     }
 
     /** {@inheritDoc} */
+    @Override
     public K getKey() {
         return iterator.getKey();
     }
 
     /** {@inheritDoc} */
+    @Override
     public V getValue() {
         return iterator.getValue();
     }
 
     /** {@inheritDoc} */
+    @Override
     public V setValue(final V obj) {
         return iterator.setValue(obj);
     }

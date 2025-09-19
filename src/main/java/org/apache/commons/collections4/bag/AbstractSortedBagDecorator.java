@@ -25,8 +25,8 @@ import org.apache.commons.collections4.SortedBag;
  * <p>
  * Methods are forwarded directly to the decorated bag.
  *
+ * @param <E> the type of elements in this bag
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractSortedBagDecorator<E>
         extends AbstractBagDecorator<E> implements SortedBag<E> {
@@ -46,7 +46,7 @@ public abstract class AbstractSortedBagDecorator<E>
      * Constructor that wraps (not copies).
      *
      * @param bag  the bag to decorate, must not be null
-     * @throws IllegalArgumentException if list is null
+     * @throws NullPointerException if bag is null
      */
     protected AbstractSortedBagDecorator(final SortedBag<E> bag) {
         super(bag);

@@ -26,8 +26,10 @@ import org.apache.commons.collections4.ResettableIterator;
 /**
  * Adapts a Map entrySet to the MapIterator interface.
  *
+ * @param <K> the type of the keys in the map
+ * @param <V> the type of the values in the map
+ *
  * @since 4.0
- * @version $Id$
  */
 public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, ResettableIterator<K> {
 
@@ -52,6 +54,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public K getKey() {
         return current().getKey();
     }
@@ -59,6 +62,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public V getValue() {
         return current().getValue();
     }
@@ -66,6 +70,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public V setValue(final V value) {
         return current().setValue(value);
     }
@@ -73,6 +78,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
@@ -80,6 +86,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public K next() {
         entry = iterator.next();
         return getKey();
@@ -88,6 +95,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void reset() {
         iterator = entrySet.iterator();
     }
@@ -95,6 +103,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
     /**
      * {@inheritDoc}
      */
+    @Override
     public void remove() {
         iterator.remove();
         entry = null;
@@ -102,7 +111,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
 
     /**
      * Get the currently active entry.
-     * @return Map.Entry<K, V>
+     * @return Map.Entry&lt;K, V&gt;
      */
     protected synchronized Map.Entry<K, V> current() {
         if (entry == null) {

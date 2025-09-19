@@ -30,7 +30,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * {@link UnmodifiableSet} implementation.
  *
  * @since 3.0
- * @version $Id$
  */
 public class UnmodifiableSetTest<E> extends AbstractSetTest<E> {
 
@@ -50,7 +49,7 @@ public class UnmodifiableSetTest<E> extends AbstractSetTest<E> {
 
     @Override
     public Set<E> makeFullCollection() {
-        final HashSet<E> set = new HashSet<E>();
+        final HashSet<E> set = new HashSet<>();
         set.addAll(Arrays.asList(getFullElements()));
         return UnmodifiableSet.unmodifiableSet(set);
     }
@@ -71,7 +70,7 @@ public class UnmodifiableSetTest<E> extends AbstractSetTest<E> {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-    
+
     public void testDecorateFactory() {
         final Set<E> set = makeFullCollection();
         assertSame(set, UnmodifiableSet.unmodifiableSet(set));
@@ -79,7 +78,7 @@ public class UnmodifiableSetTest<E> extends AbstractSetTest<E> {
         try {
             UnmodifiableSet.unmodifiableSet(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     //-----------------------------------------------------------------------

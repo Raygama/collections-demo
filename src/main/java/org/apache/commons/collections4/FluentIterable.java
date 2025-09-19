@@ -47,7 +47,7 @@ import org.apache.commons.collections4.iterators.SingletonIterator;
  * List&lt;String&gt; result =
  *   FluentIterable
  *       .of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
- *       .filter(new Predicate<Integer>() {
+ *       .filter(new Predicate&lt;Integer&gt;() {
  *                   public boolean evaluate(Integer number) {
  *                        return number % 2 == 0;
  *                   }
@@ -61,7 +61,6 @@ import org.apache.commons.collections4.iterators.SingletonIterator;
  *
  * @param <E>  the element type
  * @since 4.1
- * @version $Id$
  */
 public class FluentIterable<E> implements Iterable<E> {
 
@@ -92,7 +91,7 @@ public class FluentIterable<E> implements Iterable<E> {
      * @return a new FluentIterable containing the singleton
      */
     public static <T> FluentIterable<T> of(final T singleton) {
-        return of(IteratorUtils.asIterable(new SingletonIterator<T>(singleton, false)));
+        return of(IteratorUtils.asIterable(new SingletonIterator<>(singleton, false)));
     }
 
     /**
@@ -125,9 +124,8 @@ public class FluentIterable<E> implements Iterable<E> {
         IterableUtils.checkNotNull(iterable);
         if (iterable instanceof FluentIterable<?>) {
             return (FluentIterable<T>) iterable;
-        } else {
-            return new FluentIterable<T>(iterable);
         }
+        return new FluentIterable<>(iterable);
     }
 
     // Constructor
@@ -192,7 +190,7 @@ public class FluentIterable<E> implements Iterable<E> {
      * @param other  the other iterable to collate, may not be null
      * @return a new iterable, collating this iterable with the other in natural order
      * @throws NullPointerException if other is null
-     * @see {@link org.apache.commons.collections4.iterators.CollatingIterator CollatingIterator}
+     * @see org.apache.commons.collections4.iterators.CollatingIterator
      */
     public FluentIterable<E> collate(final Iterable<? extends E> other) {
         return of(IterableUtils.collatedIterable(iterable, other));
@@ -217,7 +215,7 @@ public class FluentIterable<E> implements Iterable<E> {
      * @param other  the other iterable to collate, may not be null
      * @return a new iterable, collating this iterable with the other in natural order
      * @throws NullPointerException if other is null
-     * @see {@link org.apache.commons.collections4.iterators.CollatingIterator CollatingIterator}
+     * @see org.apache.commons.collections4.iterators.CollatingIterator
      */
     public FluentIterable<E> collate(final Iterable<? extends E> other,
                                      final Comparator<? super E> comparator) {
@@ -231,7 +229,7 @@ public class FluentIterable<E> implements Iterable<E> {
      * <p>
      * Calling this method is equivalent to:
      * <pre>
-     *   FluentIterable<E> someIterable = ...;
+     *   FluentIterable&lt;E&gt; someIterable = ...;
      *   FluentIterable.of(someIterable.toList());
      * </pre>
      *

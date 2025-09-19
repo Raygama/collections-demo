@@ -21,21 +21,22 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Tests the IteratorEnumeration.
- * 
- * @version $Id$
+ *
  */
-public class IteratorEnumerationTest extends TestCase {
-    
+public class IteratorEnumerationTest {
+
+    @Test
     public void testEnumeration() {
-        Iterator<String> iterator = Arrays.asList("a", "b", "c").iterator();
-        IteratorEnumeration<String> enumeration = new IteratorEnumeration<String>(iterator);
-        
+        final Iterator<String> iterator = Arrays.asList("a", "b", "c").iterator();
+        final IteratorEnumeration<String> enumeration = new IteratorEnumeration<>(iterator);
+
         assertEquals(iterator, enumeration.getIterator());
-        
+
         assertTrue(enumeration.hasMoreElements());
         assertEquals("a", enumeration.nextElement());
         assertEquals("b", enumeration.nextElement());
@@ -45,7 +46,7 @@ public class IteratorEnumerationTest extends TestCase {
         try {
             enumeration.nextElement();
             fail("NoSuchElementException expected");
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             // expected
         }
     }

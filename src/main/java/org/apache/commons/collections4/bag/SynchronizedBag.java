@@ -30,8 +30,8 @@ import org.apache.commons.collections4.collection.SynchronizedCollection;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <E> the type of elements in this bag
  * @since 3.0
- * @version $Id$
  */
 public class SynchronizedBag<E> extends SynchronizedCollection<E> implements Bag<E> {
 
@@ -44,11 +44,11 @@ public class SynchronizedBag<E> extends SynchronizedCollection<E> implements Bag
      * @param <E> the type of the elements in the bag
      * @param bag  the bag to decorate, must not be null
      * @return a new synchronized Bag
-     * @throws IllegalArgumentException if bag is null
+     * @throws NullPointerException if bag is null
      * @since 4.0
      */
     public static <E> SynchronizedBag<E> synchronizedBag(final Bag<E> bag) {
-        return new SynchronizedBag<E>(bag);
+        return new SynchronizedBag<>(bag);
     }
 
     //-----------------------------------------------------------------------
@@ -56,7 +56,7 @@ public class SynchronizedBag<E> extends SynchronizedCollection<E> implements Bag
      * Constructor that wraps (not copies).
      *
      * @param bag  the bag to decorate, must not be null
-     * @throws IllegalArgumentException if bag is null
+     * @throws NullPointerException if bag is null
      */
     protected SynchronizedBag(final Bag<E> bag) {
         super(bag);
@@ -67,7 +67,7 @@ public class SynchronizedBag<E> extends SynchronizedCollection<E> implements Bag
      *
      * @param bag  the bag to decorate, must not be null
      * @param lock  the lock to use, must not be null
-     * @throws IllegalArgumentException if bag is null
+     * @throws NullPointerException if bag or lock is null
      */
     protected SynchronizedBag(final Bag<E> bag, final Object lock) {
         super(bag, lock);

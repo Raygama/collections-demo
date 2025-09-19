@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
  * before that position.
  *
  * @since 4.1
- * @version $Id$
  */
 public class BoundedIterator<E> implements Iterator<E> {
 
@@ -57,11 +56,12 @@ public class BoundedIterator<E> implements Iterator<E> {
      * @param iterator  the iterator to be decorated
      * @param offset  the index of the first element of the decorated iterator to return
      * @param max  the maximum number of elements of the decorated iterator to return
-     * @throws IllegalArgumentException if iterator is null, or either offset or max is negative
+     * @throws NullPointerException if iterator is null
+     * @throws IllegalArgumentException if either offset or max is negative
      */
     public BoundedIterator(final Iterator<? extends E> iterator, final long offset, final long max) {
         if (iterator == null) {
-            throw new IllegalArgumentException("Iterator must not be null");
+            throw new NullPointerException("Iterator must not be null");
         }
         if (offset < 0) {
             throw new IllegalArgumentException("Offset parameter must not be negative.");
@@ -89,6 +89,7 @@ public class BoundedIterator<E> implements Iterator<E> {
 
     //-----------------------------------------------------------------------
 
+    @Override
     public boolean hasNext() {
         if (!checkBounds()) {
             return false;
@@ -107,6 +108,7 @@ public class BoundedIterator<E> implements Iterator<E> {
         return true;
     }
 
+    @Override
     public E next() {
         if (!checkBounds()) {
             throw new NoSuchElementException();
@@ -124,6 +126,7 @@ public class BoundedIterator<E> implements Iterator<E> {
      * {@link IllegalStateException} if no explicit call to {@link #next()} has been made prior
      * to calling {@link #remove()}.
      */
+    @Override
     public void remove() {
         if (pos <= offset) {
             throw new IllegalStateException("remove() can not be called before calling next()");

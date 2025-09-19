@@ -31,24 +31,26 @@ import org.apache.commons.collections4.functors.NOPTransformer;
  * Tests for {@link TransformedSplitMap}
  *
  * @since 4.0
- * @version $Id$
  */
 @SuppressWarnings("boxing")
 public class TransformedSplitMapTest extends BulkTest {
 
     private final Transformer<Integer, String> intToString = new Transformer<Integer, String>() {
+        @Override
         public String transform(final Integer input) {
             return String.valueOf(input);
         }
     };
 
     private final Transformer<Object, Class<?>> objectToClass = new Transformer<Object, Class<?>>() {
+        @Override
         public java.lang.Class<?> transform(final Object input) {
             return input == null ? null : input.getClass();
         }
     };
 
     private final Transformer<String, Integer> stringToInt = new Transformer<String, Integer>() {
+        @Override
         public Integer transform(final String input) {
             return Integer.valueOf(input);
         }
@@ -64,7 +66,7 @@ public class TransformedSplitMapTest extends BulkTest {
                 new HashMap<String, Class<?>>(), intToString, objectToClass);
 
         final Integer[] k = new Integer[] { 0, 1, 2, 3, 4, 5, 6 };
-        final Object[] v = new Object[] { "", new Object(), new HashMap<Object, Object>(), 0, BigInteger.TEN, null,
+        final Object[] v = new Object[] { "", new Object(), new HashMap<>(), 0, BigInteger.TEN, null,
                 new Object[0] };
 
         assertEquals(0, map.size());

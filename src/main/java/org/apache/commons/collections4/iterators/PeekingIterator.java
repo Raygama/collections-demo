@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
  * {@link #peek()} or {@link #element()}.
  *
  * @since 4.0
- * @version $Id$
  */
 public class PeekingIterator<E> implements Iterator<E> {
 
@@ -53,18 +52,18 @@ public class PeekingIterator<E> implements Iterator<E> {
      * @param <E>  the element type
      * @param iterator  the iterator to decorate
      * @return a new peeking iterator
-     * @throws IllegalArgumentException if the iterator is null
+     * @throws NullPointerException if the iterator is null
      */
     public static <E> PeekingIterator<E> peekingIterator(final Iterator<? extends E> iterator) {
         if (iterator == null) {
-            throw new IllegalArgumentException("Iterator must not be null");
+            throw new NullPointerException("Iterator must not be null");
         }
         if (iterator instanceof PeekingIterator<?>) {
             @SuppressWarnings("unchecked") // safe cast
             final PeekingIterator<E> it = (PeekingIterator<E>) iterator;
             return it;
         }
-        return new PeekingIterator<E>(iterator);
+        return new PeekingIterator<>(iterator);
     }
 
     //-----------------------------------------------------------------------
@@ -93,11 +92,12 @@ public class PeekingIterator<E> implements Iterator<E> {
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public boolean hasNext() {
         if (exhausted) {
             return false;
         }
-        return slotFilled ? true : iterator.hasNext();
+        return slotFilled || iterator.hasNext();
     }
 
     /**
@@ -132,6 +132,7 @@ public class PeekingIterator<E> implements Iterator<E> {
         return slot;
     }
 
+    @Override
     public E next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -149,6 +150,7 @@ public class PeekingIterator<E> implements Iterator<E> {
      * @throws IllegalStateException if {@link #peek()} or {@link #element()} has been called
      *   prior to the call to {@link #remove()}
      */
+    @Override
     public void remove() {
         if (slotFilled) {
             throw new IllegalStateException("peek() or element() called before remove()");

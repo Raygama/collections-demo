@@ -26,7 +26,6 @@ import org.apache.commons.collections4.map.Flat3Map;
 /**
  * <code>MapPerformanceTest</code> is designed to perform basic Map performance tests.
  *
- * @version $Id$
  */
 public class MapPerformance {
 
@@ -41,13 +40,13 @@ public class MapPerformance {
     }
 
     private static void testAll() {
-        final Map<String, String> dummyMap = new DummyMap<String, String>();
-        final Map<String, String> hashMap = new HashMap<String, String>();
+        final Map<String, String> dummyMap = new DummyMap<>();
+        final Map<String, String> hashMap = new HashMap<>();
 //        hashMap.put("Alpha", "A");
 //        hashMap.put("Beta", "B");
 //        hashMap.put("Gamma", "C");
 //        hashMap.put("Delta", "D");
-        final Map<String, String> flatMap = new Flat3Map<String, String>(hashMap);
+        final Map<String, String> flatMap = new Flat3Map<>(hashMap);
         System.out.println(flatMap);
 //        Map<String, String> unmodHashMap = Collections.unmodifiableMap(new HashMap<String, String>(hashMap));
 //        Map fastHashMap = new FastHashMap(hashMap);
@@ -132,37 +131,49 @@ public class MapPerformance {
     // ----------------------------------------------------------------------
 
     private static class DummyMap<K, V> implements Map<K, V> {
+        @Override
         public void clear() {
         }
+        @Override
         public boolean containsKey(final Object key) {
             return false;
         }
+        @Override
         public boolean containsValue(final Object value) {
             return false;
         }
+        @Override
         public Set<Map.Entry<K, V>> entrySet() {
             return null;
         }
+        @Override
         public V get(final Object key) {
             return null;
         }
+        @Override
         public boolean isEmpty() {
             return false;
         }
+        @Override
         public Set<K> keySet() {
             return null;
         }
+        @Override
         public V put(final K key, final V value) {
             return null;
         }
+        @Override
         public void putAll(final Map<? extends K, ? extends V> t) {
         }
+        @Override
         public V remove(final Object key) {
             return null;
         }
+        @Override
         public int size() {
             return 0;
         }
+        @Override
         public Collection<V> values() {
             return null;
         }

@@ -30,7 +30,6 @@ import org.apache.commons.collections4.functors.TruePredicate;
  * implementation.
  *
  * @since 3.0
- * @version $Id$
  */
 public class PredicatedSortedBagTest<T> extends AbstractSortedBagTest<T> {
 
@@ -48,6 +47,7 @@ public class PredicatedSortedBagTest<T> extends AbstractSortedBagTest<T> {
 
     protected Predicate<T> stringPredicate() {
         return new Predicate<T>() {
+            @Override
             public boolean evaluate(final T o) {
                 return o instanceof String;
             }
@@ -76,12 +76,12 @@ public class PredicatedSortedBagTest<T> extends AbstractSortedBagTest<T> {
         ((PredicatedSortedBag<T>) bag).decorated();
         try {
             decorateBag(new TreeBag<T>(), null);
-            fail("Expecting IllegalArgumentException for null predicate");
-        } catch (final IllegalArgumentException e) {}
+            fail("Expecting NullPointerException for null predicate");
+        } catch (final NullPointerException e) {}
         try {
             decorateBag(nullBag, stringPredicate());
-            fail("Expecting IllegalArgumentException for null bag");
-        } catch (final IllegalArgumentException e) {}
+            fail("Expecting NullPointerException for null bag");
+        } catch (final NullPointerException e) {}
     }
 
     @SuppressWarnings("unchecked")

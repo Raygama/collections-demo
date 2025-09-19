@@ -31,8 +31,8 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <E> the type of the elements in this set
  * @since 3.0
- * @version $Id$
  */
 public class TransformedSortedSet<E> extends TransformedSet<E> implements SortedSet<E> {
 
@@ -50,12 +50,12 @@ public class TransformedSortedSet<E> extends TransformedSet<E> implements Sorted
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed {@link SortedSet}
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      * @since 4.0
      */
     public static <E> TransformedSortedSet<E> transformingSortedSet(final SortedSet<E> set,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedSortedSet<E>(set, transformer);
+        return new TransformedSortedSet<>(set, transformer);
     }
 
     /**
@@ -70,14 +70,14 @@ public class TransformedSortedSet<E> extends TransformedSet<E> implements Sorted
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed {@link SortedSet}
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      * @since 4.0
      */
     public static <E> TransformedSortedSet<E> transformedSortedSet(final SortedSet<E> set,
             final Transformer<? super E, ? extends E> transformer) {
 
-        final TransformedSortedSet<E> decorated = new TransformedSortedSet<E>(set, transformer);
-        if (transformer != null && set != null && set.size() > 0) {
+        final TransformedSortedSet<E> decorated = new TransformedSortedSet<>(set, transformer);
+        if (set.size() > 0) {
             @SuppressWarnings("unchecked") // set is type E
             final E[] values = (E[]) set.toArray(); // NOPMD - false positive for generics
             set.clear();
@@ -97,7 +97,7 @@ public class TransformedSortedSet<E> extends TransformedSet<E> implements Sorted
      *
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      */
     protected TransformedSortedSet(final SortedSet<E> set, final Transformer<? super E, ? extends E> transformer) {
         super(set, transformer);
@@ -113,32 +113,38 @@ public class TransformedSortedSet<E> extends TransformedSet<E> implements Sorted
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public E first() {
         return getSortedSet().first();
     }
 
+    @Override
     public E last() {
         return getSortedSet().last();
     }
 
+    @Override
     public Comparator<? super E> comparator() {
         return getSortedSet().comparator();
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public SortedSet<E> subSet(final E fromElement, final E toElement) {
         final SortedSet<E> set = getSortedSet().subSet(fromElement, toElement);
-        return new TransformedSortedSet<E>(set, transformer);
+        return new TransformedSortedSet<>(set, transformer);
     }
 
+    @Override
     public SortedSet<E> headSet(final E toElement) {
         final SortedSet<E> set = getSortedSet().headSet(toElement);
-        return new TransformedSortedSet<E>(set, transformer);
+        return new TransformedSortedSet<>(set, transformer);
     }
 
+    @Override
     public SortedSet<E> tailSet(final E fromElement) {
         final SortedSet<E> set = getSortedSet().tailSet(fromElement);
-        return new TransformedSortedSet<E>(set, transformer);
+        return new TransformedSortedSet<>(set, transformer);
     }
 
 }

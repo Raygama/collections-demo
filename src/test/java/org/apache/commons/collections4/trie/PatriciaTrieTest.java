@@ -16,15 +16,20 @@
  */
 package org.apache.commons.collections4.trie;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedMap;
 
 import junit.framework.Test;
 
 import org.apache.commons.collections4.BulkTest;
+import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.map.AbstractSortedMapTest;
 import org.junit.Assert;
 
@@ -32,7 +37,6 @@ import org.junit.Assert;
  * JUnit tests for the PatriciaTrie.
  *
  * @since 4.0
- * @version $Id$
  */
 public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
 
@@ -46,7 +50,7 @@ public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
 
     @Override
     public SortedMap<String, V> makeObject() {
-        return new PatriciaTrie<V>();
+        return new PatriciaTrie<>();
     }
 
     @Override
@@ -57,7 +61,7 @@ public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
     //-----------------------------------------------------------------------
 
     public void testPrefixMap() {
-        final PatriciaTrie<String> trie = new PatriciaTrie<String>();
+        final PatriciaTrie<String> trie = new PatriciaTrie<>();
 
         final String[] keys = new String[]{
                 "",
@@ -284,7 +288,7 @@ public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
     }
 
     public void testPrefixMapRemoval() {
-        final PatriciaTrie<String> trie = new PatriciaTrie<String>();
+        final PatriciaTrie<String> trie = new PatriciaTrie<>();
 
         final String[] keys = new String[]{
                 "Albert", "Xavier", "XyZ", "Anna", "Alien", "Alberto",
@@ -327,7 +331,7 @@ public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
 
     public void testPrefixMapSizes() {
         // COLLECTIONS-525
-        PatriciaTrie<String> aTree = new PatriciaTrie<String>();
+        final PatriciaTrie<String> aTree = new PatriciaTrie<>();
         aTree.put("点评", "测试");
         aTree.put("书评", "测试");
         assertTrue(aTree.prefixMap("点").containsKey("点评"));
@@ -343,6 +347,84 @@ public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
         aTree.put("点版", "定向");
         assertEquals(2, aTree.prefixMap("点").keySet().size());
         assertEquals(2, aTree.prefixMap("点").values().size());
+    }
+
+    public void testPrefixMapSizes2() {
+        final char u8000 = Character.toChars(32768)[0]; // U+8000 (1000000000000000)
+        final char char_b = 'b'; // 1100010
+
+        final PatriciaTrie<String> trie = new PatriciaTrie<>();
+        final String prefixString = "" + char_b;
+        final String longerString = prefixString + u8000;
+
+        assertEquals(1, prefixString.length());
+        assertEquals(2, longerString.length());
+
+        assertTrue(longerString.startsWith(prefixString));
+
+        trie.put(prefixString, "prefixString");
+        trie.put(longerString, "longerString");
+
+        assertEquals(2, trie.prefixMap(prefixString).size());
+        assertTrue(trie.prefixMap(prefixString).containsKey(longerString));
+    }
+
+    public void testPrefixMapClear() {
+        final Trie<String, Integer> trie = new PatriciaTrie<>();
+        trie.put("Anna", 1);
+        trie.put("Anael", 2);
+        trie.put("Analu", 3);
+        trie.put("Andreas", 4);
+        trie.put("Andrea", 5);
+        trie.put("Andres", 6);
+        trie.put("Anatole", 7);
+        final SortedMap<String, Integer> prefixMap = trie.prefixMap("And");
+        assertEquals(new HashSet<>(Arrays.asList("Andrea", "Andreas", "Andres")), prefixMap.keySet());
+        assertEquals(Arrays.asList(5, 4, 6), new ArrayList<>(prefixMap.values()));
+
+        prefixMap.clear();
+        assertTrue(prefixMap.isEmpty());
+        assertTrue(prefixMap.keySet().isEmpty());
+        assertTrue(prefixMap.values().isEmpty());
+        assertEquals(new HashSet<>(Arrays.asList("Anael", "Analu", "Anatole", "Anna")), trie.keySet());
+        assertEquals(Arrays.asList(2, 3, 7, 1), new ArrayList<>(trie.values()));
+    }
+
+    public void testPrefixMapClearNothing() {
+        final Trie<String, Integer> trie = new PatriciaTrie<>();
+        final SortedMap<String, Integer> prefixMap = trie.prefixMap("And");
+        assertEquals(new HashSet<String>(), prefixMap.keySet());
+        assertEquals(new ArrayList<Integer>(0), new ArrayList<>(prefixMap.values()));
+
+        prefixMap.clear();
+        assertTrue(prefixMap.isEmpty());
+        assertTrue(prefixMap.keySet().isEmpty());
+        assertTrue(prefixMap.values().isEmpty());
+        assertEquals(new HashSet<String>(), trie.keySet());
+        assertEquals(new ArrayList<Integer>(0), new ArrayList<>(trie.values()));
+    }
+
+    public void testPrefixMapClearUsingRemove() {
+        final Trie<String, Integer> trie = new PatriciaTrie<>();
+        trie.put("Anna", 1);
+        trie.put("Anael", 2);
+        trie.put("Analu", 3);
+        trie.put("Andreas", 4);
+        trie.put("Andrea", 5);
+        trie.put("Andres", 6);
+        trie.put("Anatole", 7);
+        final SortedMap<String, Integer> prefixMap = trie.prefixMap("And");
+        assertEquals(new HashSet<>(Arrays.asList("Andrea", "Andreas", "Andres")), prefixMap.keySet());
+        assertEquals(Arrays.asList(5, 4, 6), new ArrayList<>(prefixMap.values()));
+
+        final Set<String> keys = new HashSet<>(prefixMap.keySet());
+        for (final String key : keys) {
+            prefixMap.remove(key);
+        }
+        assertTrue(prefixMap.keySet().isEmpty());
+        assertTrue(prefixMap.values().isEmpty());
+        assertEquals(new HashSet<>(Arrays.asList("Anael", "Analu", "Anatole", "Anna")), trie.keySet());
+        assertEquals(Arrays.asList(2, 3, 7, 1), new ArrayList<>(trie.values()));
     }
 
     //-----------------------------------------------------------------------
@@ -361,5 +443,5 @@ public class PatriciaTrieTest<V> extends AbstractSortedMapTest<String, V> {
 //        writeExternalFormToDisk(
 //            (java.io.Serializable) map,
 //            "src/test/resources/data/test/PatriciaTrie.fullCollection.version4.obj");
-//    }    
+//    }
 }

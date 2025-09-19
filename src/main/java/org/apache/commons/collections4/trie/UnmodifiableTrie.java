@@ -32,8 +32,9 @@ import org.apache.commons.collections4.iterators.UnmodifiableOrderedMapIterator;
 /**
  * An unmodifiable {@link Trie}.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 4.0
- * @version $Id$
  */
 public class UnmodifiableTrie<K, V> implements Trie<K, V>, Serializable, Unmodifiable {
 
@@ -49,7 +50,7 @@ public class UnmodifiableTrie<K, V> implements Trie<K, V>, Serializable, Unmodif
      * @param <V>  the value type
      * @param trie  the trie to decorate, must not be null
      * @return a new unmodifiable trie
-     * @throws IllegalArgumentException if trie is null
+     * @throws NullPointerException if trie is null
      */
     public static <K, V> Trie<K, V> unmodifiableTrie(final Trie<K, ? extends V> trie) {
         if (trie instanceof Unmodifiable) {
@@ -57,7 +58,7 @@ public class UnmodifiableTrie<K, V> implements Trie<K, V>, Serializable, Unmodif
             final Trie<K, V> tmpTrie = (Trie<K, V>) trie;
             return tmpTrie;
         }
-        return new UnmodifiableTrie<K, V>(trie);
+        return new UnmodifiableTrie<>(trie);
     }
 
     //-----------------------------------------------------------------------
@@ -65,11 +66,11 @@ public class UnmodifiableTrie<K, V> implements Trie<K, V>, Serializable, Unmodif
      * Constructor that wraps (not copies).
      *
      * @param trie  the trie to decorate, must not be null
-     * @throws IllegalArgumentException if trie is null
+     * @throws NullPointerException if trie is null
      */
     public UnmodifiableTrie(final Trie<K, ? extends V> trie) {
         if (trie == null) {
-            throw new IllegalArgumentException("Trie must not be null");
+            throw new NullPointerException("Trie must not be null");
         }
         @SuppressWarnings("unchecked") // safe to upcast
         final Trie<K, V> tmpTrie = (Trie<K, V>) trie;
@@ -78,93 +79,115 @@ public class UnmodifiableTrie<K, V> implements Trie<K, V>, Serializable, Unmodif
 
     //-----------------------------------------------------------------------
 
+    @Override
     public Set<Entry<K, V>> entrySet() {
         return Collections.unmodifiableSet(delegate.entrySet());
     }
 
+    @Override
     public Set<K> keySet() {
         return Collections.unmodifiableSet(delegate.keySet());
     }
 
+    @Override
     public Collection<V> values() {
         return Collections.unmodifiableCollection(delegate.values());
     }
 
+    @Override
     public void clear() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean containsKey(final Object key) {
         return delegate.containsKey(key);
     }
 
+    @Override
     public boolean containsValue(final Object value) {
         return delegate.containsValue(value);
     }
 
+    @Override
     public V get(final Object key) {
         return delegate.get(key);
     }
 
+    @Override
     public boolean isEmpty() {
         return delegate.isEmpty();
     }
 
+    @Override
     public V put(final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public V remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public int size() {
         return delegate.size();
     }
 
+    @Override
     public K firstKey() {
         return delegate.firstKey();
     }
 
+    @Override
     public SortedMap<K, V> headMap(final K toKey) {
         return Collections.unmodifiableSortedMap(delegate.headMap(toKey));
     }
 
+    @Override
     public K lastKey() {
         return delegate.lastKey();
     }
 
+    @Override
     public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
         return Collections.unmodifiableSortedMap(delegate.subMap(fromKey, toKey));
     }
 
+    @Override
     public SortedMap<K, V> tailMap(final K fromKey) {
         return Collections.unmodifiableSortedMap(delegate.tailMap(fromKey));
     }
 
+    @Override
     public SortedMap<K, V> prefixMap(final K key) {
         return Collections.unmodifiableSortedMap(delegate.prefixMap(key));
     }
 
+    @Override
     public Comparator<? super K> comparator() {
         return delegate.comparator();
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public OrderedMapIterator<K, V> mapIterator() {
         final OrderedMapIterator<K, V> it = delegate.mapIterator();
         return UnmodifiableOrderedMapIterator.unmodifiableOrderedMapIterator(it);
     }
 
-    public K nextKey(K key) {
+    @Override
+    public K nextKey(final K key) {
         return delegate.nextKey(key);
     }
 
-    public K previousKey(K key) {
+    @Override
+    public K previousKey(final K key) {
         return delegate.previousKey(key);
     }
 

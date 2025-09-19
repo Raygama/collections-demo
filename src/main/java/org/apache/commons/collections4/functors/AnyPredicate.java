@@ -29,7 +29,6 @@ import org.apache.commons.collections4.Predicate;
  * threw an exception.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
 
@@ -45,8 +44,8 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
      * @param <T> the type that the predicate queries
      * @param predicates  the predicates to check, cloned, not null
      * @return the <code>any</code> predicate
-     * @throws IllegalArgumentException if the predicates array is null
-     * @throws IllegalArgumentException if any predicate in the array is null
+     * @throws NullPointerException if the predicates array is null
+     * @throws NullPointerException if any predicate in the array is null
      */
     @SuppressWarnings("unchecked")
     public static <T> Predicate<T> anyPredicate(final Predicate<? super T>... predicates) {
@@ -57,7 +56,7 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
         if (predicates.length == 1) {
             return (Predicate<T>) predicates[0];
         }
-        return new AnyPredicate<T>(FunctorUtils.copy(predicates));
+        return new AnyPredicate<>(FunctorUtils.copy(predicates));
     }
 
     /**
@@ -69,8 +68,8 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
      * @param <T> the type that the predicate queries
      * @param predicates  the predicates to check, cloned, not null
      * @return the <code>all</code> predicate
-     * @throws IllegalArgumentException if the predicates array is null
-     * @throws IllegalArgumentException if any predicate in the array is null
+     * @throws NullPointerException if the predicates array is null
+     * @throws NullPointerException if any predicate in the array is null
      */
     @SuppressWarnings("unchecked")
     public static <T> Predicate<T> anyPredicate(final Collection<? extends Predicate<? super T>> predicates) {
@@ -81,7 +80,7 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
         if (preds.length == 1) {
             return (Predicate<T>) preds[0];
         }
-        return new AnyPredicate<T>(preds);
+        return new AnyPredicate<>(preds);
     }
 
     /**
@@ -100,6 +99,7 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
      * @param object  the input object
      * @return true if any decorated predicate return true
      */
+    @Override
     public boolean evaluate(final T object) {
         for (final Predicate<? super T> iPredicate : iPredicates) {
             if (iPredicate.evaluate(object)) {

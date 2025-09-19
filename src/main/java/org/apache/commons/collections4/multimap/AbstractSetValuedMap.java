@@ -16,12 +16,9 @@
  */
 package org.apache.commons.collections4.multimap;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.collections4.SetValuedMap;
@@ -33,52 +30,60 @@ import org.apache.commons.collections4.SetValuedMap;
  * Subclasses specify a Map implementation to use as the internal storage and
  * the Set implementation to use as values.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 4.1
- * @version $Id$
  */
-public abstract class AbstractSetValuedMap<K, V> extends AbstractMultiValuedMap<K, V> implements SetValuedMap<K, V> {
-
-    /** Serialization version */
-    private static final long serialVersionUID = 3383617478898639862L;
+public abstract class AbstractSetValuedMap<K, V> extends AbstractMultiValuedMap<K, V>
+    implements SetValuedMap<K, V> {
 
     /**
-     * A constructor that wraps, not copies
-     *
-     * @param <C> the set type
-     * @param map the map to wrap, must not be null
-     * @param setClazz the collection class
-     * @throws NullPointerException if the map is null
+     * Constructor needed for subclass serialisation.
      */
-    protected <C extends Set<V>> AbstractSetValuedMap(Map<K, ? super C> map, Class<C> setClazz) {
-        super(map, setClazz);
+    protected AbstractSetValuedMap() {
+        super();
     }
 
     /**
      * A constructor that wraps, not copies
      *
-     * @param <C> the set type
-     * @param map the map to wrap, must not be null
-     * @param setClazz the collection class
-     * @param initialSetCapacity the initial size of the values set
+     * @param map  the map to wrap, must not be null
      * @throws NullPointerException if the map is null
-     * @throws IllegalArgumentException if initialSetCapacity is negative
      */
-    protected <C extends Set<V>> AbstractSetValuedMap(Map<K, ? super C> map, Class<C> setClazz,
-            int initialSetCapacity) {
-        super(map, setClazz, initialSetCapacity);
+    protected AbstractSetValuedMap(final Map<K, ? extends Set<V>> map) {
+        super(map);
     }
 
+    // -----------------------------------------------------------------------
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Map<K, Set<V>> getMap() {
+        return (Map<K, Set<V>>) super.getMap();
+    }
+
+    /**
+     * Creates a new value collection using the provided factory.
+     * @return a new list
+     */
+    @Override
+    protected abstract Set<V> createCollection();
+
+    // -----------------------------------------------------------------------
     /**
      * Gets the set of values associated with the specified key. This would
      * return an empty set in case the mapping is not present
      *
-     * @param key the key to retrieve
+     * @param key  the key to retrieve
      * @return the <code>Set</code> of values, will return an empty
-     *         <code>Set</code> for no mapping
-     * @throws ClassCastException if the key is of an invalid type
+     *   <code>Set</code> for no mapping
      */
     @Override
-    public Set<V> get(Object key) {
+    public Set<V> get(final K key) {
+        return wrappedCollection(key);
+    }
+
+    @Override
+    Set<V> wrappedCollection(final K key) {
         return new WrappedSet(key);
     }
 
@@ -89,92 +94,40 @@ public abstract class AbstractSetValuedMap<K, V> extends AbstractMultiValuedMap<
      *
      * @param key the key to remove values from
      * @return the <code>Set</code> of values removed, will return an empty,
-     *         unmodifiable set for no mapping found.
-     * @throws ClassCastException if the key is of an invalid type
+     *   unmodifiable set for no mapping found.
      */
     @Override
-    public Set<V> remove(Object key) {
-        return SetUtils.emptyIfNull((Set<V>) getMap().remove(key));
+    public Set<V> remove(final Object key) {
+        return SetUtils.emptyIfNull(getMap().remove(key));
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof SetValuedMap == false) {
-            return false;
-        }
-        SetValuedMap<?, ?> other = (SetValuedMap<?, ?>) obj;
-        if (other.size() != size()) {
-            return false;
-        }
-        Iterator<?> it = keySet().iterator();
-        while (it.hasNext()) {
-            Object key = it.next();
-            Set<?> set = get(key);
-            Set<?> otherSet = other.get(key);
-            if (otherSet == null) {
-                return false;
-            }
-            if (SetUtils.isEqualSet(set, otherSet) == false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int h = 0;
-        Iterator<Entry<K, Collection<V>>> it = getMap().entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<K, Collection<V>> entry = it.next();
-            K key = entry.getKey();
-            Set<V> valueSet = (Set<V>) entry.getValue();
-            h += (key == null ? 0 : key.hashCode()) ^ SetUtils.hashCodeForSet(valueSet);
-        }
-        return h;
-    }
-
+    // -----------------------------------------------------------------------
     /**
      * Wrapped set to handle add and remove on the collection returned by
-     * get(object)
+     * {@code get(Object)}.
      */
-    protected class WrappedSet extends WrappedCollection implements Set<V> {
+    private class WrappedSet extends WrappedCollection implements Set<V> {
 
-        public WrappedSet(Object key) {
+        public WrappedSet(final K key) {
             super(key);
         }
 
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(final Object other) {
             final Set<V> set = (Set<V>) getMapping();
             if (set == null) {
                 return Collections.emptySet().equals(other);
             }
-            if (other == null) {
-                return false;
-            }
             if (!(other instanceof Set)) {
                 return false;
             }
-            Set<?> otherSet = (Set<?>) other;
-            if (SetUtils.isEqualSet(set, otherSet) == false) {
-                return false;
-            }
-            return true;
+            final Set<?> otherSet = (Set<?>) other;
+            return SetUtils.isEqualSet(set, otherSet);
         }
 
         @Override
         public int hashCode() {
             final Set<V> set = (Set<V>) getMapping();
-            if (set == null) {
-                return Collections.emptySet().hashCode();
-            }
             return SetUtils.hashCodeForSet(set);
         }
 

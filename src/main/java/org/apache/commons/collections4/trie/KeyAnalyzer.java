@@ -29,8 +29,8 @@ import java.util.Comparator;
  * key (if the key and found key are equal than the return value is
  * {@link #EQUAL_BIT_KEY}).
  *
+ * @param <K> the type of objects that may be compared by this analyzer
  * @since 4.0
- * @version $Id$
  */
 public abstract class KeyAnalyzer<K> implements Comparator<K>, Serializable {
 
@@ -134,6 +134,7 @@ public abstract class KeyAnalyzer<K> implements Comparator<K>, Serializable {
      */
     public abstract boolean isPrefix(K prefix, int offsetInBits, int lengthInBits, K key);
 
+    @Override
     @SuppressWarnings("unchecked")
     public int compare(final K o1, final K o2) {
         if (o1 == null) {

@@ -16,18 +16,19 @@
  */
 package org.apache.commons.collections4.keyvalue;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 /**
  * Test the DefaultKeyValue class.
  *
  * @since 3.0
- * @version $Id$
  */
-public class DefaultKeyValueTest<K, V> extends TestCase {
+public class DefaultKeyValueTest<K, V> {
 
     private final String key = "name";
     private final String value = "duke";
@@ -39,7 +40,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
      * of the type being tested.
      */
     protected DefaultKeyValue<K, V> makeDefaultKeyValue() {
-        return new DefaultKeyValue<K, V>(null, null);
+        return new DefaultKeyValue<>(null, null);
     }
 
     /**
@@ -48,11 +49,12 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
      * of the type being tested.
      */
     protected DefaultKeyValue<K, V> makeDefaultKeyValue(final K key, final V value) {
-        return new DefaultKeyValue<K, V>(key, value);
+        return new DefaultKeyValue<>(key, value);
     }
 
     //-----------------------------------------------------------------------
     @SuppressWarnings("unchecked")
+    @Test
     public void testAccessorsAndMutators() {
         final DefaultKeyValue<K, V> kv = makeDefaultKeyValue();
 
@@ -72,6 +74,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testSelfReferenceHandling() {
         // test that #setKey and #setValue do not permit
         //  the KVP to contain itself (and thus cause infinite recursion
@@ -104,17 +107,18 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
      * Subclasses should override this method to test their own constructors.
      */
     @SuppressWarnings("unchecked")
+    @Test
     public void testConstructors() {
         // 1. test default constructor
-        DefaultKeyValue<K, V> kv = new DefaultKeyValue<K, V>();
+        DefaultKeyValue<K, V> kv = new DefaultKeyValue<>();
         assertTrue(kv.getKey() == null && kv.getValue() == null);
 
         // 2. test key-value constructor
-        kv = new DefaultKeyValue<K, V>((K) key, (V) value);
+        kv = new DefaultKeyValue<>((K) key, (V) value);
         assertTrue(kv.getKey() == key && kv.getValue() == value);
 
         // 3. test copy constructor
-        final DefaultKeyValue<K, V> kv2 = new DefaultKeyValue<K, V>(kv);
+        final DefaultKeyValue<K, V> kv2 = new DefaultKeyValue<>(kv);
         assertTrue(kv2.getKey() == key && kv2.getValue() == value);
 
         // test that the KVPs are independent
@@ -124,11 +128,11 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
         assertTrue(kv2.getKey() == key && kv2.getValue() == value);
 
         // 4. test Map.Entry constructor
-        final Map<K, V> map = new HashMap<K, V>();
+        final Map<K, V> map = new HashMap<>();
         map.put((K) key, (V) value);
         final Map.Entry<K, V> entry = map.entrySet().iterator().next();
 
-        kv = new DefaultKeyValue<K, V>(entry);
+        kv = new DefaultKeyValue<>(entry);
         assertTrue(kv.getKey() == key && kv.getValue() == value);
 
         // test that the KVP is independent of the Map.Entry
@@ -138,6 +142,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testEqualsAndHashCode() {
         // 1. test with object data
         DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
@@ -157,6 +162,7 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testToString() {
         DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
         assertTrue(kv.toString().equals(kv.getKey() + "=" + kv.getValue()));
@@ -167,10 +173,11 @@ public class DefaultKeyValueTest<K, V> extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testToMapEntry() {
         final DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
 
-        final Map<K, V> map = new HashMap<K, V>();
+        final Map<K, V> map = new HashMap<>();
         map.put(kv.getKey(), kv.getValue());
         final Map.Entry<K, V> entry = map.entrySet().iterator().next();
 

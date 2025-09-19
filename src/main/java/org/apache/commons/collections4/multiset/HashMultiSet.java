@@ -23,18 +23,16 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.commons.collections4.MultiSet;
-
 /**
- * Implements {@link MultiSet}, using a {@link HashMap} to provide the
+ * Implements {@code MultiSet}, using a {@link HashMap} to provide the
  * data storage. This is the standard implementation of a multiset.
  * <p>
- * A {@link MultiSet} stores each object in the collection together with a
+ * A {@code MultiSet} stores each object in the collection together with a
  * count of occurrences. Extra methods on the interface allow multiple copies
  * of an object to be added or removed at once.
  *
+ * @param <E> the type held in the multiset
  * @since 4.1
- * @version $Id$
  */
 public class HashMultiSet<E> extends AbstractMapMultiSet<E> implements Serializable {
 
@@ -49,9 +47,9 @@ public class HashMultiSet<E> extends AbstractMapMultiSet<E> implements Serializa
     }
 
     /**
-     * Constructs a bag containing all the members of the given collection.
+     * Constructs a multiset containing all the members of the given collection.
      *
-     * @param coll  a collection to copy into this bag
+     * @param coll  a collection to copy into this multiset
      */
     public HashMultiSet(final Collection<? extends E> coll) {
         this();
@@ -60,7 +58,10 @@ public class HashMultiSet<E> extends AbstractMapMultiSet<E> implements Serializa
 
     //-----------------------------------------------------------------------
     /**
-     * Write the bag out using a custom routine.
+     * Write the multiset out using a custom routine.
+     *
+     * @param out  the output stream
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -68,11 +69,16 @@ public class HashMultiSet<E> extends AbstractMapMultiSet<E> implements Serializa
     }
 
     /**
-     * Read the bag in using a custom routine.
+     * Read the multiset in using a custom routine.
+     *
+     * @param in the input stream
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        super.doReadObject(new HashMap<E, MutableInteger>(), in);
+        setMap(new HashMap<E, MutableInteger>());
+        super.doReadObject(in);
     }
 
 }

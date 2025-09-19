@@ -26,8 +26,8 @@ import org.apache.commons.collections4.collection.AbstractCollectionDecorator;
  * <p>
  * Methods are forwarded directly to the decorated multiset.
  *
+ * @param <E> the type held in the multiset
  * @since 4.1
- * @version $Id$
  */
 public abstract class AbstractMultiSetDecorator<E>
         extends AbstractCollectionDecorator<E> implements MultiSet<E> {
@@ -46,7 +46,7 @@ public abstract class AbstractMultiSetDecorator<E>
      * Constructor that wraps (not copies).
      *
      * @param multiset  the multiset to decorate, must not be null
-     * @throws IllegalArgumentException if multiset is null
+     * @throws NullPointerException if multiset is null
      */
     protected AbstractMultiSetDecorator(final MultiSet<E> multiset) {
         super(multiset);
@@ -80,7 +80,7 @@ public abstract class AbstractMultiSetDecorator<E>
     }
 
     @Override
-    public int setCount(E object, int count) {
+    public int setCount(final E object, final int count) {
         return decorated().setCount(object, count);
     }
 
@@ -103,5 +103,5 @@ public abstract class AbstractMultiSetDecorator<E>
     public Set<Entry<E>> entrySet() {
         return decorated().entrySet();
     }
-    
+
 }

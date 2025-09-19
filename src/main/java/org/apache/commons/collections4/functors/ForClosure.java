@@ -16,20 +16,19 @@
  */
 package org.apache.commons.collections4.functors;
 
-import java.io.Serializable;
-
 import org.apache.commons.collections4.Closure;
 
 /**
  * Closure implementation that calls another closure n times, like a for loop.
+ * <p>
+ * <b>WARNING:</b> from v4.1 onwards this class will <b>not</b> be serializable anymore
+ * in order to prevent potential remote code execution exploits. Please refer to
+ * <a href="https://issues.apache.org/jira/browse/COLLECTIONS-580">COLLECTIONS-580</a>
+ * for more details.
  *
  * @since 3.0
- * @version $Id$
  */
-public class ForClosure<E> implements Closure<E>, Serializable {
-
-    /** Serial version UID */
-    private static final long serialVersionUID = -1190120533393621674L;
+public class ForClosure<E> implements Closure<E> {
 
     /** The number of times to loop */
     private final int iCount;
@@ -55,7 +54,7 @@ public class ForClosure<E> implements Closure<E>, Serializable {
         if (count == 1) {
             return (Closure<E>) closure;
         }
-        return new ForClosure<E>(count, closure);
+        return new ForClosure<>(count, closure);
     }
 
     /**
@@ -76,6 +75,7 @@ public class ForClosure<E> implements Closure<E>, Serializable {
      *
      * @param input  the input object
      */
+    @Override
     public void execute(final E input) {
         for (int i = 0; i < iCount; i++) {
             iClosure.execute(input);

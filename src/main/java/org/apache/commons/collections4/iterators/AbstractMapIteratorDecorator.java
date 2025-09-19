@@ -24,7 +24,6 @@ import org.apache.commons.collections4.MapIterator;
  * All methods are forwarded to the decorated map iterator.
  *
  * @since 3.0
- * @version $Id$
  */
 public class AbstractMapIteratorDecorator<K, V> implements MapIterator<K, V> {
 
@@ -36,12 +35,12 @@ public class AbstractMapIteratorDecorator<K, V> implements MapIterator<K, V> {
      * Constructor that decorates the specified iterator.
      *
      * @param iterator  the iterator to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the iterator is null
      */
     public AbstractMapIteratorDecorator(final MapIterator<K, V> iterator) {
         super();
         if (iterator == null) {
-            throw new IllegalArgumentException("MapIterator must not be null");
+            throw new NullPointerException("MapIterator must not be null");
         }
         this.iterator = iterator;
     }
@@ -58,31 +57,37 @@ public class AbstractMapIteratorDecorator<K, V> implements MapIterator<K, V> {
     //-----------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
     /** {@inheritDoc} */
+    @Override
     public K next() {
         return iterator.next();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void remove() {
         iterator.remove();
     }
 
     /** {@inheritDoc} */
+    @Override
     public K getKey() {
         return iterator.getKey();
     }
 
     /** {@inheritDoc} */
+    @Override
     public V getValue() {
         return iterator.getValue();
     }
 
     /** {@inheritDoc} */
+    @Override
     public V setValue(final V obj) {
         return iterator.setValue(obj);
     }

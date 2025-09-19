@@ -24,7 +24,6 @@ import java.util.Iterator;
  * {@link Enumeration Enumeration} instance.
  *
  * @since 1.0
- * @version $Id$
  */
 public class IteratorEnumeration<E> implements Enumeration<E> {
 
@@ -56,6 +55,7 @@ public class IteratorEnumeration<E> implements Enumeration<E> {
      *
      * @return true if the underlying iterator has more elements
      */
+    @Override
     public boolean hasMoreElements() {
         return iterator.hasNext();
     }
@@ -67,6 +67,7 @@ public class IteratorEnumeration<E> implements Enumeration<E> {
      * @throws java.util.NoSuchElementException if the underlying iterator has
      * no more elements
      */
+    @Override
     public E nextElement() {
         return iterator.next();
     }

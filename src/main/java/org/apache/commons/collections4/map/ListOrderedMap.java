@@ -72,8 +72,9 @@ import org.apache.commons.collections4.list.UnmodifiableList;
  * <p>
  * This class is {@link Serializable} starting with Commons Collections 3.1.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public class ListOrderedMap<K, V>
         extends AbstractMapDecorator<K, V>
@@ -83,7 +84,7 @@ public class ListOrderedMap<K, V>
     private static final long serialVersionUID = 2728177751851003750L;
 
     /** Internal list to hold the sequence of objects */
-    private final List<K> insertOrder = new ArrayList<K>();
+    private final List<K> insertOrder = new ArrayList<>();
 
     /**
      * Factory method to create an ordered map.
@@ -94,11 +95,11 @@ public class ListOrderedMap<K, V>
      * @param <V>  the value type
      * @param map  the map to decorate, must not be null
      * @return a new list ordered map
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> ListOrderedMap<K, V> listOrderedMap(final Map<K, V> map) {
-        return new ListOrderedMap<K, V>(map);
+        return new ListOrderedMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -116,7 +117,7 @@ public class ListOrderedMap<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     protected ListOrderedMap(final Map<K, V> map) {
         super(map);
@@ -128,7 +129,7 @@ public class ListOrderedMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -140,8 +141,8 @@ public class ListOrderedMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      * @since 3.1
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect
@@ -154,7 +155,7 @@ public class ListOrderedMap<K, V>
     //-----------------------------------------------------------------------
     @Override
     public OrderedMapIterator<K, V> mapIterator() {
-        return new ListOrderedMapIterator<K, V>(this);
+        return new ListOrderedMapIterator<>(this);
     }
 
     /**
@@ -163,6 +164,7 @@ public class ListOrderedMap<K, V>
      * @return the first key currently in this map
      * @throws NoSuchElementException if this map is empty
      */
+    @Override
     public K firstKey() {
         if (size() == 0) {
             throw new NoSuchElementException("Map is empty");
@@ -176,6 +178,7 @@ public class ListOrderedMap<K, V>
      * @return the last key currently in this map
      * @throws NoSuchElementException if this map is empty
      */
+    @Override
     public K lastKey() {
         if (size() == 0) {
             throw new NoSuchElementException("Map is empty");
@@ -190,6 +193,7 @@ public class ListOrderedMap<K, V>
      * @param key  the key to find previous for
      * @return the next key, null if no match or at start
      */
+    @Override
     public K nextKey(final Object key) {
         final int index = insertOrder.indexOf(key);
         if (index >= 0 && index < size() - 1) {
@@ -205,6 +209,7 @@ public class ListOrderedMap<K, V>
      * @param key  the key to find previous for
      * @return the previous key, null if no match or at start
      */
+    @Override
     public K previousKey(final Object key) {
         final int index = insertOrder.indexOf(key);
         if (index > 0) {
@@ -288,7 +293,7 @@ public class ListOrderedMap<K, V>
      */
     @Override
     public Set<K> keySet() {
-        return new KeySetView<K>(this);
+        return new KeySetView<>(this);
     }
 
     /**
@@ -318,7 +323,7 @@ public class ListOrderedMap<K, V>
      */
     @Override
     public Collection<V> values() {
-        return new ValuesView<V>(this);
+        return new ValuesView<>(this);
     }
 
     /**
@@ -332,7 +337,7 @@ public class ListOrderedMap<K, V>
      * @since 3.2
      */
     public List<V> valueList() {
-        return new ValuesView<V>(this);
+        return new ValuesView<>(this);
     }
 
     /**
@@ -344,7 +349,7 @@ public class ListOrderedMap<K, V>
      */
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
-        return new EntrySetView<K, V>(this, this.insertOrder);
+        return new EntrySetView<>(this, this.insertOrder);
     }
 
     //-----------------------------------------------------------------------
@@ -525,6 +530,7 @@ public class ListOrderedMap<K, V>
         @Override
         public Iterator<V> iterator() {
             return new AbstractUntypedIteratorDecorator<Map.Entry<Object, V>, V>(parent.entrySet().iterator()) {
+                @Override
                 public V next() {
                     return getIterator().next().getValue();
                 }
@@ -575,6 +581,7 @@ public class ListOrderedMap<K, V>
         @Override
         public Iterator<K> iterator() {
             return new AbstractUntypedIteratorDecorator<Map.Entry<K, Object>, K>(parent.entrySet().iterator()) {
+                @Override
                 public K next() {
                     return getIterator().next().getKey();
                 }
@@ -659,7 +666,7 @@ public class ListOrderedMap<K, V>
 
         @Override
         public Iterator<Map.Entry<K, V>> iterator() {
-            return new ListOrderedIterator<K, V>(parent, insertOrder);
+            return new ListOrderedIterator<>(parent, insertOrder);
         }
     }
 
@@ -673,9 +680,10 @@ public class ListOrderedMap<K, V>
             this.parent = parent;
         }
 
+        @Override
         public Map.Entry<K, V> next() {
             last = getIterator().next();
-            return new ListOrderedMapEntry<K, V>(parent, last);
+            return new ListOrderedMapEntry<>(parent, last);
         }
 
         @Override
@@ -718,26 +726,31 @@ public class ListOrderedMap<K, V>
             this.iterator = parent.insertOrder.listIterator();
         }
 
+        @Override
         public boolean hasNext() {
             return iterator.hasNext();
         }
 
+        @Override
         public K next() {
             last = iterator.next();
             readable = true;
             return last;
         }
 
+        @Override
         public boolean hasPrevious() {
             return iterator.hasPrevious();
         }
 
+        @Override
         public K previous() {
             last = iterator.previous();
             readable = true;
             return last;
         }
 
+        @Override
         public void remove() {
             if (readable == false) {
                 throw new IllegalStateException(AbstractHashedMap.REMOVE_INVALID);
@@ -747,6 +760,7 @@ public class ListOrderedMap<K, V>
             readable = false;
         }
 
+        @Override
         public K getKey() {
             if (readable == false) {
                 throw new IllegalStateException(AbstractHashedMap.GETKEY_INVALID);
@@ -754,6 +768,7 @@ public class ListOrderedMap<K, V>
             return last;
         }
 
+        @Override
         public V getValue() {
             if (readable == false) {
                 throw new IllegalStateException(AbstractHashedMap.GETVALUE_INVALID);
@@ -761,6 +776,7 @@ public class ListOrderedMap<K, V>
             return parent.get(last);
         }
 
+        @Override
         public V setValue(final V value) {
             if (readable == false) {
                 throw new IllegalStateException(AbstractHashedMap.SETVALUE_INVALID);
@@ -768,6 +784,7 @@ public class ListOrderedMap<K, V>
             return parent.map.put(last, value);
         }
 
+        @Override
         public void reset() {
             iterator = parent.insertOrder.listIterator();
             last = null;

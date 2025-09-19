@@ -24,7 +24,6 @@ import org.apache.commons.collections4.Predicate;
  * Predicate implementation that returns true if the input is not null.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class NotNullPredicate<T> implements Predicate<T>, Serializable {
 
@@ -33,7 +32,7 @@ public final class NotNullPredicate<T> implements Predicate<T>, Serializable {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes")
-    public static final Predicate INSTANCE = new NotNullPredicate<Object>();
+    public static final Predicate INSTANCE = new NotNullPredicate<>();
 
     /**
      * Factory returning the singleton instance.
@@ -44,7 +43,7 @@ public final class NotNullPredicate<T> implements Predicate<T>, Serializable {
      */
     @SuppressWarnings("unchecked")
     public static <T> Predicate<T> notNullPredicate() {
-        return (Predicate<T>) INSTANCE;
+        return INSTANCE;
     }
 
     /**
@@ -60,6 +59,7 @@ public final class NotNullPredicate<T> implements Predicate<T>, Serializable {
      * @param object  the object to evaluate
      * @return true if not null
      */
+    @Override
     public boolean evaluate(final T object) {
         return object != null;
     }

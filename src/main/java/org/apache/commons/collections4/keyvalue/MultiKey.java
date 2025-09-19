@@ -40,7 +40,6 @@ import java.util.Arrays;
  * </pre>
  *
  * @since 3.0
- * @version $Id$
  */
 public class MultiKey<K> implements Serializable {
     // This class could implement List, but that would confuse it's purpose
@@ -274,7 +273,7 @@ public class MultiKey<K> implements Serializable {
      * only stable for the same process).
      * @return the instance with recalculated hash code
      */
-    private Object readResolve() {
+    protected Object readResolve() {
         calculateHashCode(keys);
         return this;
     }

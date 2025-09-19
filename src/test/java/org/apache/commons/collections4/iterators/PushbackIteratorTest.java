@@ -27,12 +27,11 @@ import org.junit.Test;
 
 /**
  * Tests the PushbackIterator.
- * 
- * @version $Id$
+ *
  */
 public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
 
-    private String[] testArray = { "a", "b", "c" };
+    private final String[] testArray = { "a", "b", "c" };
 
     private List<E> testList;
 
@@ -47,7 +46,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        testList = new ArrayList<E>(Arrays.asList((E[]) testArray));
+        testList = new ArrayList<>(Arrays.asList((E[]) testArray));
     }
 
     @Override
@@ -69,7 +68,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
 
     @Test
     public void testNormalIteration() {
-        PushbackIterator<E> iter = makeObject();
+        final PushbackIterator<E> iter = makeObject();
         assertEquals("a", iter.next());
         assertEquals("b", iter.next());
         assertEquals("c", iter.next());
@@ -79,7 +78,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
     @Test
     @SuppressWarnings("unchecked")
     public void testImmediatePushback() {
-        PushbackIterator<E> iter = makeObject();
+        final PushbackIterator<E> iter = makeObject();
         iter.pushback((E) "x");
         assertEquals("x", iter.next());
         assertEquals("a", iter.next());
@@ -89,7 +88,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
     @Test
     @SuppressWarnings("unchecked")
     public void testDelayedPushback() {
-        PushbackIterator<E> iter = makeObject();
+        final PushbackIterator<E> iter = makeObject();
         assertEquals("a", iter.next());
         iter.pushback((E) "x");
         assertEquals("x", iter.next());
@@ -100,7 +99,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
     @Test
     @SuppressWarnings("unchecked")
     public void testMultiplePushback() {
-        PushbackIterator<E> iter = makeObject();
+        final PushbackIterator<E> iter = makeObject();
         assertEquals("a", iter.next());
         iter.pushback((E) "x");
         iter.pushback((E) "y");
@@ -110,7 +109,7 @@ public class PushbackIteratorTest<E> extends AbstractIteratorTest<E> {
         validate(iter, "c");
     }
 
-    private void validate(Iterator<E> iter, Object... items) {
+    private void validate(final Iterator<E> iter, final Object... items) {
         for (final Object x : items) {
             assertTrue(iter.hasNext());
             assertEquals(x, iter.next());

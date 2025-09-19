@@ -17,6 +17,7 @@ package org.apache.commons.collections4.iterators;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -27,7 +28,6 @@ import org.w3c.dom.NodeList;
  * removal of items.
  *
  * @since 4.0
- * @version $Id$
  * @see NodeList
  */
 public class NodeListIterator implements Iterator<Node> {
@@ -42,11 +42,11 @@ public class NodeListIterator implements Iterator<Node> {
      * the specified node's childNodes.
      *
      * @param node Node, who's child nodes are wrapped by this class. Must not be null
-     * @throws IllegalArgumentException if node is null
+     * @throws NullPointerException if node is null
      */
     public NodeListIterator(final Node node) {
         if (node == null) {
-            throw new IllegalArgumentException("node must not be null!");
+            throw new NullPointerException("Node must not be null.");
         }
         this.nodeList = node.getChildNodes();
     }
@@ -56,19 +56,21 @@ public class NodeListIterator implements Iterator<Node> {
      * <code>org.w3c.NodeList</code>
      *
      * @param nodeList node list, which is wrapped by this class. Must not be null
-     * @throws IllegalArgumentException if nodeList is null
+     * @throws NullPointerException if nodeList is null
      */
     public NodeListIterator(final NodeList nodeList) {
         if (nodeList == null) {
-            throw new IllegalArgumentException("nodeList must not be null!");
+            throw new NullPointerException("NodeList must not be null.");
         }
         this.nodeList = nodeList;
     }
 
+    @Override
     public boolean hasNext() {
-        return nodeList == null ? false : index < nodeList.getLength();
+        return nodeList != null && index < nodeList.getLength();
     }
 
+    @Override
     public Node next() {
         if (nodeList != null && index < nodeList.getLength()) {
             return nodeList.item(index++);
@@ -81,6 +83,7 @@ public class NodeListIterator implements Iterator<Node> {
      *
      * @throws UnsupportedOperationException always
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() method not supported for a NodeListIterator.");
     }

@@ -44,8 +44,9 @@ import org.apache.commons.collections4.Predicate;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public class PredicatedMap<K, V>
         extends AbstractInputCheckedMapDecorator<K, V>
@@ -72,13 +73,13 @@ public class PredicatedMap<K, V>
      * @param keyPredicate  the predicate to validate the keys, null means no check
      * @param valuePredicate  the predicate to validate to values, null means no check
      * @return a new predicated map
-     * @throws IllegalArgumentException if the map is null
+     * @throws NullPointerException if the map is null
      * @since 4.0
      */
     public static <K, V> PredicatedMap<K, V> predicatedMap(final Map<K, V> map,
                                                            final Predicate<? super K> keyPredicate,
                                                            final Predicate<? super V> valuePredicate) {
-        return new PredicatedMap<K, V>(map, keyPredicate, valuePredicate);
+        return new PredicatedMap<>(map, keyPredicate, valuePredicate);
     }
 
     //-----------------------------------------------------------------------
@@ -88,7 +89,7 @@ public class PredicatedMap<K, V>
      * @param map  the map to decorate, must not be null
      * @param keyPredicate  the predicate to validate the keys, null means no check
      * @param valuePredicate  the predicate to validate to values, null means no check
-     * @throws IllegalArgumentException if the map is null
+     * @throws NullPointerException if the map is null
      */
     protected PredicatedMap(final Map<K, V> map, final Predicate<? super K> keyPredicate,
                             final Predicate<? super V> valuePredicate) {
@@ -108,7 +109,7 @@ public class PredicatedMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -120,8 +121,8 @@ public class PredicatedMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      * @since 3.1
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect

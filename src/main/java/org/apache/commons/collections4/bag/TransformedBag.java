@@ -33,8 +33,8 @@ import org.apache.commons.collections4.set.TransformedSet;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <E> the type of elements in this bag
  * @since 3.0
- * @version $Id$
  */
 public class TransformedBag<E> extends TransformedCollection<E> implements Bag<E> {
 
@@ -51,11 +51,11 @@ public class TransformedBag<E> extends TransformedCollection<E> implements Bag<E
      * @param bag  the bag to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed Bag
-     * @throws IllegalArgumentException if bag or transformer is null
+     * @throws NullPointerException if bag or transformer is null
      * @since 4.0
      */
     public static <E> Bag<E> transformingBag(final Bag<E> bag, final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedBag<E>(bag, transformer);
+        return new TransformedBag<>(bag, transformer);
     }
 
     /**
@@ -70,12 +70,12 @@ public class TransformedBag<E> extends TransformedCollection<E> implements Bag<E
      * @param bag  the bag to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed Bag
-     * @throws IllegalArgumentException if bag or transformer is null
+     * @throws NullPointerException if bag or transformer is null
      * @since 4.0
      */
     public static <E> Bag<E> transformedBag(final Bag<E> bag, final Transformer<? super E, ? extends E> transformer) {
-        final TransformedBag<E> decorated = new TransformedBag<E>(bag, transformer);
-        if (transformer != null && bag != null && bag.size() > 0) {
+        final TransformedBag<E> decorated = new TransformedBag<>(bag, transformer);
+        if (bag.size() > 0) {
             @SuppressWarnings("unchecked") // Bag is of type E
             final E[] values = (E[]) bag.toArray(); // NOPMD - false positive for generics
             bag.clear();
@@ -95,7 +95,7 @@ public class TransformedBag<E> extends TransformedCollection<E> implements Bag<E
      *
      * @param bag  the bag to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
-     * @throws IllegalArgumentException if bag or transformer is null
+     * @throws NullPointerException if bag or transformer is null
      */
     protected TransformedBag(final Bag<E> bag, final Transformer<? super E, ? extends E> transformer) {
         super(bag, transformer);

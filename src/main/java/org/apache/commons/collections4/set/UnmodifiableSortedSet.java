@@ -33,8 +33,8 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <E> the type of the elements in this set
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableSortedSet<E>
         extends AbstractSortedSetDecorator<E>
@@ -49,14 +49,14 @@ public final class UnmodifiableSortedSet<E>
      * @param <E> the element type
      * @param set  the set to decorate, must not be null
      * @return a new unmodifiable {@link SortedSet}
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if set is null
      * @since 4.0
      */
     public static <E> SortedSet<E> unmodifiableSortedSet(final SortedSet<E> set) {
         if (set instanceof Unmodifiable) {
             return set;
         }
-        return new UnmodifiableSortedSet<E>(set);
+        return new UnmodifiableSortedSet<>(set);
     }
 
     //-----------------------------------------------------------------------
@@ -64,7 +64,7 @@ public final class UnmodifiableSortedSet<E>
      * Constructor that wraps (not copies).
      *
      * @param set  the set to decorate, must not be null
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if set is null
      */
     private UnmodifiableSortedSet(final SortedSet<E> set) {
         super(set);
@@ -130,7 +130,7 @@ public final class UnmodifiableSortedSet<E>
      * Write the collection out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -141,8 +141,8 @@ public final class UnmodifiableSortedSet<E>
      * Read the collection in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

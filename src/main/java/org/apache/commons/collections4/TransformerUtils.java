@@ -56,10 +56,16 @@ import org.apache.commons.collections4.functors.SwitchTransformer;
  * <li>Exception - always throws an exception
  * <li>StringValue - returns a <code>java.lang.String</code> representation of the input object
  * </ul>
- * All the supplied transformers are Serializable.
+ * <p>
+ * Since v4.1 only transformers which are considered to be safe are
+ * Serializable. Transformers considered to be unsafe for serialization are:
+ * <ul>
+ * <li>Invoker
+ * <li>Clone
+ * <li>Instantiate
+ * </ul>
  *
  * @since 3.0
- * @version $Id$
  */
 public class TransformerUtils {
 
@@ -110,10 +116,10 @@ public class TransformerUtils {
      * Gets a transformer that returns a clone of the input object.
      * The input object will be cloned using one of these techniques (in order):
      * <ul>
-     * <li>public clone method
-     * <li>public copy constructor
-     * <li>serialization clone
-     * <ul>
+     * <li>public clone method</li>
+     * <li>public copy constructor</li>
+     * <li>serialization clone</li>
+     * </ul>
      *
      * @param <T>  the input/output type
      * @return the transformer
@@ -144,7 +150,7 @@ public class TransformerUtils {
      * @param <T>  the input/output type
      * @param closure  the closure to run each time in the transformer, not null
      * @return the transformer
-     * @throws IllegalArgumentException if the closure is null
+     * @throws NullPointerException if the closure is null
      * @see ClosureTransformer
      */
     public static <T> Transformer<T, T> asTransformer(final Closure<? super T> closure) {
@@ -158,7 +164,7 @@ public class TransformerUtils {
      * @param <T>  the input type
      * @param predicate  the predicate to run each time in the transformer, not null
      * @return the transformer
-     * @throws IllegalArgumentException if the predicate is null
+     * @throws NullPointerException if the predicate is null
      * @see PredicateTransformer
      */
     public static <T> Transformer<T, Boolean> asTransformer(final Predicate<? super T> predicate) {
@@ -173,7 +179,7 @@ public class TransformerUtils {
      * @param <O>  the output type
      * @param factory  the factory to run each time in the transformer, not null
      * @return the transformer
-     * @throws IllegalArgumentException if the factory is null
+     * @throws NullPointerException if the factory is null
      * @see FactoryTransformer
      */
     public static <I, O> Transformer<I, O> asTransformer(final Factory<? extends O> factory) {
@@ -187,7 +193,7 @@ public class TransformerUtils {
      * @param <T>  the input/output type
      * @param transformers  an array of transformers to chain
      * @return the transformer
-     * @throws IllegalArgumentException if the transformers array or any of the transformers is null
+     * @throws NullPointerException if the transformers array or any of the transformers is null
      * @see ChainedTransformer
      */
     public static <T> Transformer<T, T> chainedTransformer(
@@ -203,7 +209,7 @@ public class TransformerUtils {
      * @param <T>  the input/output type
      * @param transformers  a collection of transformers to chain
      * @return the transformer
-     * @throws IllegalArgumentException if the transformers collection or any of the transformers is null
+     * @throws NullPointerException if the transformers collection or any of the transformers is null
      * @see ChainedTransformer
      */
     public static <T> Transformer<T, T> chainedTransformer(
@@ -219,7 +225,7 @@ public class TransformerUtils {
      * @param predicate  the predicate to switch on
      * @param trueTransformer  the transformer called if the predicate is true
      * @return the transformer
-     * @throws IllegalArgumentException if either the predicate or transformer is null
+     * @throws NullPointerException if either the predicate or transformer is null
      * @see IfTransformer
      * @since 4.1
      */
@@ -238,7 +244,7 @@ public class TransformerUtils {
      * @param trueTransformer  the transformer called if the predicate is true
      * @param falseTransformer  the transformer called if the predicate is false
      * @return the transformer
-     * @throws IllegalArgumentException if either the predicate or transformer is null
+     * @throws NullPointerException if either the predicate or transformer is null
      * @see IfTransformer
      * @since 4.1
      */
@@ -258,9 +264,9 @@ public class TransformerUtils {
      * @param trueTransformer  the transformer called if the predicate is true
      * @param falseTransformer  the transformer called if the predicate is false
      * @return the transformer
-     * @throws IllegalArgumentException if either the predicate or transformer is null
+     * @throws NullPointerException if either the predicate or transformer is null
      * @see SwitchTransformer
-     * @deprecated as of 4.1, use {@link #ifTransformer(Predicate, Transformer, Transformer))
+     * @deprecated as of 4.1, use {@link #ifTransformer(Predicate, Transformer, Transformer)}
      */
     @SuppressWarnings("unchecked")
     @Deprecated
@@ -282,9 +288,9 @@ public class TransformerUtils {
      * @param predicates  an array of predicates to check
      * @param transformers  an array of transformers to call
      * @return the transformer
-     * @throws IllegalArgumentException if the either array is null or empty
-     * @throws IllegalArgumentException if any element in the arrays is null
-     * @throws IllegalArgumentException if the arrays are different sizes
+     * @throws NullPointerException if the either array is null
+     * @throws NullPointerException if any element in the arrays is null
+     * @throws IllegalArgumentException if the arrays have different sizes
      * @see SwitchTransformer
      */
     public static <I, O> Transformer<I, O> switchTransformer(final Predicate<? super I>[] predicates,
@@ -305,9 +311,9 @@ public class TransformerUtils {
      * @param transformers  an array of transformers to call
      * @param defaultTransformer  the default to call if no predicate matches, null means return null
      * @return the transformer
-     * @throws IllegalArgumentException if the either array is null or empty
-     * @throws IllegalArgumentException if any element in the arrays is null
-     * @throws IllegalArgumentException if the arrays are different sizes
+     * @throws NullPointerException if the either array is null
+     * @throws NullPointerException if any element in the arrays is null
+     * @throws IllegalArgumentException if the arrays have different sizes
      * @see SwitchTransformer
      */
     public static <I, O> Transformer<I, O> switchTransformer(final Predicate<? super I>[] predicates,
@@ -332,8 +338,8 @@ public class TransformerUtils {
      * @param <O>  the output type
      * @param predicatesAndTransformers  a map of predicates to transformers
      * @return the transformer
-     * @throws IllegalArgumentException if the map is null or empty
-     * @throws IllegalArgumentException if any transformer in the map is null
+     * @throws NullPointerException if the map is null
+     * @throws NullPointerException if any transformer in the map is null
      * @throws ClassCastException  if the map elements are of the wrong type
      * @see SwitchTransformer
      */
@@ -355,8 +361,8 @@ public class TransformerUtils {
      * @param <O>  the output type
      * @param objectsAndTransformers  a map of objects to transformers
      * @return the transformer
-     * @throws IllegalArgumentException if the map is null or empty
-     * @throws IllegalArgumentException if any transformer in the map is null
+     * @throws NullPointerException if the map is null
+     * @throws NullPointerException if any transformer in the map is null
      * @see SwitchTransformer
      */
     @SuppressWarnings("unchecked")
@@ -364,7 +370,7 @@ public class TransformerUtils {
             final Map<I, Transformer<I, O>> objectsAndTransformers) {
 
         if (objectsAndTransformers == null) {
-            throw new IllegalArgumentException("The object and transformer map must not be null");
+            throw new NullPointerException("The object and transformer map must not be null");
         }
         final Transformer<? super I, ? extends O> def = objectsAndTransformers.remove(null);
         final int size = objectsAndTransformers.size();
@@ -423,18 +429,20 @@ public class TransformerUtils {
 
     /**
      * Gets a Transformer that invokes a method on the input object.
-     * The method must have no parameters. If the input object is null,
-     * null is returned.
+     * The method must have no parameters. If the input object is {@code null},
+     * {@code null} is returned.
+     *
      * <p>
      * For example, <code>TransformerUtils.invokerTransformer("getName");</code>
-     * will call the <code>getName/code> method on the input object to
+     * will call the <code>getName</code> method on the input object to
      * determine the transformer result.
+     * </p>
      *
      * @param <I>  the input type
      * @param <O>  the output type
      * @param methodName  the method name to call on the input object, may not be null
      * @return the transformer
-     * @throws IllegalArgumentException if the methodName is null.
+     * @throws NullPointerException if the methodName is null.
      * @see InvokerTransformer
      */
     public static <I, O> Transformer<I, O> invokerTransformer(final String methodName) {
@@ -452,7 +460,8 @@ public class TransformerUtils {
      * @param paramTypes  the parameter types
      * @param args  the arguments
      * @return the transformer
-     * @throws IllegalArgumentException if the method name is null or the paramTypes and args don't match
+     * @throws NullPointerException if the method name is null
+     * @throws IllegalArgumentException if the paramTypes and args don't match
      * @see InvokerTransformer
      */
     public static <I, O> Transformer<I, O> invokerTransformer(final String methodName, final Class<?>[] paramTypes,

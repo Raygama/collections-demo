@@ -23,8 +23,9 @@ package org.apache.commons.collections4;
  * maximum number of elements. This interface allows the querying of details
  * associated with the maximum number of elements.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public interface BoundedMap<K, V> extends IterableMap<K, V> {
 

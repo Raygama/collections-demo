@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
-import org.apache.commons.collections4.set.UnmodifiableSet;
 import org.apache.commons.collections4.Unmodifiable;
 import org.apache.commons.collections4.collection.UnmodifiableCollection;
+import org.apache.commons.collections4.set.UnmodifiableSet;
 
 /**
  * Decorates another <code>SortedMap</code> to ensure it can't be altered.
@@ -37,8 +37,9 @@ import org.apache.commons.collections4.collection.UnmodifiableCollection;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableSortedMap<K, V>
         extends AbstractSortedMapDecorator<K, V>
@@ -54,7 +55,7 @@ public final class UnmodifiableSortedMap<K, V>
      * @param <V>  the value type
      * @param map  the map to decorate, must not be null
      * @return a new unmodifiable sorted map
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> SortedMap<K, V> unmodifiableSortedMap(final SortedMap<K, ? extends V> map) {
@@ -63,7 +64,7 @@ public final class UnmodifiableSortedMap<K, V>
             final SortedMap<K, V> tmpMap = (SortedMap<K, V>) map;
             return tmpMap;
         }
-        return new UnmodifiableSortedMap<K, V>(map);
+        return new UnmodifiableSortedMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -71,7 +72,7 @@ public final class UnmodifiableSortedMap<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableSortedMap(final SortedMap<K, ? extends V> map) {
@@ -83,7 +84,7 @@ public final class UnmodifiableSortedMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -95,8 +96,8 @@ public final class UnmodifiableSortedMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      * @since 3.1
      */
     @SuppressWarnings("unchecked")
@@ -159,17 +160,17 @@ public final class UnmodifiableSortedMap<K, V>
 
     @Override
     public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
-        return new UnmodifiableSortedMap<K, V>(decorated().subMap(fromKey, toKey));
+        return new UnmodifiableSortedMap<>(decorated().subMap(fromKey, toKey));
     }
 
     @Override
     public SortedMap<K, V> headMap(final K toKey) {
-        return new UnmodifiableSortedMap<K, V>(decorated().headMap(toKey));
+        return new UnmodifiableSortedMap<>(decorated().headMap(toKey));
     }
 
     @Override
     public SortedMap<K, V> tailMap(final K fromKey) {
-        return new UnmodifiableSortedMap<K, V>(decorated().tailMap(fromKey));
+        return new UnmodifiableSortedMap<>(decorated().tailMap(fromKey));
     }
 
 }

@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
  * overriding the supportsXxx() methods if necessary.
  *
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractListIteratorTest<E> extends AbstractIteratorTest<E> {
 
@@ -122,7 +121,7 @@ public abstract class AbstractListIteratorTest<E> extends AbstractIteratorTest<E
      * Test navigation through the iterator.
      */
     public void testWalkForwardAndBack() {
-        final ArrayList<E> list = new ArrayList<E>();
+        final ArrayList<E> list = new ArrayList<>();
         final ListIterator<E> it = makeObject();
         while (it.hasNext()) {
             list.add(it.next());
@@ -167,6 +166,7 @@ public abstract class AbstractListIteratorTest<E> extends AbstractIteratorTest<E
             // check for UnsupportedOperationException if not supported
             try {
                 it.add(addValue);
+                fail("UnsupportedOperationException must be thrown from add of " + it.getClass().getSimpleName());
             } catch (final UnsupportedOperationException ex) {}
             return;
         }
@@ -202,6 +202,7 @@ public abstract class AbstractListIteratorTest<E> extends AbstractIteratorTest<E
             // check for UnsupportedOperationException if not supported
             try {
                 it.set(addSetValue());
+                fail("UnsupportedOperationException must be thrown from set in " + it.getClass().getSimpleName());
             } catch (final UnsupportedOperationException ex) {}
             return;
         }

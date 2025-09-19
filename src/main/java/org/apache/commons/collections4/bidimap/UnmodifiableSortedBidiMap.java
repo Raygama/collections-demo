@@ -33,8 +33,9 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * <p>
  * Attempts to modify it will result in an {@link UnsupportedOperationException}.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableSortedBidiMap<K, V>
         extends AbstractSortedBidiMapDecorator<K, V> implements Unmodifiable {
@@ -51,7 +52,7 @@ public final class UnmodifiableSortedBidiMap<K, V>
      * @param <V> the value type
      * @param map  the map to decorate, must not be null
      * @return an unmodifiable SortedBidiMap
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> SortedBidiMap<K, V> unmodifiableSortedBidiMap(final SortedBidiMap<K, ? extends V> map) {
@@ -60,7 +61,7 @@ public final class UnmodifiableSortedBidiMap<K, V>
             final SortedBidiMap<K, V> tmpMap = (SortedBidiMap<K, V>) map;
             return tmpMap;
         }
-        return new UnmodifiableSortedBidiMap<K, V>(map);
+        return new UnmodifiableSortedBidiMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -68,7 +69,7 @@ public final class UnmodifiableSortedBidiMap<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableSortedBidiMap(final SortedBidiMap<K, ? extends V> map) {
@@ -131,7 +132,7 @@ public final class UnmodifiableSortedBidiMap<K, V>
     @Override
     public SortedBidiMap<V, K> inverseBidiMap() {
         if (inverse == null) {
-            inverse = new UnmodifiableSortedBidiMap<V, K>(decorated().inverseBidiMap());
+            inverse = new UnmodifiableSortedBidiMap<>(decorated().inverseBidiMap());
             inverse.inverse = this;
         }
         return inverse;

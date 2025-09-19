@@ -16,10 +16,7 @@
  */
 package org.apache.commons.collections4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +35,6 @@ import org.junit.Test;
  * Tests the ClosureUtils class.
  *
  * @since 3.0
- * @version $Id$
  */
 public class ClosureUtilsTest {
 
@@ -47,6 +43,7 @@ public class ClosureUtilsTest {
     static class MockClosure<T> implements Closure<T> {
         int count = 0;
 
+        @Override
         public void execute(final T object) {
             count++;
         }
@@ -59,6 +56,7 @@ public class ClosureUtilsTest {
     static class MockTransformer<T> implements Transformer<T, T> {
         int count = 0;
 
+        @Override
         public T transform(final T object) {
             count++;
             return object;
@@ -114,11 +112,11 @@ public class ClosureUtilsTest {
 
     @Test
     public void testForClosure() {
-        final MockClosure<Object> cmd = new MockClosure<Object>();
+        final MockClosure<Object> cmd = new MockClosure<>();
         ClosureUtils.forClosure(5, cmd).execute(null);
         assertEquals(5, cmd.count);
-        assertSame(NOPClosure.INSTANCE, ClosureUtils.forClosure(0, new MockClosure<Object>()));
-        assertSame(NOPClosure.INSTANCE, ClosureUtils.forClosure(-1, new MockClosure<Object>()));
+        assertSame(NOPClosure.INSTANCE, ClosureUtils.forClosure(0, new MockClosure<>()));
+        assertSame(NOPClosure.INSTANCE, ClosureUtils.forClosure(-1, new MockClosure<>()));
         assertSame(NOPClosure.INSTANCE, ClosureUtils.forClosure(1, null));
         assertSame(NOPClosure.INSTANCE, ClosureUtils.forClosure(3, null));
         assertSame(cmd, ClosureUtils.forClosure(1, cmd));
@@ -129,26 +127,26 @@ public class ClosureUtilsTest {
 
     @Test
     public void testWhileClosure() {
-        MockClosure<Object> cmd = new MockClosure<Object>();
+        MockClosure<Object> cmd = new MockClosure<>();
         ClosureUtils.whileClosure(FalsePredicate.falsePredicate(), cmd).execute(null);
         assertEquals(0, cmd.count);
 
-        cmd = new MockClosure<Object>();
+        cmd = new MockClosure<>();
         ClosureUtils.whileClosure(PredicateUtils.uniquePredicate(), cmd).execute(null);
         assertEquals(1, cmd.count);
 
         try {
             ClosureUtils.whileClosure(null, ClosureUtils.nopClosure());
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.whileClosure(FalsePredicate.falsePredicate(), null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.whileClosure(null, null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     // doWhileClosure
@@ -156,18 +154,18 @@ public class ClosureUtilsTest {
 
     @Test
     public void testDoWhileClosure() {
-        MockClosure<Object> cmd = new MockClosure<Object>();
+        MockClosure<Object> cmd = new MockClosure<>();
         ClosureUtils.doWhileClosure(cmd, FalsePredicate.falsePredicate()).execute(null);
         assertEquals(1, cmd.count);
 
-        cmd = new MockClosure<Object>();
+        cmd = new MockClosure<>();
         ClosureUtils.doWhileClosure(cmd, PredicateUtils.uniquePredicate()).execute(null);
         assertEquals(2, cmd.count);
 
         try {
             ClosureUtils.doWhileClosure(null, null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     // chainedClosure
@@ -176,21 +174,21 @@ public class ClosureUtilsTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testChainedClosure() {
-        MockClosure<Object> a = new MockClosure<Object>();
-        MockClosure<Object> b = new MockClosure<Object>();
+        MockClosure<Object> a = new MockClosure<>();
+        MockClosure<Object> b = new MockClosure<>();
         ClosureUtils.chainedClosure(a, b).execute(null);
         assertEquals(1, a.count);
         assertEquals(1, b.count);
 
-        a = new MockClosure<Object>();
-        b = new MockClosure<Object>();
+        a = new MockClosure<>();
+        b = new MockClosure<>();
         ClosureUtils.<Object>chainedClosure(new Closure[] {a, b, a}).execute(null);
         assertEquals(2, a.count);
         assertEquals(1, b.count);
 
-        a = new MockClosure<Object>();
-        b = new MockClosure<Object>();
-        Collection<Closure<Object>> coll = new ArrayList<Closure<Object>>();
+        a = new MockClosure<>();
+        b = new MockClosure<>();
+        Collection<Closure<Object>> coll = new ArrayList<>();
         coll.add(b);
         coll.add(a);
         coll.add(b);
@@ -204,26 +202,26 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.chainedClosure(null, null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<Object>chainedClosure((Closure[]) null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<Object>chainedClosure((Collection<Closure<Object>>) null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<Object>chainedClosure(new Closure[] {null, null});
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
-            coll = new ArrayList<Closure<Object>>();
+            coll = new ArrayList<>();
             coll.add(null);
             coll.add(null);
             ClosureUtils.chainedClosure(coll);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     // ifClosure
@@ -231,23 +229,23 @@ public class ClosureUtilsTest {
 
     @Test
     public void testIfClosure() {
-        MockClosure<Object> a = new MockClosure<Object>();
+        MockClosure<Object> a = new MockClosure<>();
         MockClosure<Object> b = null;
         ClosureUtils.ifClosure(TruePredicate.truePredicate(), a).execute(null);
         assertEquals(1, a.count);
 
-        a = new MockClosure<Object>();
+        a = new MockClosure<>();
         ClosureUtils.ifClosure(FalsePredicate.<Object>falsePredicate(), a).execute(null);
         assertEquals(0, a.count);
 
-        a = new MockClosure<Object>();
-        b = new MockClosure<Object>();
+        a = new MockClosure<>();
+        b = new MockClosure<>();
         ClosureUtils.ifClosure(TruePredicate.<Object>truePredicate(), a, b).execute(null);
         assertEquals(1, a.count);
         assertEquals(0, b.count);
 
-        a = new MockClosure<Object>();
-        b = new MockClosure<Object>();
+        a = new MockClosure<>();
+        b = new MockClosure<>();
         ClosureUtils.ifClosure(FalsePredicate.<Object>falsePredicate(), a, b).execute(null);
         assertEquals(0, a.count);
         assertEquals(1, b.count);
@@ -259,8 +257,8 @@ public class ClosureUtilsTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSwitchClosure() {
-        final MockClosure<String> a = new MockClosure<String>();
-        final MockClosure<String> b = new MockClosure<String>();
+        final MockClosure<String> a = new MockClosure<>();
+        final MockClosure<String> b = new MockClosure<>();
         ClosureUtils.<String>switchClosure(
             new Predicate[] { EqualPredicate.equalPredicate("HELLO"), EqualPredicate.equalPredicate("THERE") },
             new Closure[] { a, b }).execute("WELL");
@@ -277,7 +275,7 @@ public class ClosureUtilsTest {
 
         a.reset();
         b.reset();
-        final MockClosure<String> c = new MockClosure<String>();
+        final MockClosure<String> c = new MockClosure<>();
         ClosureUtils.<String>switchClosure(
             new Predicate[] { EqualPredicate.equalPredicate("HELLO"), EqualPredicate.equalPredicate("THERE") },
             new Closure[] { a, b }, c).execute("WELL");
@@ -287,7 +285,7 @@ public class ClosureUtilsTest {
 
         a.reset();
         b.reset();
-        final Map<Predicate<String>, Closure<String>> map = new HashMap<Predicate<String>, Closure<String>>();
+        final Map<Predicate<String>, Closure<String>> map = new HashMap<>();
         map.put(EqualPredicate.equalPredicate("HELLO"), a);
         map.put(EqualPredicate.equalPredicate("THERE"), b);
         ClosureUtils.<String>switchClosure(map).execute(null);
@@ -324,19 +322,19 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.switchClosure(null, null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<String>switchClosure((Predicate<String>[]) null, (Closure<String>[]) null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<String>switchClosure((Map<Predicate<String>, Closure<String>>) null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<String>switchClosure(new Predicate[2], new Closure[2]);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
         try {
             ClosureUtils.<String>switchClosure(
                     new Predicate[] { TruePredicate.<String>truePredicate() },
@@ -350,9 +348,9 @@ public class ClosureUtilsTest {
 
     @Test
     public void testSwitchMapClosure() {
-        final MockClosure<String> a = new MockClosure<String>();
-        final MockClosure<String> b = new MockClosure<String>();
-        final Map<String, Closure<String>> map = new HashMap<String, Closure<String>>();
+        final MockClosure<String> a = new MockClosure<>();
+        final MockClosure<String> b = new MockClosure<>();
+        final Map<String, Closure<String>> map = new HashMap<>();
         map.put("HELLO", a);
         map.put("THERE", b);
         ClosureUtils.switchMapClosure(map).execute(null);
@@ -371,7 +369,7 @@ public class ClosureUtilsTest {
         a.reset();
         b.reset();
         map.clear();
-        final MockClosure<String> c = new MockClosure<String>();
+        final MockClosure<String> c = new MockClosure<>();
         map.put("HELLO", a);
         map.put("THERE", b);
         map.put(null, c);
@@ -385,7 +383,7 @@ public class ClosureUtilsTest {
         try {
             ClosureUtils.switchMapClosure(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     // asClosure
@@ -393,7 +391,7 @@ public class ClosureUtilsTest {
 
     @Test
     public void testTransformerClosure() {
-        final MockTransformer<Object> mock = new MockTransformer<Object>();
+        final MockTransformer<Object> mock = new MockTransformer<>();
         final Closure<Object> closure = ClosureUtils.asClosure(mock);
         closure.execute(null);
         assertEquals(1, mock.count);

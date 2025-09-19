@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.collections4.ResettableListIterator;
 
 /**
- * Implements a {@link ListIterator} over an array.
+ * Implements a {@link java.util.ListIterator} over an array.
  * <p>
  * The array can be either an array of object or of primitives. If you know
  * that you have an object array, the {@link ObjectArrayListIterator}
@@ -37,7 +37,6 @@ import org.apache.commons.collections4.ResettableListIterator;
  * @see java.util.ListIterator
  *
  * @since 3.0
- * @version $Id$
  */
 public class ArrayListIterator<E> extends ArrayIterator<E>
         implements ResettableListIterator<E> {
@@ -101,6 +100,7 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      *
      * @return true if there is a previous element to return
      */
+    @Override
     public boolean hasPrevious() {
         return this.index > this.startIndex;
     }
@@ -111,6 +111,7 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * @return the previous element
      * @throws NoSuchElementException if there is no previous element
      */
+    @Override
     @SuppressWarnings("unchecked")
     public E previous() {
         if (hasPrevious() == false) {
@@ -141,6 +142,7 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
+    @Override
     public int nextIndex() {
         return this.index - this.startIndex;
     }
@@ -150,6 +152,7 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      *
      * @return the index of the item to be retrieved next
      */
+    @Override
     public int previousIndex() {
         return this.index - this.startIndex - 1;
     }
@@ -162,6 +165,7 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * @throws UnsupportedOperationException always thrown.
      * @see java.util.ListIterator#set
      */
+    @Override
     public void add(final Object o) {
         throw new UnsupportedOperationException("add() method is not supported");
     }
@@ -172,9 +176,9 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * This method sets the element that was returned by the last call
      * to {@link #next()} of {@link #previous()}.
      * <p>
-     * <b>Note:</b> {@link ListIterator} implementations that support
+     * <b>Note:</b> {@link java.util.ListIterator} implementations that support
      * <code>add()</code> and <code>remove()</code> only allow <code>set()</code> to be called
-     * once per call to <code>next()</code> or <code>previous</code> (see the {@link ListIterator}
+     * once per call to <code>next()</code> or <code>previous</code> (see the {@link java.util.ListIterator}
      * javadoc for more details). Since this implementation does
      * not support <code>add()</code> or <code>remove()</code>, <code>set()</code> may be
      * called as often as desired.
@@ -184,6 +188,7 @@ public class ArrayListIterator<E> extends ArrayIterator<E>
      * before {@link #set(Object)}
      * @see java.util.ListIterator#set
      */
+    @Override
     public void set(final Object o) {
         if (this.lastItemIndex == -1) {
             throw new IllegalStateException("must call next() or previous() before a call to set()");

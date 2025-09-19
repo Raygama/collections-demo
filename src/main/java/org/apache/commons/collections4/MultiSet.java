@@ -30,7 +30,6 @@ import java.util.Set;
  *
  * @param <E> the type held in the multiset
  * @since 4.1
- * @version $Id$
  */
 public interface MultiSet<E> extends Collection<E> {
 
@@ -50,7 +49,7 @@ public interface MultiSet<E> extends Collection<E> {
      * <p>
      * If the provided count is zero, the object will be removed from the
      * {@link #uniqueSet()}.
-     * 
+     *
      * @param object  the object to update
      * @param count  the number of occurrences of the object
      * @return the number of occurrences of the object before this operation, zero
@@ -122,7 +121,9 @@ public interface MultiSet<E> extends Collection<E> {
      * Uniqueness constraints are the same as those in {@link java.util.Set}.
      * <p>
      * The returned set is backed by this multiset, so any change to either
-     * is immediately reflected in the other.
+     * is immediately reflected in the other. Only removal operations are
+     * supported, in which case all occurrences of the element are removed
+     * from the backing multiset.
      *
      * @return the Set of unique MultiSet elements
      */
@@ -239,7 +240,7 @@ public interface MultiSet<E> extends Collection<E> {
          * and the two entries represent the same element with the same
          * number of occurrences.
          * <p>
-         * More formally, two entries <tt>e1</tt> and <tt>e2</tt> represent
+         * More formally, two entries <code>e1</code> and <code>e2</code> represent
          * the same mapping if
          * <pre>
          *     (e1.getElement()==null ? e2.getElement()==null
@@ -256,7 +257,7 @@ public interface MultiSet<E> extends Collection<E> {
         /**
          * Returns the hash code value for this multiset entry.
          * <p>
-         * The hash code of a multiset entry <tt>e</tt> is defined to be:
+         * The hash code of a multiset entry <code>e</code> is defined to be:
          * <pre>
          *      (e==null ? 0 : e.hashCode()) ^ noOccurances)
          * </pre>

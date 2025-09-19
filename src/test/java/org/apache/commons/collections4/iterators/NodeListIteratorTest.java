@@ -15,16 +15,14 @@
  */
 package org.apache.commons.collections4.iterators;
 
+import static org.easymock.EasyMock.*;
+
 import java.util.Iterator;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 /**
  * Tests the NodeListIterator.
@@ -70,9 +68,11 @@ public class NodeListIteratorTest extends AbstractIteratorTest<Node> {
     @Override
     public Iterator<Node> makeEmptyIterator() {
         final NodeList emptyNodeList = new NodeList() {
+            @Override
             public Node item(final int index) {
                 throw new IndexOutOfBoundsException();
             }
+            @Override
             public int getLength() {
                 return 0;
             }
@@ -80,21 +80,22 @@ public class NodeListIteratorTest extends AbstractIteratorTest<Node> {
 
         if (createIteratorWithStandardConstr) {
             return new NodeListIterator(emptyNodeList);
-        } else {
-            final Node parentNode = createMock(Node.class);
-            expect(parentNode.getChildNodes()).andStubReturn(emptyNodeList);
-            replay(parentNode);
-
-            return new NodeListIterator(parentNode);
         }
+        final Node parentNode = createMock(Node.class);
+        expect(parentNode.getChildNodes()).andStubReturn(emptyNodeList);
+        replay(parentNode);
+
+        return new NodeListIterator(parentNode);
     }
 
     @Override
     public Iterator<Node> makeObject() {
         final NodeList nodeList = new NodeList() {
+            @Override
             public Node item(final int index) {
                 return nodes[index];
             }
+            @Override
             public int getLength() {
                 return nodes.length;
             }
@@ -112,8 +113,8 @@ public class NodeListIteratorTest extends AbstractIteratorTest<Node> {
     public void testNullConstructor(){
         try{
             new NodeListIterator((Node) null);
-            fail("IllegalArgumentException expected!");
-        }catch(final IllegalArgumentException e){
+            fail("NullPointerException expected!");
+        }catch(final NullPointerException e){
             // expected.
         }
     }

@@ -32,8 +32,8 @@ import org.apache.commons.collections4.collection.PredicatedCollection;
  * One usage would be to ensure that no null entries are added to the queue.
  * <pre>Queue queue = PredicatedQueue.predicatedQueue(new UnboundedFifoQueue(), NotNullPredicate.INSTANCE);</pre>
  *
+ * @param <E> the type of elements held in this queue
  * @since 4.0
- * @version $Id$
  */
 public class PredicatedQueue<E> extends PredicatedCollection<E> implements Queue<E> {
 
@@ -50,12 +50,12 @@ public class PredicatedQueue<E> extends PredicatedCollection<E> implements Queue
      * @param Queue  the queue to decorate, must not be null
      * @param predicate  the predicate to use for validation, must not be null
      * @return a new predicated queue
-     * @throws IllegalArgumentException if queue or predicate is null
+     * @throws NullPointerException if queue or predicate is null
      * @throws IllegalArgumentException if the queue contains invalid elements
      */
     public static <E> PredicatedQueue<E> predicatedQueue(final Queue<E> Queue,
                                                           final Predicate<? super E> predicate) {
-        return new PredicatedQueue<E>(Queue, predicate);
+        return new PredicatedQueue<>(Queue, predicate);
     }
 
     //-----------------------------------------------------------------------
@@ -67,7 +67,7 @@ public class PredicatedQueue<E> extends PredicatedCollection<E> implements Queue
      *
      * @param queue  the queue to decorate, must not be null
      * @param predicate  the predicate to use for validation, must not be null
-     * @throws IllegalArgumentException if Queue or predicate is null
+     * @throws NullPointerException if queue or predicate is null
      * @throws IllegalArgumentException if the Queue contains invalid elements
      */
     protected PredicatedQueue(final Queue<E> queue, final Predicate<? super E> predicate) {
@@ -94,23 +94,28 @@ public class PredicatedQueue<E> extends PredicatedCollection<E> implements Queue
      * @return the result of adding to the underlying queue
      * @throws IllegalArgumentException if the add is invalid
      */
+    @Override
     public boolean offer(final E object) {
         validate(object);
         return decorated().offer(object);
     }
 
+    @Override
     public E poll() {
         return decorated().poll();
     }
 
+    @Override
     public E peek() {
         return decorated().peek();
     }
 
+    @Override
     public E element() {
         return decorated().element();
     }
 
+    @Override
     public E remove() {
         return decorated().remove();
     }

@@ -27,8 +27,7 @@ import org.apache.commons.collections4.list.FixedSizeList;
 /**
  * Extension of {@link AbstractCollectionTest} for exercising the
  * {@link UnmodifiableBoundedCollection} implementation.
- * 
- * @version $Id$
+ *
  */
 public class UnmodifiableBoundedCollectionTest<E> extends AbstractCollectionTest<E> {
 
@@ -46,18 +45,18 @@ public class UnmodifiableBoundedCollectionTest<E> extends AbstractCollectionTest
     @Override
     public BoundedCollection<E> makeFullCollection() {
         final E[] allElements = getFullElements();
-        final BoundedCollection<E> coll = FixedSizeList.<E>fixedSizeList(new ArrayList<E>(Arrays.asList(allElements)));
+        final BoundedCollection<E> coll = FixedSizeList.<E>fixedSizeList(new ArrayList<>(Arrays.asList(allElements)));
         return UnmodifiableBoundedCollection.unmodifiableBoundedCollection(coll);
     }
 
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new ArrayList<E>();
+        return new ArrayList<>();
     }
 
     @Override
     public Collection<E> makeConfirmedFullCollection() {
-        final ArrayList<E> list = new ArrayList<E>();
+        final ArrayList<E> list = new ArrayList<>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -81,14 +80,14 @@ public class UnmodifiableBoundedCollectionTest<E> extends AbstractCollectionTest
     public String getCompatibilityVersion() {
         return "4";
     }
-    
+
     //-----------------------------------------------------------------------
 
     public void testUnmodifiable() {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-    
+
     public void testDecorateFactory() {
         final BoundedCollection<E> coll = makeFullCollection();
         assertSame(coll, UnmodifiableBoundedCollection.unmodifiableBoundedCollection(coll));
@@ -96,7 +95,7 @@ public class UnmodifiableBoundedCollectionTest<E> extends AbstractCollectionTest
         try {
             UnmodifiableBoundedCollection.unmodifiableBoundedCollection(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
-    
+
 }

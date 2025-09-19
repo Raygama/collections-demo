@@ -30,7 +30,6 @@ import org.apache.commons.collections4.collection.AbstractCollectionTest;
  * {@link UnmodifiableSortedBag} implementation.
  *
  * @since 4.0
- * @version $Id$
  */
 public class UnmodifiableSortedBagTest<E> extends AbstractSortedBagTest<E> {
 
@@ -50,7 +49,7 @@ public class UnmodifiableSortedBagTest<E> extends AbstractSortedBagTest<E> {
 
     @Override
     public SortedBag<E> makeFullCollection() {
-        final SortedBag<E> bag = new TreeBag<E>();
+        final SortedBag<E> bag = new TreeBag<>();
         bag.addAll(Arrays.asList(getFullElements()));
         return UnmodifiableSortedBag.unmodifiableSortedBag(bag);
     }
@@ -81,7 +80,7 @@ public class UnmodifiableSortedBagTest<E> extends AbstractSortedBagTest<E> {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-    
+
     public void testDecorateFactory() {
         final SortedBag<E> queue = makeFullCollection();
         assertSame(queue, UnmodifiableSortedBag.unmodifiableSortedBag(queue));
@@ -89,7 +88,7 @@ public class UnmodifiableSortedBagTest<E> extends AbstractSortedBagTest<E> {
         try {
             UnmodifiableSortedBag.unmodifiableSortedBag(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     //-----------------------------------------------------------------------

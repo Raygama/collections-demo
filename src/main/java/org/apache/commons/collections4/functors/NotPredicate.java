@@ -24,7 +24,6 @@ import org.apache.commons.collections4.Predicate;
  * Predicate implementation that returns the opposite of the decorated predicate.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class NotPredicate<T> implements PredicateDecorator<T>, Serializable {
 
@@ -40,13 +39,13 @@ public final class NotPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @param <T> the type that the predicate queries
      * @param predicate  the predicate to decorate, not null
      * @return the predicate
-     * @throws IllegalArgumentException if the predicate is null
+     * @throws NullPointerException if the predicate is null
      */
     public static <T> Predicate<T> notPredicate(final Predicate<? super T> predicate) {
         if (predicate == null) {
-            throw new IllegalArgumentException("Predicate must not be null");
+            throw new NullPointerException("Predicate must not be null");
         }
-        return new NotPredicate<T>(predicate);
+        return new NotPredicate<>(predicate);
     }
 
     /**
@@ -66,6 +65,7 @@ public final class NotPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @param object  the input object
      * @return true if predicate returns false
      */
+    @Override
     public boolean evaluate(final T object) {
         return !iPredicate.evaluate(object);
     }
@@ -76,6 +76,7 @@ public final class NotPredicate<T> implements PredicateDecorator<T>, Serializabl
      * @return the predicate as the only element in an array
      * @since 3.1
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Predicate<? super T>[] getPredicates() {
         return new Predicate[] {iPredicate};

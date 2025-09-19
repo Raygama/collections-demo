@@ -28,7 +28,6 @@ import org.apache.commons.collections4.Unmodifiable;
 /**
  * JUnit tests.
  *
- * @version $Id$
  */
 public class UnmodifiableSortedBidiMapTest<K extends Comparable<K>, V extends Comparable<V>> extends AbstractSortedBidiMapTest<K, V> {
 
@@ -48,14 +47,14 @@ public class UnmodifiableSortedBidiMapTest<K extends Comparable<K>, V extends Co
 
     @Override
     public SortedBidiMap<K, V> makeFullMap() {
-        final SortedBidiMap<K, V> bidi = new DualTreeBidiMap<K, V>();
+        final SortedBidiMap<K, V> bidi = new DualTreeBidiMap<>();
         addSampleMappings(bidi);
         return UnmodifiableSortedBidiMap.unmodifiableSortedBidiMap(bidi);
     }
 
     @Override
     public SortedMap<K, V> makeConfirmedMap() {
-        return new TreeMap<K, V>();
+        return new TreeMap<>();
     }
 
     @Override
@@ -102,7 +101,7 @@ public class UnmodifiableSortedBidiMapTest<K extends Comparable<K>, V extends Co
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullMap() instanceof Unmodifiable);
     }
-    
+
     public void testDecorateFactory() {
         final SortedBidiMap<K, V> map = makeFullMap();
         assertSame(map, UnmodifiableSortedBidiMap.unmodifiableSortedBidiMap(map));
@@ -110,7 +109,7 @@ public class UnmodifiableSortedBidiMapTest<K extends Comparable<K>, V extends Co
         try {
             UnmodifiableSortedBidiMap.unmodifiableSortedBidiMap(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
 }

@@ -31,8 +31,8 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <E> the type of elements held in this queue
  * @since 4.0
- * @version $Id$
  */
 public final class UnmodifiableQueue<E>
         extends AbstractQueueDecorator<E>
@@ -49,7 +49,7 @@ public final class UnmodifiableQueue<E>
      * @param <E> the type of the elements in the queue
      * @param queue  the queue to decorate, must not be null
      * @return an unmodifiable Queue
-     * @throws IllegalArgumentException if queue is null
+     * @throws NullPointerException if queue is null
      */
     public static <E> Queue<E> unmodifiableQueue(final Queue<? extends E> queue) {
         if (queue instanceof Unmodifiable) {
@@ -57,7 +57,7 @@ public final class UnmodifiableQueue<E>
             final Queue<E> tmpQueue = (Queue<E>) queue;
             return tmpQueue;
         }
-        return new UnmodifiableQueue<E>(queue);
+        return new UnmodifiableQueue<>(queue);
     }
 
     //-----------------------------------------------------------------------
@@ -65,7 +65,7 @@ public final class UnmodifiableQueue<E>
      * Constructor that wraps (not copies).
      *
      * @param queue  the queue to decorate, must not be null
-     * @throws IllegalArgumentException if queue is null
+     * @throws NullPointerException if queue is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableQueue(final Queue<? extends E> queue) {

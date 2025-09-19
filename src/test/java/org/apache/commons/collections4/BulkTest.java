@@ -133,21 +133,9 @@ import junit.framework.TestSuite;
  *  The ordinary {@link TestSuite} constructor doesn't know how to
  *  interpret bulk test methods.
  *
- *  @version $Id$
  */
 public class BulkTest extends TestCase implements Cloneable {
 
-    /**
-     * IBM JDK 1.6.0 has several bugs in their java.util.TreeMap implementation.
-     */
-    protected static final boolean IBMJDK16;
-    static {
-        final String vmName = System.getProperty("java.vm.name");
-        final String version = System.getProperty("java.version");
-
-        IBMJDK16 = vmName != null  && vmName.equals("IBM J9 VM") &&
-                   version != null && version.equals("1.6.0");
-    }
 
     // Note:  BulkTest is Cloneable to make it easier to construct
     // BulkTest instances for simple test methods that are defined in
@@ -314,7 +302,7 @@ class BulkTestSuiteMaker {
          result.setName(prefix);
 
          final BulkTest bulk = makeFirstTestCase(startingClass);
-         ignored = new ArrayList<String>();
+         ignored = new ArrayList<>();
          final String[] s = bulk.ignoredTests();
          if (s != null) {
              ignored.addAll(Arrays.asList(s));

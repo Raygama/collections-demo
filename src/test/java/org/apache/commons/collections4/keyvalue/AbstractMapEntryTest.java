@@ -19,7 +19,8 @@ package org.apache.commons.collections4.keyvalue;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Abstract tests that can be extended to test any Map.Entry implementation.
@@ -29,9 +30,8 @@ import junit.framework.TestCase;
  * type being tested.
  *
  * @since 3.0
- * @version $Id$
  */
-public abstract class AbstractMapEntryTest<K, V> extends TestCase {
+public abstract class AbstractMapEntryTest<K, V> {
 
     protected final String key = "name";
     protected final String value = "duke";
@@ -64,7 +64,7 @@ public abstract class AbstractMapEntryTest<K, V> extends TestCase {
      * Makes a Map.Entry of a type that's known to work correctly.
      */
     public Map.Entry<K, V> makeKnownMapEntry(final K key, final V value) {
-        final Map<K, V> map = new HashMap<K, V>(1);
+        final Map<K, V> map = new HashMap<>(1);
         map.put(key, value);
         final Map.Entry<K, V> entry = map.entrySet().iterator().next();
         return entry;
@@ -72,6 +72,7 @@ public abstract class AbstractMapEntryTest<K, V> extends TestCase {
 
     //-----------------------------------------------------------------------
     @SuppressWarnings("unchecked")
+    @Test
     public void testAccessorsAndMutators() {
         Map.Entry<K, V> entry = makeMapEntry((K) key, (V) value);
 
@@ -96,6 +97,7 @@ public abstract class AbstractMapEntryTest<K, V> extends TestCase {
      */
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testSelfReferenceHandling() {
         // test that #setValue does not permit
         //  the MapEntry to contain itself (and thus cause infinite recursion
@@ -121,6 +123,7 @@ public abstract class AbstractMapEntryTest<K, V> extends TestCase {
     public abstract void testConstructors();
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testEqualsAndHashCode() {
         // 1. test with object data
         Map.Entry<K, V> e1 = makeMapEntry((K) key, (V) value);
@@ -142,6 +145,7 @@ public abstract class AbstractMapEntryTest<K, V> extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testToString() {
         Map.Entry<K, V> entry = makeMapEntry((K) key, (V) value);
         assertTrue(entry.toString().equals(entry.getKey() + "=" + entry.getValue()));

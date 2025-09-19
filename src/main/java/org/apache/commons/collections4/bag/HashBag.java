@@ -23,20 +23,18 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.commons.collections4.Bag;
-
 /**
- * Implements {@link Bag}, using a {@link HashMap} to provide the
+ * Implements {@code Bag}, using a {@link HashMap} to provide the
  * data storage. This is the standard implementation of a bag.
  * <p>
- * A {@link Bag} stores each object in the collection together with a
+ * A {@code Bag} stores each object in the collection together with a
  * count of occurrences. Extra methods on the interface allow multiple copies
  * of an object to be added or removed at once. It is important to read the
  * interface javadoc carefully as several methods violate the
  * {@link Collection} interface specification.
  *
+ * @param <E> the type of elements in this bag
  * @since 3.0 (previously in main package v2.0)
- * @version $Id$
  */
 public class HashBag<E> extends AbstractMapBag<E> implements Serializable {
 
@@ -63,6 +61,9 @@ public class HashBag<E> extends AbstractMapBag<E> implements Serializable {
     //-----------------------------------------------------------------------
     /**
      * Write the bag out using a custom routine.
+     *
+     * @param out  the output stream
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -71,6 +72,10 @@ public class HashBag<E> extends AbstractMapBag<E> implements Serializable {
 
     /**
      * Read the bag in using a custom routine.
+     *
+     * @param in  the input stream
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();

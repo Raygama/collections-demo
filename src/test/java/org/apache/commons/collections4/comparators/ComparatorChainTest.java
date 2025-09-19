@@ -26,7 +26,6 @@ import org.junit.Test;
 /**
  * Tests for ComparatorChain.
  *
- * @version $Id$
  */
 public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainTest.PseudoRow> {
 
@@ -36,7 +35,7 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
 
     @Override
     public Comparator<PseudoRow> makeObject() {
-        final ComparatorChain<PseudoRow> chain = new ComparatorChain<PseudoRow>(new ColumnComparator(0));
+        final ComparatorChain<PseudoRow> chain = new ComparatorChain<>(new ColumnComparator(0));
         chain.addComparator(new ColumnComparator(1), true); // reverse the second column
         chain.addComparator(new ColumnComparator(2), false);
         return chain;
@@ -53,7 +52,7 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
 
     @Test
     public void testNoopComparatorChain() {
-        final ComparatorChain<Integer> chain = new ComparatorChain<Integer>();
+        final ComparatorChain<Integer> chain = new ComparatorChain<>();
         final Integer i1 = Integer.valueOf(4);
         final Integer i2 = Integer.valueOf(6);
         chain.addComparator(new ComparableComparator<Integer>());
@@ -64,7 +63,7 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
 
     @Test
     public void testBadNoopComparatorChain() {
-        final ComparatorChain<Integer> chain = new ComparatorChain<Integer>();
+        final ComparatorChain<Integer> chain = new ComparatorChain<>();
         final Integer i1 = Integer.valueOf(4);
         final Integer i2 = Integer.valueOf(6);
         try {
@@ -76,9 +75,9 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
 
     @Test
     public void testListComparatorChain() {
-        final List<Comparator<Integer>> list = new LinkedList<Comparator<Integer>>();
+        final List<Comparator<Integer>> list = new LinkedList<>();
         list.add(new ComparableComparator<Integer>());
-        final ComparatorChain<Integer> chain = new ComparatorChain<Integer>(list);
+        final ComparatorChain<Integer> chain = new ComparatorChain<>(list);
         final Integer i1 = Integer.valueOf(4);
         final Integer i2 = Integer.valueOf(6);
 
@@ -88,8 +87,8 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
 
     @Test
     public void testBadListComparatorChain() {
-        final List<Comparator<Integer>> list = new LinkedList<Comparator<Integer>>();
-        final ComparatorChain<Integer> chain = new ComparatorChain<Integer>(list);
+        final List<Comparator<Integer>> list = new LinkedList<>();
+        final ComparatorChain<Integer> chain = new ComparatorChain<>(list);
         final Integer i1 = Integer.valueOf(4);
         final Integer i2 = Integer.valueOf(6);
         try {
@@ -103,8 +102,9 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
     public void testComparatorChainOnMinvaluedCompatator() {
         // -1 * Integer.MIN_VALUE is less than 0,
         // test that ComparatorChain handles this edge case correctly
-        final ComparatorChain<Integer> chain = new ComparatorChain<Integer>();
+        final ComparatorChain<Integer> chain = new ComparatorChain<>();
         chain.addComparator(new Comparator<Integer>() {
+            @Override
             public int compare(final Integer a, final Integer b) {
                 final int result = a.compareTo(b);
                 if (result < 0) {
@@ -124,7 +124,7 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
 
     @Override
     public List<PseudoRow> getComparableObjectsOrdered() {
-        final List<PseudoRow> list = new LinkedList<PseudoRow>();
+        final List<PseudoRow> list = new LinkedList<>();
         // this is the correct order assuming a
         // "0th forward, 1st reverse, 2nd forward" sort
         list.add(new PseudoRow(1, 2, 3));
@@ -201,6 +201,7 @@ public class ComparatorChainTest extends AbstractComparatorTest<ComparatorChainT
             this.colIndex = colIndex;
         }
 
+        @Override
         public int compare(final PseudoRow o1, final PseudoRow o2) {
 
             final int col1 = o1.getColumn(colIndex);

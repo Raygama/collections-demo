@@ -16,24 +16,20 @@
  */
 /**
  * This package contains implementations of the
- * {@link org.apache.commons.collections4.MultiSet MultiSet} and
- * {@link org.apache.commons.collections4.SortedMultiSet SortedMultiSet} interfaces.
+ * {@link org.apache.commons.collections4.MultiSet MultiSet} interface.
  * A multiset stores an object and a count of the number of occurrences of the object.
  * <p>
  * The following implementations are provided in the package:
  * <ul>
  *   <li>HashMultiSet - implementation that uses a HashMap to store the data
- *   <li>TreeMultiSet - implementation that uses a TreeMap to store the data
  * </ul>
  * <p>
  * The following decorators are provided in the package:
  * <ul>
+ *   <li>Predicated   - ensures that only elements that are valid according to a predicate can be added
  *   <li>Synchronized - synchronizes method access for multi-threaded environments
  *   <li>Unmodifiable - ensures the multiset cannot be altered
- *   <li>Predicated - ensures that only elements that are valid according to a predicate can be added
- *   <li>Transformed - transforms each element added to the multiset
  * </ul>
  *
- * @version $Id$
  */
 package org.apache.commons.collections4.multiset;

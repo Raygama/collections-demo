@@ -16,6 +16,7 @@
  */
 package org.apache.commons.collections4.list;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,7 +47,6 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * This class is Serializable from Commons Collections 3.1.
  *
  * @since 3.0
- * @version $Id$
  */
 public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
 
@@ -65,19 +65,19 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
      * @param <E>  the element type
      * @param list  the list to decorate, must not be null
      * @return a new {@link SetUniqueList}
-     * @throws IllegalArgumentException if list is null
+     * @throws NullPointerException if list is null
      * @since 4.0
      */
     public static <E> SetUniqueList<E> setUniqueList(final List<E> list) {
         if (list == null) {
-            throw new IllegalArgumentException("List must not be null");
+            throw new NullPointerException("List must not be null");
         }
         if (list.isEmpty()) {
-            return new SetUniqueList<E>(list, new HashSet<E>());
+            return new SetUniqueList<>(list, new HashSet<E>());
         }
-        final List<E> temp = new ArrayList<E>(list);
+        final List<E> temp = new ArrayList<>(list);
         list.clear();
-        final SetUniqueList<E> sl = new SetUniqueList<E>(list, new HashSet<E>());
+        final SetUniqueList<E> sl = new SetUniqueList<>(list, new HashSet<E>());
         sl.addAll(temp);
         return sl;
     }
@@ -90,12 +90,12 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
      *
      * @param set  the set to decorate, must not be null
      * @param list  the list to decorate, must not be null
-     * @throws IllegalArgumentException if set or list is null
+     * @throws NullPointerException if set or list is null
      */
     protected SetUniqueList(final List<E> list, final Set<E> set) {
         super(list);
         if (set == null) {
-            throw new IllegalArgumentException("Set must not be null");
+            throw new NullPointerException("Set must not be null");
         }
         this.set = set;
     }
@@ -148,8 +148,8 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
     public void add(final int index, final E object) {
         // adds element if it is not contained already
         if (set.contains(object) == false) {
-            super.add(index, object);
             set.add(object);
+            super.add(index, object);
         }
     }
 
@@ -188,7 +188,7 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
      */
     @Override
     public boolean addAll(final int index, final Collection<? extends E> coll) {
-        final List<E> temp = new ArrayList<E>();
+        final List<E> temp = new ArrayList<>();
         for (final E e : coll) {
             if (set.add(e)) {
                 temp.add(e);
@@ -262,7 +262,7 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
      */
     @Override
     public boolean retainAll(final Collection<?> coll) {
-        boolean result = set.retainAll(coll);
+        final boolean result = set.retainAll(coll);
         if (result == false) {
             return false;
         }
@@ -293,17 +293,17 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new SetListIterator<E>(super.iterator(), set);
+        return new SetListIterator<>(super.iterator(), set);
     }
 
     @Override
     public ListIterator<E> listIterator() {
-        return new SetListListIterator<E>(super.listIterator(), set);
+        return new SetListListIterator<>(super.listIterator(), set);
     }
 
     @Override
     public ListIterator<E> listIterator(final int index) {
-        return new SetListListIterator<E>(super.listIterator(index), set);
+        return new SetListListIterator<>(super.listIterator(index), set);
     }
 
     /**
@@ -316,7 +316,7 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
     public List<E> subList(final int fromIndex, final int toIndex) {
         final List<E> superSubList = super.subList(fromIndex, toIndex);
         final Set<E> subSet = createSetBasedOnList(set, superSubList);
-        return ListUtils.unmodifiableList(new SetUniqueList<E>(superSubList, subSet));
+        return ListUtils.unmodifiableList(new SetUniqueList<>(superSubList, subSet));
     }
 
     /**
@@ -328,21 +328,20 @@ public class SetUniqueList<E> extends AbstractSerializableListDecorator<E> {
      * @return a new {@link Set} populated with all elements of the provided
      *   {@link List}
      */
-    @SuppressWarnings("unchecked")
     protected Set<E> createSetBasedOnList(final Set<E> set, final List<E> list) {
         Set<E> subSet;
         if (set.getClass().equals(HashSet.class)) {
-            subSet = new HashSet<E>(list.size());
+            subSet = new HashSet<>(list.size());
         } else {
             try {
-                subSet = set.getClass().newInstance();
-            } catch (final InstantiationException ie) {
-                subSet = new HashSet<E>();
-            } catch (final IllegalAccessException iae) {
-                subSet = new HashSet<E>();
+                subSet = set.getClass().getDeclaredConstructor(set.getClass()).newInstance(set);
+            } catch (final InstantiationException
+                    | IllegalAccessException
+                    | InvocationTargetException
+                    | NoSuchMethodException ie) {
+                subSet = new HashSet<>();
             }
         }
-        subSet.addAll(list);
         return subSet;
     }
 

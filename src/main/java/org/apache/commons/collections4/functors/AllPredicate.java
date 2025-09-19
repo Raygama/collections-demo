@@ -33,7 +33,6 @@ import org.apache.commons.collections4.Predicate;
  * threw an exception.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class AllPredicate<T> extends AbstractQuantifierPredicate<T> {
 
@@ -49,11 +48,11 @@ public final class AllPredicate<T> extends AbstractQuantifierPredicate<T> {
      * @param <T> the type that the predicate queries
      * @param predicates  the predicates to check, cloned, not null
      * @return the <code>all</code> predicate
-     * @throws IllegalArgumentException if the predicates array is null
-     * @throws IllegalArgumentException if any predicate in the array is null
+     * @throws NullPointerException if the predicates array is null
+     * @throws NullPointerException if any predicate in the array is null
      */
     public static <T> Predicate<T> allPredicate(final Predicate<? super T>... predicates) {
-        FunctorUtils.validate(predicates);
+        validate(predicates);
         if (predicates.length == 0) {
             return truePredicate();
         }
@@ -61,7 +60,7 @@ public final class AllPredicate<T> extends AbstractQuantifierPredicate<T> {
             return coerce(predicates[0]);
         }
 
-        return new AllPredicate<T>(FunctorUtils.copy(predicates));
+        return new AllPredicate<>(FunctorUtils.copy(predicates));
     }
 
     /**
@@ -73,8 +72,8 @@ public final class AllPredicate<T> extends AbstractQuantifierPredicate<T> {
      * @param <T> the type that the predicate queries
      * @param predicates  the predicates to check, cloned, not null
      * @return the <code>all</code> predicate
-     * @throws IllegalArgumentException if the predicates array is null
-     * @throws IllegalArgumentException if any predicate in the array is null
+     * @throws NullPointerException if the predicates array is null
+     * @throws NullPointerException if any predicate in the array is null
      */
     public static <T> Predicate<T> allPredicate(final Collection<? extends Predicate<? super T>> predicates) {
         final Predicate<? super T>[] preds = validate(predicates);
@@ -84,7 +83,7 @@ public final class AllPredicate<T> extends AbstractQuantifierPredicate<T> {
         if (preds.length == 1) {
             return coerce(preds[0]);
         }
-        return new AllPredicate<T>(preds);
+        return new AllPredicate<>(preds);
     }
 
     /**
@@ -103,6 +102,7 @@ public final class AllPredicate<T> extends AbstractQuantifierPredicate<T> {
      * @param object  the input object
      * @return true if all decorated predicates return true
      */
+    @Override
     public boolean evaluate(final T object) {
         for (final Predicate<? super T> iPredicate : iPredicates) {
             if (!iPredicate.evaluate(object)) {

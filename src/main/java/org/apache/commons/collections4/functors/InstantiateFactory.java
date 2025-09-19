@@ -16,7 +16,6 @@
  */
 package org.apache.commons.collections4.functors;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -25,14 +24,15 @@ import org.apache.commons.collections4.FunctorException;
 
 /**
  * Factory implementation that creates a new object instance by reflection.
+ * <p>
+ * <b>WARNING:</b> from v4.1 onwards this class will <b>not</b> be serializable anymore
+ * in order to prevent potential remote code execution exploits. Please refer to
+ * <a href="https://issues.apache.org/jira/browse/COLLECTIONS-580">COLLECTIONS-580</a>
+ * for more details.
  *
  * @since 3.0
- * @version $Id$
  */
-public class InstantiateFactory<T> implements Factory<T>, Serializable {
-
-    /** The serial version */
-    private static final long serialVersionUID = -7732226881069447957L;
+public class InstantiateFactory<T> implements Factory<T> {
 
     /** The class to create */
     private final Class<T> iClassToInstantiate;
@@ -51,12 +51,14 @@ public class InstantiateFactory<T> implements Factory<T>, Serializable {
      * @param paramTypes  the constructor parameter types, cloned
      * @param args  the constructor arguments, cloned
      * @return a new instantiate factory
+     * @throws NullPointerException if classToInstantiate is null
+     * @throws IllegalArgumentException if paramTypes does not match args
      */
     public static <T> Factory<T> instantiateFactory(final Class<T> classToInstantiate,
                                                     final Class<?>[] paramTypes,
                                                     final Object[] args) {
         if (classToInstantiate == null) {
-            throw new IllegalArgumentException("Class to instantiate must not be null");
+            throw new NullPointerException("Class to instantiate must not be null");
         }
         if (paramTypes == null && args != null
             || paramTypes != null && args == null
@@ -65,9 +67,9 @@ public class InstantiateFactory<T> implements Factory<T>, Serializable {
         }
 
         if (paramTypes == null || paramTypes.length == 0) {
-            return new InstantiateFactory<T>(classToInstantiate);
+            return new InstantiateFactory<>(classToInstantiate);
         }
-        return new InstantiateFactory<T>(classToInstantiate, paramTypes, args);
+        return new InstantiateFactory<>(classToInstantiate, paramTypes, args);
     }
 
     /**
@@ -116,6 +118,7 @@ public class InstantiateFactory<T> implements Factory<T>, Serializable {
      *
      * @return the new object
      */
+    @Override
     public T create() {
         // needed for post-serialization
         if (iConstructor == null) {

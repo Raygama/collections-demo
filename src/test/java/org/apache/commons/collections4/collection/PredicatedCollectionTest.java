@@ -25,11 +25,10 @@ import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.functors.TruePredicate;
 
 /**
- * Extension of {@link AbstractCollectionTest} for exercising the 
+ * Extension of {@link AbstractCollectionTest} for exercising the
  * {@link PredicatedCollection} implementation.
  *
  * @since 3.0
- * @version $Id$
  */
 public class PredicatedCollectionTest<E> extends AbstractCollectionTest<E> {
 
@@ -52,7 +51,7 @@ public class PredicatedCollectionTest<E> extends AbstractCollectionTest<E> {
 
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new ArrayList<E>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -63,14 +62,14 @@ public class PredicatedCollectionTest<E> extends AbstractCollectionTest<E> {
 
     @Override
     public Collection<E> makeFullCollection() {
-        final List<E> list = new ArrayList<E>();
+        final List<E> list = new ArrayList<>();
         list.addAll(Arrays.asList(getFullElements()));
         return decorateCollection(list, truePredicate);
     }
 
     @Override
     public Collection<E> makeConfirmedFullCollection() {
-        final List<E> list = new ArrayList<E>();
+        final List<E> list = new ArrayList<>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -78,6 +77,7 @@ public class PredicatedCollectionTest<E> extends AbstractCollectionTest<E> {
     //-----------------------------------------------------------------------
     protected Predicate<E> testPredicate =
         new Predicate<E>() {
+            @Override
             public boolean evaluate(final E o) {
                 return o instanceof String;
             }
@@ -104,7 +104,7 @@ public class PredicatedCollectionTest<E> extends AbstractCollectionTest<E> {
     @SuppressWarnings("unchecked")
     public void testIllegalAddAll() {
         final Collection<E> c = makeTestCollection();
-        final List<E> elements = new ArrayList<E>();
+        final List<E> elements = new ArrayList<>();
         elements.add((E) "one");
         elements.add((E) "two");
         elements.add((E) Integer.valueOf(3));

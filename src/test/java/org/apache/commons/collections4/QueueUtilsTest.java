@@ -25,14 +25,14 @@ import java.util.Queue;
 
 import org.apache.commons.collections4.functors.TruePredicate;
 import org.apache.commons.collections4.queue.PredicatedQueue;
+import org.apache.commons.collections4.queue.SynchronizedQueue;
 import org.apache.commons.collections4.queue.TransformedQueue;
 import org.apache.commons.collections4.queue.UnmodifiableQueue;
 import org.junit.Test;
 
 /**
  * Tests for QueueUtils factory methods.
- * 
- * @version $Id$
+ *
  */
 public class QueueUtilsTest {
 
@@ -42,58 +42,70 @@ public class QueueUtilsTest {
     // ----------------------------------------------------------------------
 
     @Test
+    public void testSynchronizedQueue() {
+        final Queue<Object> queue = QueueUtils.synchronizedQueue(new LinkedList<>());
+        assertTrue("Returned object should be a SynchronizedQueue.", queue instanceof SynchronizedQueue);
+        try {
+            QueueUtils.synchronizedQueue(null);
+            fail("Expecting NullPointerException for null queue.");
+        } catch (final NullPointerException ex) {
+            // expected
+        }
+    }
+
+    @Test
     public void testUnmodifiableQueue() {
-        Queue<Object> queue = QueueUtils.unmodifiableQueue(new LinkedList<Object>());
+        final Queue<Object> queue = QueueUtils.unmodifiableQueue(new LinkedList<>());
         assertTrue("Returned object should be an UnmodifiableQueue.", queue instanceof UnmodifiableQueue);
         try {
             QueueUtils.unmodifiableQueue(null);
-            fail("Expecting IllegalArgumentException for null queue.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null queue.");
+        } catch (final NullPointerException ex) {
             // expected
         }
-        
+
         assertSame("UnmodifiableQueue shall not be decorated", queue, QueueUtils.unmodifiableQueue(queue));
     }
 
     @Test
     public void testPredicatedQueue() {
-        Queue<Object> queue = QueueUtils.predicatedQueue(new LinkedList<Object>(), truePredicate);
+        final Queue<Object> queue = QueueUtils.predicatedQueue(new LinkedList<>(), truePredicate);
         assertTrue("Returned object should be a PredicatedQueue.", queue instanceof PredicatedQueue);
         try {
             QueueUtils.predicatedQueue(null, truePredicate);
-            fail("Expecting IllegalArgumentException for null queue.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null queue.");
+        } catch (final NullPointerException ex) {
             // expected
         }
         try {
-            QueueUtils.predicatedQueue(new LinkedList<Object>(), null);
-            fail("Expecting IllegalArgumentException for null predicate.");
-        } catch (final IllegalArgumentException ex) {
+            QueueUtils.predicatedQueue(new LinkedList<>(), null);
+            fail("Expecting NullPointerException for null predicate.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testTransformedQueue() {
-        Queue<Object> queue = QueueUtils.transformingQueue(new LinkedList<Object>(), nopTransformer);
+        final Queue<Object> queue = QueueUtils.transformingQueue(new LinkedList<>(), nopTransformer);
         assertTrue("Returned object should be an TransformedQueue.", queue instanceof TransformedQueue);
         try {
             QueueUtils.transformingQueue(null, nopTransformer);
-            fail("Expecting IllegalArgumentException for null queue.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null queue.");
+        } catch (final NullPointerException ex) {
             // expected
         }
         try {
-            QueueUtils.transformingQueue(new LinkedList<Object>(), null);
-            fail("Expecting IllegalArgumentException for null transformer.");
-        } catch (final IllegalArgumentException ex) {
+            QueueUtils.transformingQueue(new LinkedList<>(), null);
+            fail("Expecting NullPointerException for null transformer.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testEmptyQueue() {
-        Queue<Object> queue = QueueUtils.emptyQueue();
+        final Queue<Object> queue = QueueUtils.emptyQueue();
         assertTrue("Returned object should be an UnmodifiableQueue.", queue instanceof UnmodifiableQueue);
         assertTrue("Returned queue is not empty.", queue.isEmpty());
 

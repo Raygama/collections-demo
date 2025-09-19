@@ -25,7 +25,6 @@ import org.apache.commons.collections4.Predicate;
  * as the one stored in this predicate.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class IdentityPredicate<T> implements Predicate<T>, Serializable {
 
@@ -41,13 +40,12 @@ public final class IdentityPredicate<T> implements Predicate<T>, Serializable {
      * @param <T> the type that the predicate queries
      * @param object  the object to compare to
      * @return the predicate
-     * @throws IllegalArgumentException if the predicate is null
      */
     public static <T> Predicate<T> identityPredicate(final T object) {
         if (object == null) {
             return NullPredicate.<T>nullPredicate();
         }
-        return new IdentityPredicate<T>(object);
+        return new IdentityPredicate<>(object);
     }
 
     /**
@@ -68,6 +66,7 @@ public final class IdentityPredicate<T> implements Predicate<T>, Serializable {
      * @param object  the input object
      * @return true if input is the same object as the stored value
      */
+    @Override
     public boolean evaluate(final T object) {
         return iValue == object;
     }

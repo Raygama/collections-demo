@@ -31,8 +31,8 @@ import org.apache.commons.collections4.collection.TransformedCollection;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <E> the type of the elements in this set
  * @since 3.0
- * @version $Id$
  */
 public class TransformedSet<E> extends TransformedCollection<E> implements Set<E> {
 
@@ -50,12 +50,12 @@ public class TransformedSet<E> extends TransformedCollection<E> implements Set<E
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed set
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      * @since 4.0
      */
     public static <E> TransformedSet<E> transformingSet(final Set<E> set,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedSet<E>(set, transformer);
+        return new TransformedSet<>(set, transformer);
     }
 
     /**
@@ -70,12 +70,12 @@ public class TransformedSet<E> extends TransformedCollection<E> implements Set<E
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed set
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      * @since 4.0
      */
     public static <E> Set<E> transformedSet(final Set<E> set, final Transformer<? super E, ? extends E> transformer) {
-        final TransformedSet<E> decorated = new TransformedSet<E>(set, transformer);
-        if (transformer != null && set != null && set.size() > 0) {
+        final TransformedSet<E> decorated = new TransformedSet<>(set, transformer);
+        if (set.size() > 0) {
             @SuppressWarnings("unchecked") // set is type E
             final E[] values = (E[]) set.toArray(); // NOPMD - false positive for generics
             set.clear();
@@ -95,7 +95,7 @@ public class TransformedSet<E> extends TransformedCollection<E> implements Set<E
      *
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      */
     protected TransformedSet(final Set<E> set, final Transformer<? super E, ? extends E> transformer) {
         super(set, transformer);

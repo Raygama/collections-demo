@@ -32,7 +32,6 @@ import org.apache.commons.collections4.FluentIterable;
  * and {@code B.next()} until both iterators are exhausted.
  *
  * @since 4.1
- * @version $Id$
  */
 public class ZippingIterator<E> implements Iterator<E> {
 
@@ -86,7 +85,7 @@ public class ZippingIterator<E> implements Iterator<E> {
      */
     public ZippingIterator(final Iterator<? extends E>... iterators) {
         // create a mutable list to be able to remove exhausted iterators
-        final List<Iterator<? extends E>> list = new ArrayList<Iterator<? extends E>>();
+        final List<Iterator<? extends E>> list = new ArrayList<>();
         for (final Iterator<? extends E> iterator : iterators) {
             if (iterator == null) {
                 throw new NullPointerException("Iterator must not be null.");
@@ -104,6 +103,7 @@ public class ZippingIterator<E> implements Iterator<E> {
      *
      * @return true if this iterator has remaining elements
      */
+    @Override
     public boolean hasNext() {
         // the next iterator has already been determined
         // this might happen if hasNext() is called multiple
@@ -116,10 +116,9 @@ public class ZippingIterator<E> implements Iterator<E> {
             if (childIterator.hasNext()) {
                 nextIterator = childIterator;
                 return true;
-            } else {
-                // iterator is exhausted, remove it
-                iterators.remove();
             }
+            // iterator is exhausted, remove it
+            iterators.remove();
         }
         return false;
     }
@@ -130,6 +129,7 @@ public class ZippingIterator<E> implements Iterator<E> {
      * @return the next interleaved element
      * @throws NoSuchElementException if no child iterator has any more elements
      */
+    @Override
     public E next() throws NoSuchElementException {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -147,6 +147,7 @@ public class ZippingIterator<E> implements Iterator<E> {
      * @throws IllegalStateException if there is no last returned element, or if
      *   the last returned element has already been removed
      */
+    @Override
     public void remove() {
         if (lastReturned == null) {
             throw new IllegalStateException("No value can be removed at present");

@@ -32,8 +32,9 @@ import java.util.Set;
  * Most map implementation can be used to create a set by passing in dummy values.
  * Exceptions include <code>BidiMap</code> implementations, as they require unique values.
  *
+ * @param <E> the type of the elements in this set
+ * @param <V> the dummy value type in this map
  * @since 3.1
- * @version $Id$
  */
 public final class MapBackedSet<E, V> implements Set<E>, Serializable {
 
@@ -53,7 +54,7 @@ public final class MapBackedSet<E, V> implements Set<E>, Serializable {
      * @param <V> the dummy value type in the map
      * @param map  the map to decorate, must not be null
      * @return a new map backed set
-     * @throws IllegalArgumentException if set is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <E, V> MapBackedSet<E, V> mapBackedSet(final Map<E, ? super V> map) {
@@ -68,14 +69,11 @@ public final class MapBackedSet<E, V> implements Set<E>, Serializable {
      * @param map  the map to decorate, must not be null
      * @param dummyValue  the dummy value to use
      * @return a new map backed set
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <E, V> MapBackedSet<E, V> mapBackedSet(final Map<E, ? super V> map, final V dummyValue) {
-        if (map == null) {
-            throw new IllegalArgumentException("The map must not be null");
-        }
-        return new MapBackedSet<E, V>(map, dummyValue);
+        return new MapBackedSet<>(map, dummyValue);
     }
 
     //-----------------------------------------------------------------------
@@ -84,41 +82,51 @@ public final class MapBackedSet<E, V> implements Set<E>, Serializable {
      *
      * @param map  the map to decorate, must not be null
      * @param dummyValue  the dummy value to use
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     private MapBackedSet(final Map<E, ? super V> map, final V dummyValue) {
         super();
+        if (map == null) {
+            throw new NullPointerException("The map must not be null");
+        }
         this.map = map;
         this.dummyValue = dummyValue;
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public int size() {
         return map.size();
     }
 
+    @Override
     public boolean isEmpty() {
         return map.isEmpty();
     }
 
+    @Override
     public Iterator<E> iterator() {
         return map.keySet().iterator();
     }
 
+    @Override
     public boolean contains(final Object obj) {
         return map.containsKey(obj);
     }
 
+    @Override
     public boolean containsAll(final Collection<?> coll) {
         return map.keySet().containsAll(coll);
     }
 
+    @Override
     public boolean add(final E obj) {
         final int size = map.size();
         map.put(obj, dummyValue);
         return map.size() != size;
     }
 
+    @Override
     public boolean addAll(final Collection<? extends E> coll) {
         final int size = map.size();
         for (final E e : coll) {
@@ -127,28 +135,34 @@ public final class MapBackedSet<E, V> implements Set<E>, Serializable {
         return map.size() != size;
     }
 
+    @Override
     public boolean remove(final Object obj) {
         final int size = map.size();
         map.remove(obj);
         return map.size() != size;
     }
 
+    @Override
     public boolean removeAll(final Collection<?> coll) {
         return map.keySet().removeAll(coll);
     }
 
+    @Override
     public boolean retainAll(final Collection<?> coll) {
         return map.keySet().retainAll(coll);
     }
 
+    @Override
     public void clear() {
         map.clear();
     }
 
+    @Override
     public Object[] toArray() {
         return map.keySet().toArray();
     }
 
+    @Override
     public <T> T[] toArray(final T[] array) {
         return map.keySet().toArray(array);
     }

@@ -25,7 +25,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableMapIterator<K, V> implements MapIterator<K, V>, Unmodifiable {
 
@@ -40,19 +39,19 @@ public final class UnmodifiableMapIterator<K, V> implements MapIterator<K, V>, U
      * @param <V>  the value type
      * @param iterator  the iterator to decorate
      * @return a new unmodifiable map iterator
-     * @throws IllegalArgumentException if the iterator is null
+     * @throws NullPointerException if the iterator is null
      */
     public static <K, V> MapIterator<K, V> unmodifiableMapIterator(
             final MapIterator<? extends K, ? extends V> iterator) {
         if (iterator == null) {
-            throw new IllegalArgumentException("MapIterator must not be null");
+            throw new NullPointerException("MapIterator must not be null");
         }
         if (iterator instanceof Unmodifiable) {
             @SuppressWarnings("unchecked") // safe to upcast
             final MapIterator<K, V> tmpIterator = (MapIterator<K, V>) iterator;
             return tmpIterator;
         }
-        return new UnmodifiableMapIterator<K, V>(iterator);
+        return new UnmodifiableMapIterator<>(iterator);
     }
 
     //-----------------------------------------------------------------------
@@ -67,26 +66,32 @@ public final class UnmodifiableMapIterator<K, V> implements MapIterator<K, V>, U
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
+    @Override
     public K next() {
         return iterator.next();
     }
 
+    @Override
     public K getKey() {
         return iterator.getKey();
     }
 
+    @Override
     public V getValue() {
         return iterator.getValue();
     }
 
+    @Override
     public V setValue(final V value) {
         throw new UnsupportedOperationException("setValue() is not supported");
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }

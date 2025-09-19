@@ -67,7 +67,7 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * <p>
  * <b>Fixture Methods</b>
  * <p>
- * Fixtures are used to verify that the the operation results in correct state
+ * Fixtures are used to verify that the operation results in correct state
  * for the collection.  Basically, the operation is performed against your
  * collection implementation, and an identical operation is performed against a
  * <i>confirmed</i> collection implementation.  A confirmed collection
@@ -90,7 +90,7 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * {@link #confirmed}, the {@link #verify()} method is invoked to compare
  * the results.  You may want to override {@link #verify()} to perform
  * additional verifications.  For instance, when testing the collection
- * views of a map, {@link org.apache.commons.collections4.map.AbstractMapTest AbstractTestMap} 
+ * views of a map, {@link org.apache.commons.collections4.map.AbstractMapTest AbstractTestMap}
  * would override {@link #verify()} to make
  * sure the map is changed after the collection view is changed.
  * <p>
@@ -106,7 +106,7 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * <p>
  * If you're extending {@link org.apache.commons.collections4.list.AbstractListTest AbstractListTest},
  * {@link org.apache.commons.collections4.set.AbstractSetTest AbstractTestSet},
- * or {@link org.apache.commons.collections4.bag.AbstractBagTest AbstractBagTest}, 
+ * or {@link org.apache.commons.collections4.bag.AbstractBagTest AbstractBagTest},
  * you probably don't have to worry about the
  * above methods, because those three classes already override the methods
  * to provide standard JDK confirmed collections.<P>
@@ -117,7 +117,6 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * you may still use this base set of cases.  Simply override the
  * test case (method) your {@link Collection} fails.
  *
- * @version $Id$
  */
 public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
@@ -372,7 +371,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
      * Creates a new Map Entry that is independent of the first and the map.
      */
     public Map.Entry<E, E> cloneMapEntry(final Map.Entry<E, E> entry) {
-        final HashMap<E, E> map = new HashMap<E, E>();
+        final HashMap<E, E> map = new HashMap<>();
         map.put(entry.getKey(), entry.getValue());
         return map.entrySet().iterator().next();
     }
@@ -391,7 +390,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     @SuppressWarnings("unchecked")
     public E[] getFullElements() {
         if (isNullSupported()) {
-            final ArrayList<E> list = new ArrayList<E>();
+            final ArrayList<E> list = new ArrayList<>();
             list.addAll(Arrays.asList(getFullNonNullElements()));
             list.add(4, null);
             return (E[]) list.toArray();
@@ -672,7 +671,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
         resetFull();
         elements = getOtherElements();
-        for (Object element : elements) {
+        for (final Object element : elements) {
             assertTrue("Full collection shouldn't contain element",
                     !getCollection().contains(element));
         }
@@ -683,7 +682,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
      */
     public void testCollectionContainsAll() {
         resetEmpty();
-        Collection<E> col = new HashSet<E>();
+        Collection<E> col = new HashSet<>();
         assertTrue("Every Collection should contain all elements of an " +
                 "empty Collection.", getCollection().containsAll(col));
         col.addAll(Arrays.asList(getOtherElements()));
@@ -713,7 +712,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         // make sure calls to "containsAll" don't change anything
         verify();
 
-        col = new ArrayList<E>();
+        col = new ArrayList<>();
         col.addAll(Arrays.asList(getFullElements()));
         col.addAll(Arrays.asList(getFullElements()));
         assertTrue("Full collection should containAll duplicate full elements",
@@ -763,7 +762,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         }
         assertTrue("Iterator should be finished", !it1.hasNext());
 
-        final ArrayList<E> list = new ArrayList<E>();
+        final ArrayList<E> list = new ArrayList<>();
         it1 = getCollection().iterator();
         for (int i = 0; i < getCollection().size(); i++) {
             final E next = it1.next();
@@ -862,7 +861,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
         resetEmpty();
         final E[] elements = getFullElements();
-        for (E element : elements) {
+        for (final E element : elements) {
             assertTrue("Shouldn't remove nonexistent element", !getCollection().remove(element));
             verify();
         }
@@ -870,7 +869,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         final E[] other = getOtherElements();
 
         resetFull();
-        for (E element : other) {
+        for (final E element : other) {
             assertTrue("Shouldn't remove nonexistent other element", !getCollection().remove(element));
             verify();
         }
@@ -912,7 +911,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         assertTrue("Empty collection removeAll should return false for nonempty input",
-                   !getCollection().removeAll(new ArrayList<E>(getCollection())));
+                   !getCollection().removeAll(new ArrayList<>(getCollection())));
         verify();
 
         resetFull();
@@ -925,8 +924,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         assertTrue("Full collection removeAll should return true for full elements",
-                getCollection().removeAll(new HashSet<E>(getCollection())));
-        getConfirmed().removeAll(new HashSet<E>(getConfirmed()));
+                getCollection().removeAll(new HashSet<>(getCollection())));
+        getConfirmed().removeAll(new HashSet<>(getConfirmed()));
         verify();
 
         resetFull();
@@ -940,7 +939,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         assertTrue("Collection should shrink after removeAll", getCollection().size() < size);
-        for (E element : all) {
+        for (final E element : all) {
             assertTrue("Collection shouldn't contain removed element", !getCollection().contains(element));
         }
     }
@@ -992,13 +991,13 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
             getConfirmed().retainAll(elements.subList(min, max));
             verify();
 
-            for (E element : getCollection()) {
+            for (final E element : getCollection()) {
                 assertTrue("Collection only contains retained element", elements.subList(min, max).contains(element));
             }
         }
 
         resetFull();
-        final HashSet<E> set = new HashSet<E>(elements);
+        final HashSet<E> set = new HashSet<>(elements);
         size = getCollection().size();
         assertTrue("Collection shouldn't change from retainAll without " +
                    "duplicate elements", !getCollection().retainAll(set));
@@ -1085,7 +1084,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         try {
-            array = getCollection().toArray(null);
+            // Casting to Object[] allows compilation on Java 11.
+            array = getCollection().toArray((Object[]) null);
             fail("toArray(null) should raise NPE");
         } catch (final NullPointerException e) {
             // expected
@@ -1099,7 +1099,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
         // Figure out if they're all the same class
         // TODO: It'd be nicer to detect a common superclass
-        final HashSet<Class<?>> classes = new HashSet<Class<?>>();
+        final HashSet<Class<?>> classes = new HashSet<>();
         for (final Object element : array) {
             classes.add(element == null ? null : element.getClass());
         }

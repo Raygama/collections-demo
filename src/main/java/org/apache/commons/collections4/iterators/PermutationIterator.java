@@ -38,7 +38,6 @@ import java.util.NoSuchElementException;
  *
  * @param <E>  the type of the objects being permuted
  *
- * @version $Id$
  * @since 4.0
  */
 public class PermutationIterator<E> implements Iterator<List<E>> {
@@ -46,12 +45,12 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
     /**
      * Permutation is done on theses keys to handle equal objects.
      */
-    private int[] keys;
+    private final int[] keys;
 
     /**
      * Mapping between keys and objects.
      */
-    private Map<Integer, E> objectMap;
+    private final Map<Integer, E> objectMap;
 
     /**
      * Direction table used in the algorithm:
@@ -60,7 +59,7 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
      *   <li>true is right</li>
      * </ul>
      */
-    private boolean[] direction;
+    private final boolean[] direction;
 
     /**
      * Next permutation to return. When a permutation is requested
@@ -82,19 +81,20 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         direction = new boolean[coll.size()];
         Arrays.fill(direction, false);
         int value = 1;
-        objectMap = new HashMap<Integer, E>();
-        for (E e : coll) {
+        objectMap = new HashMap<>();
+        for (final E e : coll) {
             objectMap.put(Integer.valueOf(value), e);
             keys[value - 1] = value;
             value++;
         }
-        nextPermutation = new ArrayList<E>(coll);
+        nextPermutation = new ArrayList<>(coll);
     }
 
     /**
      * Indicates if there are more permutation available.
      * @return true if there are more permutations, otherwise false
      */
+    @Override
     public boolean hasNext() {
         return nextPermutation != null;
     }
@@ -104,6 +104,7 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
      * @return a list of the permutator's elements representing a permutation
      * @throws NoSuchElementException if there are no more permutations
      */
+    @Override
     public List<E> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -115,14 +116,14 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         for (int i = 0; i < keys.length; i++) {
             if ((direction[i] && i < keys.length - 1 && keys[i] > keys[i + 1]) ||
                 (!direction[i] && i > 0 && keys[i] > keys[i - 1])) {
-                if (keys[i] > largestKey) {
+                if (keys[i] > largestKey) { // NOPMD
                     largestKey = keys[i];
                     indexOfLargestMobileInteger = i;
                 }
             }
         }
         if (largestKey == -1) {
-            List<E> toReturn = nextPermutation;
+            final List<E> toReturn = nextPermutation;
             nextPermutation = null;
             return toReturn;
         }
@@ -132,12 +133,12 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         final int tmpKey = keys[indexOfLargestMobileInteger];
         keys[indexOfLargestMobileInteger] = keys[indexOfLargestMobileInteger + offset];
         keys[indexOfLargestMobileInteger + offset] = tmpKey;
-        boolean tmpDirection = direction[indexOfLargestMobileInteger];
+        final boolean tmpDirection = direction[indexOfLargestMobileInteger];
         direction[indexOfLargestMobileInteger] = direction[indexOfLargestMobileInteger + offset];
         direction[indexOfLargestMobileInteger + offset] = tmpDirection;
 
         // reverse the direction of all integers larger than k and build the result
-        final List<E> nextP = new ArrayList<E>();
+        final List<E> nextP = new ArrayList<>();
         for (int i = 0; i < keys.length; i++) {
             if (keys[i] > largestKey) {
                 direction[i] = !direction[i];
@@ -149,6 +150,7 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
         return result;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }

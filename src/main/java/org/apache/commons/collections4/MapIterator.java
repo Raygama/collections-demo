@@ -31,19 +31,18 @@ import java.util.Iterator;
  * In use, this iterator iterates through the keys in the map. After each call
  * to <code>next()</code>, the <code>getValue()</code> method provides direct
  * access to the value. The value can also be set using <code>setValue()</code>.
- * <pre>
+ * <pre>{@code
  * MapIterator<String,Integer> it = map.mapIterator();
  * while (it.hasNext()) {
  *   String key = it.next();
  *   Integer value = it.getValue();
  *   it.setValue(value + 1);
  * }
- * </pre>
+ * }</pre>
  *
  * @param <K> the type of the keys in the map
  * @param <V> the type of the values in the map
  * @since 3.0
- * @version $Id$
  */
 public interface MapIterator<K, V> extends Iterator<K> {
 
@@ -52,6 +51,7 @@ public interface MapIterator<K, V> extends Iterator<K> {
      *
      * @return <code>true</code> if the iterator has more elements
      */
+    @Override
     boolean hasNext();
 
     /**
@@ -60,6 +60,7 @@ public interface MapIterator<K, V> extends Iterator<K> {
      * @return the next key in the iteration
      * @throws java.util.NoSuchElementException if the iteration is finished
      */
+    @Override
     K next();
 
     //-----------------------------------------------------------------------
@@ -92,6 +93,7 @@ public interface MapIterator<K, V> extends Iterator<K> {
      * @throws IllegalStateException if <code>remove()</code> has already been called
      *  since the last call to <code>next()</code>
      */
+    @Override
     void remove();
 
     /**

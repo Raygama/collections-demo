@@ -28,7 +28,6 @@ import org.apache.commons.collections4.Predicate;
  * those elements that match the specified {@link Predicate Predicate}.
  *
  * @since 2.0
- * @version $Id$
  */
 public class FilterListIterator<E> implements ListIterator<E> {
 
@@ -112,24 +111,29 @@ public class FilterListIterator<E> implements ListIterator<E> {
     }
 
     //-----------------------------------------------------------------------
-    /** Not supported. */
+    /**
+     * Not supported.
+     * @param o the element to insert
+     */
+    @Override
     public void add(final E o) {
         throw new UnsupportedOperationException("FilterListIterator.add(Object) is not supported.");
     }
 
+    @Override
     public boolean hasNext() {
         return nextObjectSet || setNextObject();
     }
 
+    @Override
     public boolean hasPrevious() {
         return previousObjectSet || setPreviousObject();
     }
 
+    @Override
     public E next() {
-        if (!nextObjectSet) {
-            if (!setNextObject()) {
-                throw new NoSuchElementException();
-            }
+        if (!nextObjectSet && !setNextObject()) {
+            throw new NoSuchElementException();
         }
         nextIndex++;
         final E temp = nextObject;
@@ -137,15 +141,15 @@ public class FilterListIterator<E> implements ListIterator<E> {
         return temp;
     }
 
+    @Override
     public int nextIndex() {
         return nextIndex;
     }
 
+    @Override
     public E previous() {
-        if (!previousObjectSet) {
-            if (!setPreviousObject()) {
-                throw new NoSuchElementException();
-            }
+        if (!previousObjectSet && !setPreviousObject()) {
+            throw new NoSuchElementException();
         }
         nextIndex--;
         final E temp = previousObject;
@@ -153,16 +157,23 @@ public class FilterListIterator<E> implements ListIterator<E> {
         return temp;
     }
 
+    @Override
     public int previousIndex() {
         return nextIndex-1;
     }
 
     /** Not supported. */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("FilterListIterator.remove() is not supported.");
     }
 
-    /** Not supported. */
+    /**
+     * Not supported.
+     * @param o the element with which to replace the last element returned by
+     *          {@code next} or {@code previous}
+     */
+    @Override
     public void set(final E o) {
         throw new UnsupportedOperationException("FilterListIterator.set(Object) is not supported.");
     }

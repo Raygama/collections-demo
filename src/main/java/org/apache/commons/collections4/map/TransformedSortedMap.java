@@ -38,8 +38,9 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public class TransformedSortedMap<K, V>
         extends TransformedMap<K, V>
@@ -60,13 +61,13 @@ public class TransformedSortedMap<K, V>
      * @param keyTransformer  the predicate to validate the keys, null means no transformation
      * @param valueTransformer  the predicate to validate to values, null means no transformation
      * @return a new transformed sorted map
-     * @throws IllegalArgumentException if the map is null
+     * @throws NullPointerException if the map is null
      * @since 4.0
      */
     public static <K, V> TransformedSortedMap<K, V> transformingSortedMap(final SortedMap<K, V> map,
             final Transformer<? super K, ? extends K> keyTransformer,
             final Transformer<? super V, ? extends V> valueTransformer) {
-        return new TransformedSortedMap<K, V>(map, keyTransformer, valueTransformer);
+        return new TransformedSortedMap<>(map, keyTransformer, valueTransformer);
     }
 
     /**
@@ -83,7 +84,7 @@ public class TransformedSortedMap<K, V>
      * @param keyTransformer  the transformer to use for key conversion, null means no transformation
      * @param valueTransformer  the transformer to use for value conversion, null means no transformation
      * @return a new transformed sorted map
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> TransformedSortedMap<K, V> transformedSortedMap(final SortedMap<K, V> map,
@@ -91,7 +92,7 @@ public class TransformedSortedMap<K, V>
             final Transformer<? super V, ? extends V> valueTransformer) {
 
         final TransformedSortedMap<K, V> decorated =
-                new TransformedSortedMap<K, V>(map, keyTransformer, valueTransformer);
+                new TransformedSortedMap<>(map, keyTransformer, valueTransformer);
         if (map.size() > 0) {
             final Map<K, V> transformed = decorated.transformMap(map);
             decorated.clear();
@@ -110,7 +111,7 @@ public class TransformedSortedMap<K, V>
      * @param map  the map to decorate, must not be null
      * @param keyTransformer  the predicate to validate the keys, null means no transformation
      * @param valueTransformer  the predicate to validate to values, null means no transformation
-     * @throws IllegalArgumentException if the map is null
+     * @throws NullPointerException if the map is null
      */
     protected TransformedSortedMap(final SortedMap<K, V> map,
             final Transformer<? super K, ? extends K> keyTransformer,
@@ -129,31 +130,37 @@ public class TransformedSortedMap<K, V>
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public K firstKey() {
         return getSortedMap().firstKey();
     }
 
+    @Override
     public K lastKey() {
         return getSortedMap().lastKey();
     }
 
+    @Override
     public Comparator<? super K> comparator() {
         return getSortedMap().comparator();
     }
 
+    @Override
     public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
         final SortedMap<K, V> map = getSortedMap().subMap(fromKey, toKey);
-        return new TransformedSortedMap<K, V>(map, keyTransformer, valueTransformer);
+        return new TransformedSortedMap<>(map, keyTransformer, valueTransformer);
     }
 
+    @Override
     public SortedMap<K, V> headMap(final K toKey) {
         final SortedMap<K, V> map = getSortedMap().headMap(toKey);
-        return new TransformedSortedMap<K, V>(map, keyTransformer, valueTransformer);
+        return new TransformedSortedMap<>(map, keyTransformer, valueTransformer);
     }
 
+    @Override
     public SortedMap<K, V> tailMap(final K fromKey) {
         final SortedMap<K, V> map = getSortedMap().tailMap(fromKey);
-        return new TransformedSortedMap<K, V>(map, keyTransformer, valueTransformer);
+        return new TransformedSortedMap<>(map, keyTransformer, valueTransformer);
     }
 
 }

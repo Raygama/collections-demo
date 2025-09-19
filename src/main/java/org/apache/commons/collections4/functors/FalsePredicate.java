@@ -24,7 +24,6 @@ import org.apache.commons.collections4.Predicate;
  * Predicate implementation that always returns false.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class FalsePredicate<T> implements Predicate<T>, Serializable {
 
@@ -33,7 +32,7 @@ public final class FalsePredicate<T> implements Predicate<T>, Serializable {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes") // the static instance works for all types
-    public static final Predicate INSTANCE = new FalsePredicate<Object>();
+    public static final Predicate INSTANCE = new FalsePredicate<>();
 
     /**
      * Get a typed instance.
@@ -44,7 +43,7 @@ public final class FalsePredicate<T> implements Predicate<T>, Serializable {
      */
     @SuppressWarnings("unchecked") // the static instance works for all types
     public static <T> Predicate<T> falsePredicate() {
-        return (Predicate<T>) INSTANCE;
+        return INSTANCE;
     }
 
     /**
@@ -60,6 +59,7 @@ public final class FalsePredicate<T> implements Predicate<T>, Serializable {
      * @param object  the input object
      * @return false always
      */
+    @Override
     public boolean evaluate(final T object) {
         return false;
     }

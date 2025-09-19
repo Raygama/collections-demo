@@ -31,8 +31,9 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableOrderedBidiMap<K, V>
         extends AbstractOrderedBidiMapDecorator<K, V> implements Unmodifiable {
@@ -49,7 +50,7 @@ public final class UnmodifiableOrderedBidiMap<K, V>
      * @param <V> the value type
      * @param map  the map to decorate, must not be null
      * @return an unmodifiable OrderedBidiMap
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> OrderedBidiMap<K, V> unmodifiableOrderedBidiMap(
@@ -59,7 +60,7 @@ public final class UnmodifiableOrderedBidiMap<K, V>
             final OrderedBidiMap<K, V> tmpMap = (OrderedBidiMap<K, V>) map;
             return tmpMap;
         }
-        return new UnmodifiableOrderedBidiMap<K, V>(map);
+        return new UnmodifiableOrderedBidiMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -67,7 +68,7 @@ public final class UnmodifiableOrderedBidiMap<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableOrderedBidiMap(final OrderedBidiMap<? extends K, ? extends V> map) {
@@ -138,7 +139,7 @@ public final class UnmodifiableOrderedBidiMap<K, V>
      */
     public OrderedBidiMap<V, K> inverseOrderedBidiMap() {
         if (inverse == null) {
-            inverse = new UnmodifiableOrderedBidiMap<V, K>(decorated().inverseBidiMap());
+            inverse = new UnmodifiableOrderedBidiMap<>(decorated().inverseBidiMap());
             inverse.inverse = this;
         }
         return inverse;

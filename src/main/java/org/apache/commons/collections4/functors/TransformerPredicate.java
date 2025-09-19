@@ -26,7 +26,6 @@ import org.apache.commons.collections4.Transformer;
  * Predicate implementation that returns the result of a transformer.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class TransformerPredicate<T> implements Predicate<T>, Serializable {
 
@@ -42,13 +41,13 @@ public final class TransformerPredicate<T> implements Predicate<T>, Serializable
      * @param <T> the type that the predicate queries
      * @param transformer  the transformer to decorate
      * @return the predicate
-     * @throws IllegalArgumentException if the transformer is null
+     * @throws NullPointerException if the transformer is null
      */
     public static <T> Predicate<T> transformerPredicate(final Transformer<? super T, Boolean> transformer) {
         if (transformer == null) {
-            throw new IllegalArgumentException("The transformer to call must not be null");
+            throw new NullPointerException("The transformer to call must not be null");
         }
-        return new TransformerPredicate<T>(transformer);
+        return new TransformerPredicate<>(transformer);
     }
 
     /**
@@ -69,6 +68,7 @@ public final class TransformerPredicate<T> implements Predicate<T>, Serializable
      * @return true if decorated transformer returns Boolean.TRUE
      * @throws FunctorException if the transformer returns an invalid type
      */
+    @Override
     public boolean evaluate(final T object) {
         final Boolean result = iTransformer.transform(object);
         if (result == null) {

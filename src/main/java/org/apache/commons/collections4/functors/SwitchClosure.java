@@ -27,7 +27,6 @@ import org.apache.commons.collections4.Predicate;
  * like a switch statement.
  *
  * @since 3.0
- * @version $Id$
  */
 public class SwitchClosure<E> implements Closure<E>, Serializable {
 
@@ -49,8 +48,9 @@ public class SwitchClosure<E> implements Closure<E>, Serializable {
      * @param closures  matching array of closures, cloned, no nulls
      * @param defaultClosure  the closure to use if no match, null means nop
      * @return the <code>chained</code> closure
-     * @throws IllegalArgumentException if array is null
-     * @throws IllegalArgumentException if any element in the array is null
+     * @throws NullPointerException if array is null
+     * @throws NullPointerException if any element in the array is null
+     * @throws IllegalArgumentException if the array lengths of predicates and closures do not match
      */
     @SuppressWarnings("unchecked")
     public static <E> Closure<E> switchClosure(final Predicate<? super E>[] predicates,
@@ -64,7 +64,7 @@ public class SwitchClosure<E> implements Closure<E>, Serializable {
         if (predicates.length == 0) {
             return (Closure<E>) (defaultClosure == null ? NOPClosure.<E>nopClosure(): defaultClosure);
         }
-        return new SwitchClosure<E>(predicates, closures, defaultClosure);
+        return new SwitchClosure<>(predicates, closures, defaultClosure);
     }
 
     /**
@@ -81,14 +81,14 @@ public class SwitchClosure<E> implements Closure<E>, Serializable {
      * @param <E> the type that the closure acts on
      * @param predicatesAndClosures  a map of predicates to closures
      * @return the <code>switch</code> closure
-     * @throws IllegalArgumentException if the map is null
-     * @throws IllegalArgumentException if any closure in the map is null
+     * @throws NullPointerException if the map is null
+     * @throws NullPointerException if any closure in the map is null
      * @throws ClassCastException  if the map elements are of the wrong type
      */
     @SuppressWarnings("unchecked")
     public static <E> Closure<E> switchClosure(final Map<Predicate<E>, Closure<E>> predicatesAndClosures) {
         if (predicatesAndClosures == null) {
-            throw new IllegalArgumentException("The predicate and closure map must not be null");
+            throw new NullPointerException("The predicate and closure map must not be null");
         }
         // convert to array like this to guarantee iterator() ordering
         final Closure<? super E> defaultClosure = predicatesAndClosures.remove(null);
@@ -104,7 +104,7 @@ public class SwitchClosure<E> implements Closure<E>, Serializable {
             closures[i] = entry.getValue();
             i++;
         }
-        return new SwitchClosure<E>(false, preds, closures, defaultClosure);
+        return new SwitchClosure<>(false, preds, closures, defaultClosure);
     }
 
     /**
@@ -142,6 +142,7 @@ public class SwitchClosure<E> implements Closure<E>, Serializable {
      *
      * @param input  the input object
      */
+    @Override
     public void execute(final E input) {
         for (int i = 0; i < iPredicates.length; i++) {
             if (iPredicates[i].evaluate(input) == true) {

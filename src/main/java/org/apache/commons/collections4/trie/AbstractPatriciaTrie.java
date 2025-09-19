@@ -39,14 +39,13 @@ import org.apache.commons.collections4.OrderedMapIterator;
  * is related to the {@link Map} interface.
  *
  * @since 4.0
- * @version $Id$
  */
 abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
     private static final long serialVersionUID = 5155253417231339498L;
 
-    /** The root node of the {@link Trie}. */
-    private transient TrieEntry<K, V> root = new TrieEntry<K, V>(null, null, -1);
+    /** The root node of the {@link org.apache.commons.collections4.Trie}. */
+    private transient TrieEntry<K, V> root = new TrieEntry<>(null, null, -1);
 
     /**
      * Each of these fields are initialized to contain an instance of the
@@ -57,11 +56,11 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     private transient volatile Collection<V> values;
     private transient volatile Set<Map.Entry<K,V>> entrySet;
 
-    /** The current size of the {@link Trie}. */
+    /** The current size of the {@link org.apache.commons.collections4.Trie}. */
     private transient int size = 0;
 
     /**
-     * The number of times this {@link Trie} has been modified.
+     * The number of times this {@link org.apache.commons.collections4.Trie} has been modified.
      * It's used to detect concurrent modifications and fail-fast the {@link Iterator}s.
      */
     protected transient int modCount = 0;
@@ -71,8 +70,8 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     }
 
     /**
-     * Constructs a new {@link org.apache.commons.collections4.Trie Trie} using the given
-     * {@link KeyAnalyzer} and initializes the {@link org.apache.commons.collections4.Trie Trie}
+     * Constructs a new {@link org.apache.commons.collections4.Trie org.apache.commons.collections4.Trie Trie}
+     * using the given {@link KeyAnalyzer} and initializes the {@link org.apache.commons.collections4.Trie Trie}
      * with the values from the provided {@link Map}.
      */
     protected AbstractPatriciaTrie(final KeyAnalyzer<? super K> keyAnalyzer,
@@ -158,7 +157,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         if (!KeyAnalyzer.isOutOfBoundsIndex(bitIndex)) {
             if (KeyAnalyzer.isValidBitIndex(bitIndex)) { // in 99.999...9% the case
                 /* NEW KEY+VALUE TUPLE */
-                final TrieEntry<K, V> t = new TrieEntry<K, V>(key, value, bitIndex);
+                final TrieEntry<K, V> t = new TrieEntry<>(key, value, bitIndex);
                 addEntry(t, lengthInBits);
                 incrementSize();
                 return null;
@@ -178,7 +177,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
                 // This is a very special and rare case.
 
                 /* REPLACE OLD KEY+VALUE */
-                if (found != root) {
+                if (found != root) { // NOPMD
                     incrementModCount();
                     return found.setKeyValue(key, value);
                 }
@@ -261,7 +260,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     }
 
     /**
-     * Returns the {@link Entry} whose key is closest in a bitwise XOR
+     * Returns the {@link java.util.Map.Entry} whose key is closest in a bitwise XOR
      * metric to the given key. This is NOT lexicographic closeness.
      * For example, given the keys:
      *
@@ -271,17 +270,17 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
      * <li>L = 1001100
      * </ol>
      *
-     * If the {@link Trie} contained 'H' and 'L', a lookup of 'D' would
+     * If the {@link org.apache.commons.collections4.Trie} contained 'H' and 'L', a lookup of 'D' would
      * return 'L', because the XOR distance between D &amp; L is smaller
      * than the XOR distance between D &amp; H.
      *
      * @param key  the key to use in the search
-     * @return the {@link Entry} whose key is closest in a bitwise XOR metric
+     * @return the {@link java.util.Map.Entry} whose key is closest in a bitwise XOR metric
      *   to the provided key
      */
     public Map.Entry<K, V> select(final K key) {
         final int lengthInBits = lengthInBits(key);
-        final Reference<Map.Entry<K, V>> reference = new Reference<Map.Entry<K,V>>();
+        final Reference<Map.Entry<K, V>> reference = new Reference<>();
         if (!selectR(root.left, -1, key, lengthInBits, reference)) {
             return reference.get();
         }
@@ -300,7 +299,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
      * <li>L = 1001100
      * </ol>
      *
-     * If the {@link Trie} contained 'H' and 'L', a lookup of 'D' would
+     * If the {@link org.apache.commons.collections4.Trie} contained 'H' and 'L', a lookup of 'D' would
      * return 'L', because the XOR distance between D &amp; L is smaller
      * than the XOR distance between D &amp; H.
      *
@@ -327,7 +326,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
      * <li>L = 1001100
      * </ol>
      *
-     * If the {@link Trie} contained 'H' and 'L', a lookup of 'D' would
+     * If the {@link org.apache.commons.collections4.Trie} contained 'H' and 'L', a lookup of 'D' would
      * return 'L', because the XOR distance between D &amp; L is smaller
      * than the XOR distance between D &amp; H.
      *
@@ -771,10 +770,12 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
     //-----------------------------------------------------------------------
 
+    @Override
     public Comparator<? super K> comparator() {
         return getKeyAnalyzer();
     }
 
+    @Override
     public K firstKey() {
         if (size() == 0) {
             throw new NoSuchElementException();
@@ -782,6 +783,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         return firstEntry().getKey();
     }
 
+    @Override
     public K lastKey() {
         final TrieEntry<K, V> entry = lastEntry();
         if (entry != null) {
@@ -790,6 +792,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         throw new NoSuchElementException();
     }
 
+    @Override
     public K nextKey(final K key) {
         if (key == null) {
             throw new NullPointerException();
@@ -802,6 +805,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         return null;
     }
 
+    @Override
     public K previousKey(final K key) {
         if (key == null) {
             throw new NullPointerException();
@@ -814,10 +818,12 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         return null;
     }
 
+    @Override
     public OrderedMapIterator<K, V> mapIterator() {
         return new TrieMapIterator();
     }
 
+    @Override
     public SortedMap<K, V> prefixMap(final K key) {
         return getPrefixMapByBits(key, 0, lengthInBits(key));
     }
@@ -858,14 +864,17 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
         return new PrefixRangeMap(key, offsetInBits, lengthInBits);
     }
 
+    @Override
     public SortedMap<K, V> headMap(final K toKey) {
         return new RangeEntryMap(null, toKey);
     }
 
+    @Override
     public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
         return new RangeEntryMap(fromKey, toKey);
     }
 
+    @Override
     public SortedMap<K, V> tailMap(final K fromKey) {
         return new RangeEntryMap(fromKey, null);
     }
@@ -900,7 +909,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
         final int bitIndex = bitIndex(key, found.key);
         if (KeyAnalyzer.isValidBitIndex(bitIndex)) {
-            final TrieEntry<K, V> added = new TrieEntry<K, V>(key, null, bitIndex);
+            final TrieEntry<K, V> added = new TrieEntry<>(key, null, bitIndex);
             addEntry(added, lengthInBits);
             incrementSize(); // must increment because remove will decrement
             final TrieEntry<K, V> ceil = nextEntry(added);
@@ -962,7 +971,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
         final int bitIndex = bitIndex(key, found.key);
         if (KeyAnalyzer.isValidBitIndex(bitIndex)) {
-            final TrieEntry<K, V> added = new TrieEntry<K, V>(key, null, bitIndex);
+            final TrieEntry<K, V> added = new TrieEntry<>(key, null, bitIndex);
             addEntry(added, lengthInBits);
             incrementSize(); // must increment because remove will decrement
             final TrieEntry<K, V> ceil = nextEntry(added);
@@ -1017,7 +1026,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
         final int bitIndex = bitIndex(key, found.key);
         if (KeyAnalyzer.isValidBitIndex(bitIndex)) {
-            final TrieEntry<K, V> added = new TrieEntry<K, V>(key, null, bitIndex);
+            final TrieEntry<K, V> added = new TrieEntry<>(key, null, bitIndex);
             addEntry(added, lengthInBits);
             incrementSize(); // must increment because remove will decrement
             final TrieEntry<K, V> prior = previousEntry(added);
@@ -1058,7 +1067,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
         final int bitIndex = bitIndex(key, found.key);
         if (KeyAnalyzer.isValidBitIndex(bitIndex)) {
-            final TrieEntry<K, V> added = new TrieEntry<K, V>(key, null, bitIndex);
+            final TrieEntry<K, V> added = new TrieEntry<>(key, null, bitIndex);
             addEntry(added, lengthInBits);
             incrementSize(); // must increment because remove will decrement
             final TrieEntry<K, V> floor = previousEntry(added);
@@ -1258,7 +1267,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     }
 
     /**
-     *  A {@link Trie} is a set of {@link TrieEntry} nodes.
+     *  A {@link org.apache.commons.collections4.Trie} is a set of {@link TrieEntry} nodes.
      */
     protected static class TrieEntry<K,V> extends BasicEntry<K, V> {
 
@@ -1422,6 +1431,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
          * An {@link Iterator} that returns {@link Entry} Objects.
          */
         private class EntryIterator extends TrieIterator<Map.Entry<K,V>> {
+            @Override
             public Map.Entry<K,V> next() {
                 return nextEntry();
             }
@@ -1464,6 +1474,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
          * An {@link Iterator} that returns Key Objects.
          */
         private class KeyIterator extends TrieIterator<K> {
+            @Override
             public K next() {
                 return nextEntry().getKey();
             }
@@ -1511,6 +1522,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
          * An {@link Iterator} that returns Value Objects.
          */
         private class ValueIterator extends TrieIterator<V> {
+            @Override
             public V next() {
                 return nextEntry().getValue();
             }
@@ -1567,10 +1579,12 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return AbstractPatriciaTrie.this.nextEntry(prior);
         }
 
+        @Override
         public boolean hasNext() {
             return next != null;
         }
 
+        @Override
         public void remove() {
             if (current == null) {
                 throw new IllegalStateException();
@@ -1595,10 +1609,12 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
 
         protected TrieEntry<K, V> previous; // the previous node to return
 
+        @Override
         public K next() {
             return nextEntry().getKey();
         }
 
+        @Override
         public K getKey() {
             if (current == null) {
                 throw new IllegalStateException();
@@ -1606,6 +1622,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return current.getKey();
         }
 
+        @Override
         public V getValue() {
             if (current == null) {
                 throw new IllegalStateException();
@@ -1613,6 +1630,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return current.getValue();
         }
 
+        @Override
         public V setValue(final V value) {
             if (current == null) {
                 throw new IllegalStateException();
@@ -1620,10 +1638,12 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return current.setValue(value);
         }
 
+        @Override
         public boolean hasPrevious() {
             return previous != null;
         }
 
+        @Override
         public K previous() {
             return previousEntry().getKey();
         }
@@ -1687,6 +1707,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
          */
         protected abstract boolean isToInclusive();
 
+        @Override
         public Comparator<? super K> comparator() {
             return AbstractPatriciaTrie.this.comparator();
         }
@@ -1734,6 +1755,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return entrySet;
         }
 
+        @Override
         public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
             if (!inRange2(fromKey)) {
                 throw new IllegalArgumentException("FromKey is out of range: " + fromKey);
@@ -1746,6 +1768,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return createRangeMap(fromKey, isFromInclusive(), toKey, isToInclusive());
         }
 
+        @Override
         public SortedMap<K, V> headMap(final K toKey) {
             if (!inRange2(toKey)) {
                 throw new IllegalArgumentException("ToKey is out of range: " + toKey);
@@ -1753,6 +1776,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return createRangeMap(getFromKey(), isFromInclusive(), toKey, isToInclusive());
         }
 
+        @Override
         public SortedMap<K, V> tailMap(final K fromKey) {
             if (!inRange2(fromKey)) {
                 throw new IllegalArgumentException("FromKey is out of range: " + fromKey);
@@ -1860,7 +1884,8 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
            this.toInclusive = toInclusive;
        }
 
-       public K firstKey() {
+       @Override
+    public K firstKey() {
            Map.Entry<K,V> e = null;
            if (fromKey == null) {
                e = firstEntry();
@@ -1879,7 +1904,8 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
            return first;
        }
 
-       public K lastKey() {
+       @Override
+    public K lastKey() {
            Map.Entry<K,V> e;
            if (toKey == null) {
                e = lastEntry();
@@ -2049,6 +2075,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
                 return next != null && !compare(next.key, excludedKey);
             }
 
+            @Override
             public Map.Entry<K,V> next() {
                 if (next == null || compare(next.key, excludedKey)) {
                     throw new NoSuchElementException();
@@ -2130,6 +2157,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return size;
         }
 
+        @Override
         public K firstKey() {
             fixup();
 
@@ -2148,6 +2176,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
             return first;
         }
 
+        @Override
         public K lastKey() {
             fixup();
 
@@ -2228,6 +2257,17 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
                                                  final K toKey, final boolean toInclusive) {
             return new RangeEntryMap(fromKey, fromInclusive, toKey, toInclusive);
         }
+
+        @Override
+        public void clear() {
+            final Iterator<Map.Entry<K, V>> it = AbstractPatriciaTrie.this.entrySet().iterator();
+            final Set<K> currentKeys = keySet();
+            while (it.hasNext()) {
+                if (currentKeys.contains(it.next().getKey())) {
+                    it.remove();
+                }
+            }
+        }
     }
 
     /**
@@ -2284,10 +2324,12 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
                 this.entry = entry;
             }
 
+            @Override
             public boolean hasNext() {
                 return hit == 0;
             }
 
+            @Override
             public Map.Entry<K, V> next() {
                 if (hit != 0) {
                     throw new NoSuchElementException();
@@ -2297,6 +2339,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
                 return entry;
             }
 
+            @Override
             public void remove() {
                 if (hit != 1) {
                     throw new IllegalStateException();
@@ -2333,6 +2376,7 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
                 this.lengthInBits = lengthInBits;
             }
 
+            @Override
             public Map.Entry<K,V> next() {
                 final Map.Entry<K, V> entry = nextEntry();
                 if (lastOne) {
@@ -2382,11 +2426,11 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
     @SuppressWarnings("unchecked") // This will fail at runtime if the stream is incorrect
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException{
         stream.defaultReadObject();
-        root = new TrieEntry<K, V>(null, null, -1);
-        int size = stream.readInt();
+        root = new TrieEntry<>(null, null, -1);
+        final int size = stream.readInt();
         for(int i = 0; i < size; i++){
-            K k = (K) stream.readObject();
-            V v = (V) stream.readObject();
+            final K k = (K) stream.readObject();
+            final V v = (V) stream.readObject();
             put(k, v);
         }
     }

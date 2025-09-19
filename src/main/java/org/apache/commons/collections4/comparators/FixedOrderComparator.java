@@ -43,8 +43,8 @@ import java.util.Map;
  * <p>
  * This class is Serializable from Commons Collections 4.0.
  *
+ * @param <T> the type of objects compared by this comparator
  * @since 3.0
- * @version $Id$
  */
 public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
 
@@ -55,12 +55,12 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
      * Unknown object behavior enum.
      * @since 4.0
      */
-    public static enum UnknownObjectBehavior {
+    public enum UnknownObjectBehavior {
         BEFORE, AFTER, EXCEPTION;
     }
 
     /** Internal map of object to position */
-    private final Map<T, Integer> map = new HashMap<T, Integer>();
+    private final Map<T, Integer> map = new HashMap<>();
 
     /** Counter used in determining the position in the map */
     private int counter = 0;
@@ -87,12 +87,12 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
      * The array is copied, so later changes will not affect the comparator.
      *
      * @param items  the items that the comparator can compare in order
-     * @throws IllegalArgumentException if the array is null
+     * @throws NullPointerException if the array is null
      */
     public FixedOrderComparator(final T... items) {
         super();
         if (items == null) {
-            throw new IllegalArgumentException("The list of items must not be null");
+            throw new NullPointerException("The list of items must not be null");
         }
         for (final T item : items) {
             add(item);
@@ -106,12 +106,12 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
      * The list is copied, so later changes will not affect the comparator.
      *
      * @param items  the items that the comparator can compare in order
-     * @throws IllegalArgumentException if the list is null
+     * @throws NullPointerException if the list is null
      */
     public FixedOrderComparator(final List<T> items) {
         super();
         if (items == null) {
-            throw new IllegalArgumentException("The list of items must not be null");
+            throw new NullPointerException("The list of items must not be null");
         }
         for (final T t : items) {
             add(t);
@@ -157,12 +157,12 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
      * @param unknownObjectBehavior  the flag for unknown behaviour -
      * UNKNOWN_AFTER, UNKNOWN_BEFORE or UNKNOWN_THROW_EXCEPTION
      * @throws UnsupportedOperationException if a comparison has been performed
-     * @throws IllegalArgumentException if the unknown flag is not valid
+     * @throws NullPointerException if unknownObjectBehavior is null
      */
     public void setUnknownObjectBehavior(final UnknownObjectBehavior unknownObjectBehavior) {
         checkLocked();
         if (unknownObjectBehavior == null) {
-            throw new IllegalArgumentException("Unknown object behavior must not be null");
+            throw new NullPointerException("Unknown object behavior must not be null");
         }
         this.unknownObjectBehavior = unknownObjectBehavior;
     }
@@ -214,7 +214,7 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
      * Compares two objects according to the order of this Comparator.
      * <p>
      * It is important to note that this class will throw an IllegalArgumentException
-     * in the case of an unrecognised object. This is not specified in the
+     * in the case of an unrecognized object. This is not specified in the
      * Comparator interface, but is the most appropriate exception.
      *
      * @param obj1  the first object to compare
@@ -257,7 +257,7 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
     @Override
     public int hashCode() {
         int total = 17;
-        total = total*37 + (map == null ? 0 : map.hashCode());
+        total = total*37 + map.hashCode();
         total = total*37 + (unknownObjectBehavior == null ? 0 : unknownObjectBehavior.hashCode());
         total = total*37 + counter;
         total = total*37 + (isLocked ? 0 : 1);

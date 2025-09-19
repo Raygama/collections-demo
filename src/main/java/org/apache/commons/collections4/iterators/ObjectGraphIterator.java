@@ -72,12 +72,11 @@ import org.apache.commons.collections4.Transformer;
  * more efficient (and convenient) than using nested for loops to extract a list.
  *
  * @since 3.1
- * @version $Id$
  */
 public class ObjectGraphIterator<E> implements Iterator<E> {
 
     /** The stack of iterators */
-    private final Deque<Iterator<? extends E>> stack = new ArrayDeque<Iterator<? extends E>>(8);
+    private final Deque<Iterator<? extends E>> stack = new ArrayDeque<>(8);
     /** The root object in the tree */
     private E root;
     /** The transformer to use */
@@ -205,6 +204,7 @@ public class ObjectGraphIterator<E> implements Iterator<E> {
      *
      * @return true if elements remain in the iteration
      */
+    @Override
     public boolean hasNext() {
         updateCurrentIterator();
         return hasNext;
@@ -216,6 +216,7 @@ public class ObjectGraphIterator<E> implements Iterator<E> {
      * @return the next element from the iteration
      * @throws NoSuchElementException if all the Iterators are exhausted
      */
+    @Override
     public E next() {
         updateCurrentIterator();
         if (hasNext == false) {
@@ -241,6 +242,7 @@ public class ObjectGraphIterator<E> implements Iterator<E> {
      *   if the next method has not yet been called, or the remove method has
      *   already been called after the last call to the next method.
      */
+    @Override
     public void remove() {
         if (lastUsedIterator == null) {
             throw new IllegalStateException("Iterator remove() cannot be called at this time");

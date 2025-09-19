@@ -34,8 +34,9 @@ import org.apache.commons.collections4.map.AbstractMapDecorator;
  * it would provide a loophole around the validation.
  * But, you might want that loophole, so this class is kept simple.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractBidiMapDecorator<K, V>
         extends AbstractMapDecorator<K, V> implements BidiMap<K, V> {
@@ -44,7 +45,7 @@ public abstract class AbstractBidiMapDecorator<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if the collection is null
+     * @throws NullPointerException if the collection is null
      */
     protected AbstractBidiMapDecorator(final BidiMap<K, V> map) {
         super(map);

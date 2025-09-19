@@ -26,7 +26,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableIterator<E> implements Iterator<E>, Unmodifiable {
 
@@ -42,18 +41,18 @@ public final class UnmodifiableIterator<E> implements Iterator<E>, Unmodifiable 
      * @param <E>  the element type
      * @param iterator  the iterator to decorate
      * @return a new unmodifiable iterator
-     * @throws IllegalArgumentException if the iterator is null
+     * @throws NullPointerException if the iterator is null
      */
     public static <E> Iterator<E> unmodifiableIterator(final Iterator<? extends E> iterator) {
         if (iterator == null) {
-            throw new IllegalArgumentException("Iterator must not be null");
+            throw new NullPointerException("Iterator must not be null");
         }
         if (iterator instanceof Unmodifiable) {
             @SuppressWarnings("unchecked") // safe to upcast
             final Iterator<E> tmpIterator = (Iterator<E>) iterator;
             return tmpIterator;
         }
-        return new UnmodifiableIterator<E>(iterator);
+        return new UnmodifiableIterator<>(iterator);
     }
 
     //-----------------------------------------------------------------------
@@ -68,14 +67,17 @@ public final class UnmodifiableIterator<E> implements Iterator<E>, Unmodifiable 
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
+    @Override
     public E next() {
         return iterator.next();
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }

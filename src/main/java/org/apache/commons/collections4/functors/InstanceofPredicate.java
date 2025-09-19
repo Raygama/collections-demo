@@ -25,7 +25,6 @@ import org.apache.commons.collections4.Predicate;
  * the type stored in this predicate.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class InstanceofPredicate implements Predicate<Object>, Serializable {
 
@@ -40,11 +39,11 @@ public final class InstanceofPredicate implements Predicate<Object>, Serializabl
      *
      * @param type  the type to check for, may not be null
      * @return the predicate
-     * @throws IllegalArgumentException if the class is null
+     * @throws NullPointerException if the class is null
      */
     public static Predicate<Object> instanceOfPredicate(final Class<?> type) {
         if (type == null) {
-            throw new IllegalArgumentException("The type to check instanceof must not be null");
+            throw new NullPointerException("The type to check instanceof must not be null");
         }
         return new InstanceofPredicate(type);
     }
@@ -66,6 +65,7 @@ public final class InstanceofPredicate implements Predicate<Object>, Serializabl
      * @param object  the input object
      * @return true if input is of stored type
      */
+    @Override
     public boolean evaluate(final Object object) {
         return iType.isInstance(object);
     }

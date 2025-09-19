@@ -30,9 +30,8 @@ import org.apache.commons.collections4.collection.AbstractCollectionTest;
  * Test class for {@link CollectionSortedBag}.
  * <p>
  * Note: This test is mainly for serialization support, the CollectionSortedBag decorator
- * is extensively used and tested in AbstractSortedBagTest. 
+ * is extensively used and tested in AbstractSortedBagTest.
  *
- * @version $Id$
  * @since 4.0
  */
 public class CollectionSortedBagTest<T> extends AbstractCollectionTest<T> {
@@ -47,7 +46,7 @@ public class CollectionSortedBagTest<T> extends AbstractCollectionTest<T> {
     }
 
     //-----------------------------------------------------------------------
-    
+
     /**
      * Overridden because SortedBags don't allow null elements (normally).
      * @return false
@@ -69,7 +68,7 @@ public class CollectionSortedBagTest<T> extends AbstractCollectionTest<T> {
      */
     @Override
     public Collection<T> makeConfirmedCollection() {
-        return new ArrayList<T>();
+        return new ArrayList<>();
     }
 
     /**

@@ -56,9 +56,10 @@ import org.apache.commons.collections4.functors.FactoryTransformer;
  * using {@link java.util.Collections#synchronizedMap(Map)}. This class may throw
  * exceptions when accessed by concurrent threads without synchronization.
  *
- * @since 3.2
- * @version $Id$
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  *
+ * @since 3.2
  * @see LazyMap
  */
 public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Serializable {
@@ -80,11 +81,11 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * @param map  the map to decorate, must not be null
      * @param defaultValue  the default value to return when the key is not found
      * @return a new defaulting map
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> DefaultedMap<K, V> defaultedMap(final Map<K, V> map, final V defaultValue) {
-        return new DefaultedMap<K, V>(map, ConstantTransformer.constantTransformer(defaultValue));
+        return new DefaultedMap<>(map, ConstantTransformer.constantTransformer(defaultValue));
     }
 
     /**
@@ -98,14 +99,14 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * @param map  the map to decorate, must not be null
      * @param factory  the factory to use to create entries, must not be null
      * @return a new defaulting map
-     * @throws IllegalArgumentException if map or factory is null
+     * @throws NullPointerException if map or factory is null
      * @since 4.0
      */
     public static <K, V> DefaultedMap<K, V> defaultedMap(final Map<K, V> map, final Factory<? extends V> factory) {
         if (factory == null) {
             throw new IllegalArgumentException("Factory must not be null");
         }
-        return new DefaultedMap<K, V>(map, FactoryTransformer.factoryTransformer(factory));
+        return new DefaultedMap<>(map, FactoryTransformer.factoryTransformer(factory));
     }
 
     /**
@@ -120,7 +121,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * @param map  the map to decorate, must not be null
      * @param transformer  the transformer to use as a factory to create entries, must not be null
      * @return a new defaulting map
-     * @throws IllegalArgumentException if map or factory is null
+     * @throws NullPointerException if map or factory is null
      * @since 4.0
      */
     public static <K, V> Map<K, V> defaultedMap(final Map<K, V> map,
@@ -128,7 +129,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
         if (transformer == null) {
            throw new IllegalArgumentException("Transformer must not be null");
        }
-       return new DefaultedMap<K, V>(map, transformer);
+       return new DefaultedMap<>(map, transformer);
     }
 
     //-----------------------------------------------------------------------
@@ -159,12 +160,12 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      *
      * @param map  the map to decorate, must not be null
      * @param defaultValueTransformer  the value transformer to use
-     * @throws IllegalArgumentException if map or transformer is null
+     * @throws NullPointerException if map or transformer is null
      */
     protected DefaultedMap(final Map<K, V> map, final Transformer<? super K, ? extends V> defaultValueTransformer) {
         super(map);
         if (defaultValueTransformer == null) {
-            throw new IllegalArgumentException("transformer must not be null");
+            throw new NullPointerException("Transformer must not be null.");
         }
         this.value = defaultValueTransformer;
     }
@@ -174,7 +175,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -185,8 +186,8 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -198,11 +199,10 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
     @Override
     @SuppressWarnings("unchecked")
     public V get(final Object key) {
-        // create value for key if key is not currently in the map
-        if (map.containsKey(key) == false) {
-            return value.transform((K) key);
-        }
-        return map.get(key);
+        V v;
+        return (((v = map.get(key)) != null) || map.containsKey(key))
+          ? v
+          : value.transform((K) key);
     }
 
     // no need to wrap keySet, entrySet or values as they are views of

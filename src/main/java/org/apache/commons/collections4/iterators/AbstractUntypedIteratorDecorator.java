@@ -25,7 +25,6 @@ import java.util.Iterator;
  * All methods are forwarded to the decorated iterator.
  *
  * @since 4.0
- * @version $Id$
  */
 public abstract class AbstractUntypedIteratorDecorator<I, O> implements Iterator<O> {
 
@@ -36,11 +35,12 @@ public abstract class AbstractUntypedIteratorDecorator<I, O> implements Iterator
      * Create a new AbstractUntypedIteratorDecorator.
      *
      * @param iterator  the iterator to decorate
+     * @throws NullPointerException if the iterator is null
      */
     protected AbstractUntypedIteratorDecorator(final Iterator<I> iterator) {
         super();
         if (iterator == null) {
-            throw new IllegalArgumentException("Iterator must not be null");
+            throw new NullPointerException("Iterator must not be null");
         }
         this.iterator = iterator;
     }
@@ -54,10 +54,12 @@ public abstract class AbstractUntypedIteratorDecorator<I, O> implements Iterator
         return iterator;
     }
 
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
+    @Override
     public void remove() {
         iterator.remove();
     }

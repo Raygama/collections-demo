@@ -39,7 +39,6 @@ import java.util.Set;
  * @param <V> the type of the values in the map
  *
  * @since 3.0
- * @version $Id$
  */
 public interface BidiMap<K, V> extends IterableMap<K, V> {
 
@@ -71,6 +70,7 @@ public interface BidiMap<K, V> extends IterableMap<K, V> {
      * @throws NullPointerException (optional) if the map limits the values to
      *  non-null and null was specified
      */
+    @Override
     V put(K key, V value);
 
     /**
@@ -140,5 +140,6 @@ public interface BidiMap<K, V> extends IterableMap<K, V> {
      *
      * @return a set view of the values contained in this map
      */
+    @Override
     Set<V> values();
 }

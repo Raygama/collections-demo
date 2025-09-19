@@ -26,7 +26,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableListIterator<E> implements ListIterator<E>, Unmodifiable {
 
@@ -40,18 +39,18 @@ public final class UnmodifiableListIterator<E> implements ListIterator<E>, Unmod
      * @param <E>  the element type
      * @param iterator  the iterator to decorate
      * @return a new unmodifiable list iterator
-     * @throws IllegalArgumentException if the iterator is null
+     * @throws NullPointerException if the iterator is null
      */
     public static <E> ListIterator<E> umodifiableListIterator(final ListIterator<? extends E> iterator) {
         if (iterator == null) {
-            throw new IllegalArgumentException("ListIterator must not be null");
+            throw new NullPointerException("ListIterator must not be null");
         }
         if (iterator instanceof Unmodifiable) {
             @SuppressWarnings("unchecked") // safe to upcast
             final ListIterator<E> tmpIterator = (ListIterator<E>) iterator;
             return tmpIterator;
         }
-        return new UnmodifiableListIterator<E>(iterator);
+        return new UnmodifiableListIterator<>(iterator);
     }
 
     //-----------------------------------------------------------------------
@@ -66,38 +65,47 @@ public final class UnmodifiableListIterator<E> implements ListIterator<E>, Unmod
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
+    @Override
     public E next() {
         return iterator.next();
     }
 
+    @Override
     public int nextIndex() {
         return iterator.nextIndex();
     }
 
+    @Override
     public boolean hasPrevious() {
         return iterator.hasPrevious();
     }
 
+    @Override
     public E previous() {
         return iterator.previous();
     }
 
+    @Override
     public int previousIndex() {
         return iterator.previousIndex();
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }
 
+    @Override
     public void set(final E obj) {
         throw new UnsupportedOperationException("set() is not supported");
     }
 
+    @Override
     public void add(final E obj) {
         throw new UnsupportedOperationException("add() is not supported");
     }

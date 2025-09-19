@@ -26,7 +26,6 @@ import org.apache.commons.collections4.Unmodifiable;
  * {@link UnmodifiableOrderedMap} implementation.
  *
  * @since 3.0
- * @version $Id$
  */
 public class UnmodifiableOrderedMapTest<K, V> extends AbstractOrderedMapTest<K, V> {
 
@@ -77,7 +76,7 @@ public class UnmodifiableOrderedMapTest<K, V> extends AbstractOrderedMapTest<K, 
         try {
             UnmodifiableOrderedMap.unmodifiableOrderedMap(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     //-----------------------------------------------------------------------

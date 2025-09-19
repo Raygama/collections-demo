@@ -16,9 +16,7 @@
  */
 package org.apache.commons.collections4;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.apache.commons.collections4.bag.HashBag;
 import org.apache.commons.collections4.bag.PredicatedBag;
@@ -36,7 +34,6 @@ import org.junit.Test;
 /**
  * Tests for BagUtils factory methods.
  *
- * @version $Id$
  */
 public class BagUtilsTest {
 
@@ -47,132 +44,132 @@ public class BagUtilsTest {
 
     @Test
     public void testSynchronizedBag() {
-        Bag<Object> bag = BagUtils.synchronizedBag(new HashBag<Object>());
+        final Bag<Object> bag = BagUtils.synchronizedBag(new HashBag<>());
         assertTrue("Returned object should be a SynchronizedBag.",
             bag instanceof SynchronizedBag);
         try {
             BagUtils.synchronizedBag(null);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testUnmodifiableBag() {
-        Bag<Object> bag = BagUtils.unmodifiableBag(new HashBag<Object>());
+        final Bag<Object> bag = BagUtils.unmodifiableBag(new HashBag<>());
         assertTrue("Returned object should be an UnmodifiableBag.",
             bag instanceof UnmodifiableBag);
         try {
             BagUtils.unmodifiableBag(null);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
-        
+
         assertSame("UnmodifiableBag shall not be decorated", bag, BagUtils.unmodifiableBag(bag));
     }
 
     @Test
     public void testPredicatedBag() {
-        Bag<Object> bag = BagUtils.predicatedBag(new HashBag<Object>(), truePredicate);
+        final Bag<Object> bag = BagUtils.predicatedBag(new HashBag<>(), truePredicate);
         assertTrue("Returned object should be a PredicatedBag.",
             bag instanceof PredicatedBag);
         try {
             BagUtils.predicatedBag(null,truePredicate);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
         try {
-            BagUtils.predicatedBag(new HashBag<Object>(), null);
-            fail("Expecting IllegalArgumentException for null predicate.");
-        } catch (final IllegalArgumentException ex) {
+            BagUtils.predicatedBag(new HashBag<>(), null);
+            fail("Expecting NullPointerException for null predicate.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testTransformedBag() {
-        Bag<Object> bag = BagUtils.transformingBag(new HashBag<Object>(), nopTransformer);
+        final Bag<Object> bag = BagUtils.transformingBag(new HashBag<>(), nopTransformer);
         assertTrue("Returned object should be an TransformedBag.",
             bag instanceof TransformedBag);
         try {
             BagUtils.transformingBag(null, nopTransformer);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
         try {
-            BagUtils.transformingBag(new HashBag<Object>(), null);
-            fail("Expecting IllegalArgumentException for null transformer.");
-        } catch (final IllegalArgumentException ex) {
+            BagUtils.transformingBag(new HashBag<>(), null);
+            fail("Expecting NullPointerException for null transformer.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testSynchronizedSortedBag() {
-        Bag<Object> bag = BagUtils.synchronizedSortedBag(new TreeBag<Object>());
+        final Bag<Object> bag = BagUtils.synchronizedSortedBag(new TreeBag<>());
         assertTrue("Returned object should be a SynchronizedSortedBag.",
             bag instanceof SynchronizedSortedBag);
         try {
             BagUtils.synchronizedSortedBag(null);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testUnmodifiableSortedBag() {
-        SortedBag<Object> bag = BagUtils.unmodifiableSortedBag(new TreeBag<Object>());
+        final SortedBag<Object> bag = BagUtils.unmodifiableSortedBag(new TreeBag<>());
         assertTrue("Returned object should be an UnmodifiableSortedBag.",
             bag instanceof UnmodifiableSortedBag);
         try {
             BagUtils.unmodifiableSortedBag(null);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
-        
+
         assertSame("UnmodifiableSortedBag shall not be decorated", bag, BagUtils.unmodifiableSortedBag(bag));
     }
 
     @Test
     public void testPredicatedSortedBag() {
-        Bag<Object> bag = BagUtils.predicatedSortedBag(new TreeBag<Object>(), truePredicate);
+        final Bag<Object> bag = BagUtils.predicatedSortedBag(new TreeBag<>(), truePredicate);
         assertTrue("Returned object should be a PredicatedSortedBag.",
             bag instanceof PredicatedSortedBag);
         try {
             BagUtils.predicatedSortedBag(null, truePredicate);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
         try {
-            BagUtils.predicatedSortedBag(new TreeBag<Object>(), null);
-            fail("Expecting IllegalArgumentException for null predicate.");
-        } catch (final IllegalArgumentException ex) {
+            BagUtils.predicatedSortedBag(new TreeBag<>(), null);
+            fail("Expecting NullPointerException for null predicate.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }
 
     @Test
     public void testTransformedSortedBag() {
-        Bag<Object> bag = BagUtils.transformingSortedBag(new TreeBag<Object>(), nopTransformer);
+        final Bag<Object> bag = BagUtils.transformingSortedBag(new TreeBag<>(), nopTransformer);
         assertTrue("Returned object should be an TransformedSortedBag",
             bag instanceof TransformedSortedBag);
         try {
             BagUtils.transformingSortedBag(null, nopTransformer);
-            fail("Expecting IllegalArgumentException for null bag.");
-        } catch (final IllegalArgumentException ex) {
+            fail("Expecting NullPointerException for null bag.");
+        } catch (final NullPointerException ex) {
             // expected
         }
         try {
-            BagUtils.transformingSortedBag(new TreeBag<Object>(), null);
-            fail("Expecting IllegalArgumentException for null transformer.");
-        } catch (final IllegalArgumentException ex) {
+            BagUtils.transformingSortedBag(new TreeBag<>(), null);
+            fail("Expecting NullPointerException for null transformer.");
+        } catch (final NullPointerException ex) {
             // expected
         }
     }

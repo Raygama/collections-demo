@@ -34,9 +34,8 @@ import org.apache.commons.collections4.Bag;
  * The method javadoc highlights the differences compared to the original Bag interface.
  *
  * @see Bag
- * @param <E> the type held in the bag
+ * @param <E> the type of elements in this bag
  * @since 4.0
- * @version $Id$
  */
 public final class CollectionBag<E> extends AbstractBagDecorator<E> {
 
@@ -49,10 +48,10 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * @param <E> the type of the elements in the bag
      * @param bag  the bag to decorate, must not be null
      * @return a Bag that complies to the Collection contract
-     * @throws IllegalArgumentException if bag is null
+     * @throws NullPointerException if bag is null
      */
     public static <E> Bag<E> collectionBag(final Bag<E> bag) {
-        return new CollectionBag<E>(bag);
+        return new CollectionBag<>(bag);
     }
 
     //-----------------------------------------------------------------------
@@ -60,7 +59,7 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * Constructor that wraps (not copies).
      *
      * @param bag  the bag to decorate, must not be null
-     * @throws IllegalArgumentException if bag is null
+     * @throws NullPointerException if bag is null
      */
     public CollectionBag(final Bag<E> bag) {
         super(bag);
@@ -71,7 +70,7 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * Write the collection out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -82,8 +81,8 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * Read the collection in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      * @throws ClassCastException if deserialised object has wrong type
      */
     @SuppressWarnings("unchecked") // will throw CCE, see Javadoc
@@ -178,10 +177,9 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
                 result = result || changed;
             }
             return result;
-        } else {
-            // let the decorated bag handle the case of null argument
-            return decorated().removeAll(null);
         }
+        // let the decorated bag handle the case of null argument
+        return decorated().removeAll(null);
     }
 
     /**
@@ -213,10 +211,9 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
                 }
             }
             return modified;
-        } else {
-            // let the decorated bag handle the case of null argument
-            return decorated().retainAll(null);
         }
+        // let the decorated bag handle the case of null argument
+        return decorated().retainAll(null);
     }
 
     //-----------------------------------------------------------------------

@@ -38,7 +38,6 @@ import org.apache.commons.collections4.collection.AbstractCollectionTest;
  * elements may be added; see {@link AbstractCollectionTest} for more details.
  *
  * @since 3.0
- * @version $Id$
  */
 public abstract class AbstractSetTest<E> extends AbstractCollectionTest<E> {
 
@@ -63,7 +62,7 @@ public abstract class AbstractSetTest<E> extends AbstractCollectionTest<E> {
         assertEquals("Sets should have equal hashCodes",
                      getConfirmed().hashCode(), getCollection().hashCode());
         final Collection<E> set = makeConfirmedCollection();
-        for (E element : getCollection()) {
+        for (final E element : getCollection()) {
             assertTrue("Set.iterator should only return unique elements", set.add(element));
         }
     }
@@ -84,7 +83,7 @@ public abstract class AbstractSetTest<E> extends AbstractCollectionTest<E> {
      */
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new HashSet<E>();
+        return new HashSet<>();
     }
 
     /**

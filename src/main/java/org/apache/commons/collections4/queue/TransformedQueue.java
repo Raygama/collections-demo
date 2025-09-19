@@ -29,8 +29,8 @@ import org.apache.commons.collections4.collection.TransformedCollection;
  * For example, if the transformation converts Strings to Integers, you must
  * use the Integer form to remove objects.
  *
+ * @param <E> the type of elements held in this queue
  * @since 4.0
- * @version $Id$
  */
 public class TransformedQueue<E> extends TransformedCollection<E> implements Queue<E> {
 
@@ -48,11 +48,11 @@ public class TransformedQueue<E> extends TransformedCollection<E> implements Que
      * @param queue  the queue to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed Queue
-     * @throws IllegalArgumentException if queue or transformer is null
+     * @throws NullPointerException if queue or transformer is null
      */
     public static <E> TransformedQueue<E> transformingQueue(final Queue<E> queue,
                                                             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedQueue<E>(queue, transformer);
+        return new TransformedQueue<>(queue, transformer);
     }
 
     /**
@@ -67,13 +67,13 @@ public class TransformedQueue<E> extends TransformedCollection<E> implements Que
      * @param queue  the queue to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed Queue
-     * @throws IllegalArgumentException if queue or transformer is null
+     * @throws NullPointerException if queue or transformer is null
      * @since 4.0
      */
     public static <E> TransformedQueue<E> transformedQueue(final Queue<E> queue,
                                                            final Transformer<? super E, ? extends E> transformer) {
         // throws IAE if queue or transformer is null
-        final TransformedQueue<E> decorated = new TransformedQueue<E>(queue, transformer);
+        final TransformedQueue<E> decorated = new TransformedQueue<>(queue, transformer);
         if (queue.size() > 0) {
             @SuppressWarnings("unchecked") // queue is type <E>
             final E[] values = (E[]) queue.toArray(); // NOPMD - false positive for generics
@@ -94,7 +94,7 @@ public class TransformedQueue<E> extends TransformedCollection<E> implements Que
      *
      * @param queue  the queue to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
-     * @throws IllegalArgumentException if queue or transformer is null
+     * @throws NullPointerException if queue or transformer is null
      */
     protected TransformedQueue(final Queue<E> queue, final Transformer<? super E, ? extends E> transformer) {
         super(queue, transformer);
@@ -111,22 +111,27 @@ public class TransformedQueue<E> extends TransformedCollection<E> implements Que
 
     //-----------------------------------------------------------------------
 
+    @Override
     public boolean offer(final E obj) {
         return getQueue().offer(transform(obj));
     }
 
+    @Override
     public E poll() {
         return getQueue().poll();
     }
 
+    @Override
     public E peek() {
         return getQueue().peek();
     }
 
+    @Override
     public E element() {
         return getQueue().element();
     }
 
+    @Override
     public E remove() {
         return getQueue().remove();
     }

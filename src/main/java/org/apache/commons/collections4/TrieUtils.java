@@ -22,7 +22,6 @@ import org.apache.commons.collections4.trie.UnmodifiableTrie;
  * A collection of {@link Trie} utilities.
  *
  * @since 4.0
- * @version $Id$
  */
 public class TrieUtils {
 
@@ -38,6 +37,7 @@ public class TrieUtils {
      * @param <V>  the value type
      * @param trie  the trie to make unmodifiable, must not be null
      * @return an unmodifiable trie backed by the given trie
+     * @throws NullPointerException if trie is null
      *
      * @see java.util.Collections#unmodifiableMap(java.util.Map)
      */

@@ -25,7 +25,6 @@ import org.apache.commons.collections4.Closure;
  * Closure implementation that chains the specified closures together.
  *
  * @since 3.0
- * @version $Id$
  */
 public class ChainedClosure<E> implements Closure<E>, Serializable {
 
@@ -41,15 +40,15 @@ public class ChainedClosure<E> implements Closure<E>, Serializable {
      * @param <E> the type that the closure acts on
      * @param closures  the closures to chain, copied, no nulls
      * @return the <code>chained</code> closure
-     * @throws IllegalArgumentException if the closures array is null
-     * @throws IllegalArgumentException if any closure in the array is null
+     * @throws NullPointerException if the closures array is null
+     * @throws NullPointerException if any closure in the array is null
      */
     public static <E> Closure<E> chainedClosure(final Closure<? super E>... closures) {
         FunctorUtils.validate(closures);
         if (closures.length == 0) {
             return NOPClosure.<E>nopClosure();
         }
-        return new ChainedClosure<E>(closures);
+        return new ChainedClosure<>(closures);
     }
 
     /**
@@ -60,13 +59,13 @@ public class ChainedClosure<E> implements Closure<E>, Serializable {
      * @param <E> the type that the closure acts on
      * @param closures  a collection of closures to chain
      * @return the <code>chained</code> closure
-     * @throws IllegalArgumentException if the closures collection is null
-     * @throws IllegalArgumentException if any closure in the collection is null
+     * @throws NullPointerException if the closures collection is null
+     * @throws NullPointerException if any closure in the collection is null
      */
     @SuppressWarnings("unchecked")
     public static <E> Closure<E> chainedClosure(final Collection<? extends Closure<? super E>> closures) {
         if (closures == null) {
-            throw new IllegalArgumentException("Closure collection must not be null");
+            throw new NullPointerException("Closure collection must not be null");
         }
         if (closures.size() == 0) {
             return NOPClosure.<E>nopClosure();
@@ -78,7 +77,7 @@ public class ChainedClosure<E> implements Closure<E>, Serializable {
             cmds[i++] = closure;
         }
         FunctorUtils.validate(cmds);
-        return new ChainedClosure<E>(false, cmds);
+        return new ChainedClosure<>(false, cmds);
     }
 
     /**
@@ -107,6 +106,7 @@ public class ChainedClosure<E> implements Closure<E>, Serializable {
      *
      * @param input  the input object passed to each closure
      */
+    @Override
     public void execute(final E input) {
         for (final Closure<? super E> iClosure : iClosures) {
             iClosure.execute(input);

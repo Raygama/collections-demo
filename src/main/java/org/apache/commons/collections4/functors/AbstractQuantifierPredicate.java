@@ -24,7 +24,6 @@ import org.apache.commons.collections4.Predicate;
  * Abstract base class for quantification predicates, e.g. All, Any, None.
  *
  * @since 4.0
- * @version $Id$
  */
 public abstract class AbstractQuantifierPredicate<T> implements PredicateDecorator<T>, Serializable {
 
@@ -49,6 +48,7 @@ public abstract class AbstractQuantifierPredicate<T> implements PredicateDecorat
      * @return a copy of the predicates
      * @since 3.1
      */
+    @Override
     public Predicate<? super T>[] getPredicates() {
         return FunctorUtils.<T>copy(iPredicates);
     }

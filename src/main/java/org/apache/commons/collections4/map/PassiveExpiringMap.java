@@ -55,10 +55,9 @@ import java.util.concurrent.TimeUnit;
  * synchronization.
  * </p>
  *
- * @param <K> the type of the keys in the map
- * @param <V> the type of the values in the map
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 4.0
- * @version $Id$
  */
 public class PassiveExpiringMap<K, V>
     extends AbstractMapDecorator<K, V>
@@ -72,7 +71,6 @@ public class PassiveExpiringMap<K, V>
      * @param <K> the type of the keys in the map
      * @param <V> the type of the values in the map
      * @since 4.0
-     * @version $Id$
      */
     public static class ConstantTimeToLiveExpirationPolicy<K, V>
         implements ExpirationPolicy<K, V> {
@@ -117,7 +115,7 @@ public class PassiveExpiringMap<K, V>
          *        expire.
          * @param timeUnit the unit of time for the <code>timeToLive</code>
          *        parameter, must not be null.
-         * @throws IllegalArgumentException if the time unit is null.
+         * @throws NullPointerException if the time unit is null.
          */
         public ConstantTimeToLiveExpirationPolicy(final long timeToLive,
                                                   final TimeUnit timeUnit) {
@@ -134,6 +132,7 @@ public class PassiveExpiringMap<K, V>
          *         {@link System#currentTimeMillis()} is returned. Otherwise, -1
          *         is returned indicating the entry never expires.
          */
+        @Override
         public long expirationTime(final K key, final V value) {
             if (timeToLiveMillis >= 0L) {
                 // avoid numerical overflow
@@ -159,9 +158,8 @@ public class PassiveExpiringMap<K, V>
      * @param <K> the key object type.
      * @param <V> the value object type
      * @since 4.0
-     * @version $Id$
      */
-    public static interface ExpirationPolicy<K, V>
+    public interface ExpirationPolicy<K, V>
         extends Serializable {
 
         /**
@@ -181,26 +179,25 @@ public class PassiveExpiringMap<K, V>
     /**
      * First validate the input parameters. If the parameters are valid, convert
      * the given time measured in the given units to the same time measured in
-     * milliseconds. If the parameters are invalid, an
-     * {@link IllegalArgumentException} is thrown.
+     * milliseconds.
      *
      * @param timeToLive the constant amount of time an entry is available
      *        before it expires. A negative value results in entries that NEVER
      *        expire. A zero value results in entries that ALWAYS expire.
      * @param timeUnit the unit of time for the <code>timeToLive</code>
      *        parameter, must not be null.
-     * @throws IllegalArgumentException if the time unit is null.
+     * @throws NullPointerException if the time unit is null.
      */
     private static long validateAndConvertToMillis(final long timeToLive,
                                                    final TimeUnit timeUnit) {
         if (timeUnit == null) {
-            throw new IllegalArgumentException("Time unit must not be null");
+            throw new NullPointerException("Time unit must not be null");
         }
         return TimeUnit.MILLISECONDS.convert(timeToLive, timeUnit);
     }
 
     /** map used to manage expiration times for the actual map entries. */
-    private final Map<Object, Long> expirationMap = new HashMap<Object, Long>();
+    private final Map<Object, Long> expirationMap = new HashMap<>();
 
     /** the policy used to determine time-to-live values for map entries. */
     private final ExpirationPolicy<K, V> expiringPolicy;
@@ -219,6 +216,7 @@ public class PassiveExpiringMap<K, V>
      *
      * @param expiringPolicy the policy used to determine expiration times of
      *        entries as they are added.
+     * @throws NullPointerException if expiringPolicy is null
      */
     public PassiveExpiringMap(final ExpirationPolicy<K, V> expiringPolicy) {
         this(expiringPolicy, new HashMap<K, V>());
@@ -233,13 +231,13 @@ public class PassiveExpiringMap<K, V>
      * @param expiringPolicy the policy used to determine expiration times of
      *        entries as they are added.
      * @param map the map to decorate, must not be null.
-     * @throws IllegalArgumentException if the map is null.
+     * @throws NullPointerException if the map or expiringPolicy is null.
      */
     public PassiveExpiringMap(final ExpirationPolicy<K, V> expiringPolicy,
                               final Map<K, V> map) {
         super(map);
         if (expiringPolicy == null) {
-            throw new IllegalArgumentException("Policy must not be null.");
+            throw new NullPointerException("Policy must not be null.");
         }
         this.expiringPolicy = expiringPolicy;
     }
@@ -271,7 +269,7 @@ public class PassiveExpiringMap<K, V>
      *        entries that NEVER expire. A zero value results in entries that
      *        ALWAYS expire.
      * @param map the map to decorate, must not be null.
-     * @throws IllegalArgumentException if the map is null.
+     * @throws NullPointerException if the map is null.
      */
     public PassiveExpiringMap(final long timeToLiveMillis, final Map<K, V> map) {
         this(new ConstantTimeToLiveExpirationPolicy<K, V>(timeToLiveMillis),
@@ -288,7 +286,7 @@ public class PassiveExpiringMap<K, V>
      *        expire. A zero value results in entries that ALWAYS expire.
      * @param timeUnit the unit of time for the <code>timeToLive</code>
      *        parameter, must not be null.
-     * @throws IllegalArgumentException if the time unit is null.
+     * @throws NullPointerException if the time unit is null.
      */
     public PassiveExpiringMap(final long timeToLive, final TimeUnit timeUnit) {
         this(validateAndConvertToMillis(timeToLive, timeUnit));
@@ -308,8 +306,7 @@ public class PassiveExpiringMap<K, V>
      * @param timeUnit the unit of time for the <code>timeToLive</code>
      *        parameter, must not be null.
      * @param map the map to decorate, must not be null.
-     * @throws IllegalArgumentException if the time unit is null.
-     * @throws IllegalArgumentException if the map is null.
+     * @throws NullPointerException if the map or time unit is null.
      */
     public PassiveExpiringMap(final long timeToLive, final TimeUnit timeUnit, final Map<K, V> map) {
         this(validateAndConvertToMillis(timeToLive, timeUnit), map);
@@ -321,7 +318,7 @@ public class PassiveExpiringMap<K, V>
      * being decorated, they also will NEVER expire.
      *
      * @param map the map to decorate, must not be null.
-     * @throws IllegalArgumentException if the map is null.
+     * @throws NullPointerException if the map is null.
      */
     public PassiveExpiringMap(final Map<K, V> map) {
         this(-1L, map);
@@ -433,6 +430,9 @@ public class PassiveExpiringMap<K, V>
     */
     @Override
     public V put(final K key, final V value) {
+        // remove the previous record
+        removeIfExpired(key, now());
+
         // record expiration time of new entry
         final long expirationTime = expiringPolicy.expirationTime(key, value);
         expirationMap.put(key, Long.valueOf(expirationTime));
@@ -504,8 +504,8 @@ public class PassiveExpiringMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     @SuppressWarnings("unchecked")
     // (1) should only fail if input stream is incorrect
@@ -519,7 +519,7 @@ public class PassiveExpiringMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out)
         throws IOException {

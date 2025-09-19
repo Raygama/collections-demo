@@ -16,22 +16,21 @@
  */
 package org.apache.commons.collections4.functors;
 
-import java.io.Serializable;
-
 import org.apache.commons.collections4.Closure;
 import org.apache.commons.collections4.Predicate;
 
 /**
  * Closure implementation that executes a closure repeatedly until a condition is met,
  * like a do-while or while loop.
+ * <p>
+ * <b>WARNING:</b> from v4.1 onwards this class will <b>not</b> be serializable anymore
+ * in order to prevent potential remote code execution exploits. Please refer to
+ * <a href="https://issues.apache.org/jira/browse/COLLECTIONS-580">COLLECTIONS-580</a>
+ * for more details.
  *
  * @since 3.0
- * @version $Id$
  */
-public class WhileClosure<E> implements Closure<E>, Serializable {
-
-    /** Serial version UID */
-    private static final long serialVersionUID = -3110538116913760108L;
+public class WhileClosure<E> implements Closure<E> {
 
     /** The test condition */
     private final Predicate<? super E> iPredicate;
@@ -48,17 +47,17 @@ public class WhileClosure<E> implements Closure<E>, Serializable {
      * @param closure  the closure the execute, not null
      * @param doLoop  true to act as a do-while loop, always executing the closure once
      * @return the <code>while</code> closure
-     * @throws IllegalArgumentException if the predicate or closure is null
+     * @throws NullPointerException if the predicate or closure is null
      */
     public static <E> Closure<E> whileClosure(final Predicate<? super E> predicate,
                                               final Closure<? super E> closure, final boolean doLoop) {
         if (predicate == null) {
-            throw new IllegalArgumentException("Predicate must not be null");
+            throw new NullPointerException("Predicate must not be null");
         }
         if (closure == null) {
-            throw new IllegalArgumentException("Closure must not be null");
+            throw new NullPointerException("Closure must not be null");
         }
-        return new WhileClosure<E>(predicate, closure, doLoop);
+        return new WhileClosure<>(predicate, closure, doLoop);
     }
 
     /**
@@ -81,6 +80,7 @@ public class WhileClosure<E> implements Closure<E>, Serializable {
      *
      * @param input  the input object
      */
+    @Override
     public void execute(final E input) {
         if (iDoLoop) {
             iClosure.execute(input);

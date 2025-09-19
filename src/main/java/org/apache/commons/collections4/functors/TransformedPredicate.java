@@ -26,7 +26,6 @@ import org.apache.commons.collections4.Transformer;
  * another <code>Predicate</code>.
  *
  * @since 3.1
- * @version $Id$
  */
 public final class TransformedPredicate<T> implements PredicateDecorator<T>, Serializable {
 
@@ -46,17 +45,17 @@ public final class TransformedPredicate<T> implements PredicateDecorator<T>, Ser
      * @param transformer  the transformer to call
      * @param predicate  the predicate to call with the result of the transform
      * @return the predicate
-     * @throws IllegalArgumentException if the transformer or the predicate is null
+     * @throws NullPointerException if the transformer or the predicate is null
      */
     public static <T> Predicate<T> transformedPredicate(final Transformer<? super T, ? extends T> transformer,
                                                         final Predicate<? super T> predicate) {
         if (transformer == null) {
-            throw new IllegalArgumentException("The transformer to call must not be null");
+            throw new NullPointerException("The transformer to call must not be null");
         }
         if (predicate == null) {
-            throw new IllegalArgumentException("The predicate to call must not be null");
+            throw new NullPointerException("The predicate to call must not be null");
         }
-        return new TransformedPredicate<T>(transformer, predicate);
+        return new TransformedPredicate<>(transformer, predicate);
     }
 
     /**
@@ -79,6 +78,7 @@ public final class TransformedPredicate<T> implements PredicateDecorator<T>, Ser
      * @param object  the input object which will be transformed
      * @return true if decorated predicate returns true
      */
+    @Override
     public boolean evaluate(final T object) {
         final T result = iTransformer.transform(object);
         return iPredicate.evaluate(result);
@@ -90,6 +90,7 @@ public final class TransformedPredicate<T> implements PredicateDecorator<T>, Ser
      * @return the predicate as the only element in an array
      * @since 3.1
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Predicate<? super T>[] getPredicates() {
         return new Predicate[] {iPredicate};

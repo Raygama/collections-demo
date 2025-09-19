@@ -31,8 +31,9 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableBidiMap<K, V>
         extends AbstractBidiMapDecorator<K, V> implements Unmodifiable {
@@ -49,7 +50,7 @@ public final class UnmodifiableBidiMap<K, V>
      * @param <V> the value type
      * @param map  the map to decorate, must not be null
      * @return an unmodifiable BidiMap
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> BidiMap<K, V> unmodifiableBidiMap(final BidiMap<? extends K, ? extends V> map) {
@@ -58,7 +59,7 @@ public final class UnmodifiableBidiMap<K, V>
             final BidiMap<K, V> tmpMap = (BidiMap<K, V>) map;
             return tmpMap;
         }
-        return new UnmodifiableBidiMap<K, V>(map);
+        return new UnmodifiableBidiMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -66,7 +67,7 @@ public final class UnmodifiableBidiMap<K, V>
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableBidiMap(final BidiMap<? extends K, ? extends V> map) {
@@ -127,7 +128,7 @@ public final class UnmodifiableBidiMap<K, V>
     @Override
     public synchronized BidiMap<V, K> inverseBidiMap() {
         if (inverse == null) {
-            inverse = new UnmodifiableBidiMap<V, K>(decorated().inverseBidiMap());
+            inverse = new UnmodifiableBidiMap<>(decorated().inverseBidiMap());
             inverse.inverse = this;
         }
         return inverse;

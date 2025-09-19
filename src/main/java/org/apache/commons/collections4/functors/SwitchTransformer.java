@@ -27,7 +27,6 @@ import org.apache.commons.collections4.Transformer;
  * like a switch statement.
  *
  * @since 3.0
- * @version $Id$
  */
 public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable {
 
@@ -50,8 +49,8 @@ public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable 
      * @param transformers  matching array of transformers, cloned, no nulls
      * @param defaultTransformer  the transformer to use if no match, null means return null
      * @return the <code>chained</code> transformer
-     * @throws IllegalArgumentException if array is null
-     * @throws IllegalArgumentException if any element in the array is null
+     * @throws NullPointerException if array is null
+     * @throws NullPointerException if any element in the array is null
      */
     @SuppressWarnings("unchecked")
     public static <I, O> Transformer<I, O> switchTransformer(final Predicate<? super I>[] predicates,
@@ -66,7 +65,7 @@ public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable 
             return (Transformer<I, O>) (defaultTransformer == null ? ConstantTransformer.<I, O>nullTransformer() :
                                                                      defaultTransformer);
         }
-        return new SwitchTransformer<I, O>(predicates, transformers, defaultTransformer);
+        return new SwitchTransformer<>(predicates, transformers, defaultTransformer);
     }
 
     /**
@@ -84,8 +83,8 @@ public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable 
      * @param <O>  the output type
      * @param map  a map of predicates to transformers
      * @return the <code>switch</code> transformer
-     * @throws IllegalArgumentException if the map is null
-     * @throws IllegalArgumentException if any transformer in the map is null
+     * @throws NullPointerException if the map is null
+     * @throws NullPointerException if any transformer in the map is null
      * @throws ClassCastException  if the map elements are of the wrong type
      */
     @SuppressWarnings("unchecked")
@@ -93,7 +92,7 @@ public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable 
             final Map<? extends Predicate<? super I>, ? extends Transformer<? super I, ? extends O>> map) {
 
         if (map == null) {
-            throw new IllegalArgumentException("The predicate and transformer map must not be null");
+            throw new NullPointerException("The predicate and transformer map must not be null");
         }
         if (map.size() == 0) {
             return ConstantTransformer.<I, O>nullTransformer();
@@ -114,7 +113,7 @@ public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable 
             transformers[i] = entry.getValue();
             i++;
         }
-        return new SwitchTransformer<I, O>(false, preds, transformers, defaultTransformer);
+        return new SwitchTransformer<>(false, preds, transformers, defaultTransformer);
     }
 
     /**
@@ -157,6 +156,7 @@ public class SwitchTransformer<I, O> implements Transformer<I, O>, Serializable 
      * @param input  the input object to transform
      * @return the transformed result
      */
+    @Override
     public O transform(final I input) {
         for (int i = 0; i < iPredicates.length; i++) {
             if (iPredicates[i].evaluate(input) == true) {

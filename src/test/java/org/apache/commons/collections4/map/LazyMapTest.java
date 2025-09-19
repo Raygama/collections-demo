@@ -27,11 +27,10 @@ import org.apache.commons.collections4.Transformer;
 import org.junit.Test;
 
 /**
- * Extension of {@link AbstractMapTest} for exercising the 
+ * Extension of {@link AbstractMapTest} for exercising the
  * {@link LazyMap} implementation.
  *
  * @since 3.0
- * @version $Id$
  */
 @SuppressWarnings("boxing")
 public class LazyMapTest<K, V> extends AbstractIterableMapTest<K, V> {
@@ -74,6 +73,7 @@ public class LazyMapTest<K, V> extends AbstractIterableMapTest<K, V> {
     @Test
     public void mapGetWithTransformer() {
         final Transformer<Number, Integer> intConverter = new Transformer<Number, Integer>(){
+            @Override
             public Integer transform(final Number input) {
                 return input.intValue();
             }

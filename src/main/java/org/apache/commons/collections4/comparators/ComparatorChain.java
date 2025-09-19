@@ -44,8 +44,8 @@ import java.util.List;
  * thread-safe at construction time, but it <i>is</i> thread-safe to perform
  * multiple comparisons after all the setup operations are complete.
  *
+ * @param <E> the type of objects compared by this comparator
  * @since 2.0
- * @version $Id$
  */
 public class ComparatorChain<E> implements Comparator<E>, Serializable {
 
@@ -88,7 +88,7 @@ public class ComparatorChain<E> implements Comparator<E>, Serializable {
      * @param reverse    false = forward sort; true = reverse sort
      */
     public ComparatorChain(final Comparator<E> comparator, final boolean reverse) {
-        comparatorChain = new ArrayList<Comparator<E>>(1);
+        comparatorChain = new ArrayList<>(1);
         comparatorChain.add(comparator);
         orderingBits = new BitSet(1);
         if (reverse == true) {
@@ -161,7 +161,7 @@ public class ComparatorChain<E> implements Comparator<E>, Serializable {
      *
      * @param index      index of the Comparator to replace
      * @param comparator Comparator to place at the given index
-     * @exception IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException
      *                   if index &lt; 0 or index &gt;= size()
      */
     public void setComparator(final int index, final Comparator<E> comparator) throws IndexOutOfBoundsException {

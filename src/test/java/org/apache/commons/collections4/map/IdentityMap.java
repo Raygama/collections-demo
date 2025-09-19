@@ -26,7 +26,7 @@ import java.util.Map;
  * A <code>Map</code> implementation that matches keys and values based
  * on <code>==</code> not <code>equals()</code>.
  * <p>
- * <strong>This map will violate the detail of various Map and map view contracts.</note>
+ * <strong>This map will violate the detail of various Map and map view contracts.</strong>
  * As a general rule, don't compare this map to other maps. In particular, you can't
  * use decorators like {@link ListOrderedMap} on it, which silently assume that these
  * contracts are fulfilled.
@@ -40,8 +40,9 @@ import java.util.Map;
  * From 4.0, this class is replaced by java.util.IdentityHashMap but kept as a
  * test-class because it is still used by the ReferenceIdentityMapTest.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public class IdentityMap<K, V>
         extends AbstractHashedMap<K, V> implements Serializable, Cloneable {
@@ -141,7 +142,7 @@ public class IdentityMap<K, V>
     @Override
     protected IdentityEntry<K, V> createEntry(final HashEntry<K, V> next, final int hashCode,
                                               final K key, final V value) {
-        return new IdentityEntry<K, V>(next, hashCode, key, value);
+        return new IdentityEntry<>(next, hashCode, key, value);
     }
 
     //-----------------------------------------------------------------------

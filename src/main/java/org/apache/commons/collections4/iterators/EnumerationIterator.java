@@ -25,7 +25,6 @@ import java.util.Iterator;
  * to be {@link Iterator Iterator} instances.
  *
  * @since 1.0
- * @version $Id$
  */
 public class EnumerationIterator<E> implements Iterator<E> {
 
@@ -78,6 +77,7 @@ public class EnumerationIterator<E> implements Iterator<E> {
      * @return true if the underlying enumeration has more elements
      * @throws NullPointerException  if the underlying enumeration is null
      */
+    @Override
     public boolean hasNext() {
         return enumeration.hasMoreElements();
     }
@@ -88,6 +88,7 @@ public class EnumerationIterator<E> implements Iterator<E> {
      * @return the next object from the enumeration
      * @throws NullPointerException if the enumeration is null
      */
+    @Override
     public E next() {
         last = enumeration.nextElement();
         return last;
@@ -100,9 +101,10 @@ public class EnumerationIterator<E> implements Iterator<E> {
      * If so, the first occurrence of the last returned object from this
      * iterator will be removed from the collection.
      *
-     * @exception IllegalStateException <code>next()</code> not called.
-     * @exception UnsupportedOperationException if no associated collection
+     * @throws IllegalStateException <code>next()</code> not called.
+     * @throws UnsupportedOperationException if no associated collection
      */
+    @Override
     public void remove() {
         if (collection != null) {
             if (last != null) {

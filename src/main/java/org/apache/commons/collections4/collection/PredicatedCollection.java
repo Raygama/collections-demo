@@ -26,11 +26,14 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.apache.commons.collections4.Bag;
+import org.apache.commons.collections4.MultiSet;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.bag.HashBag;
 import org.apache.commons.collections4.bag.PredicatedBag;
 import org.apache.commons.collections4.functors.NotNullPredicate;
 import org.apache.commons.collections4.list.PredicatedList;
+import org.apache.commons.collections4.multiset.HashMultiSet;
+import org.apache.commons.collections4.multiset.PredicatedMultiSet;
 import org.apache.commons.collections4.queue.PredicatedQueue;
 import org.apache.commons.collections4.set.PredicatedSet;
 
@@ -51,7 +54,6 @@ import org.apache.commons.collections4.set.PredicatedSet;
  *
  * @param <E> the type of the elements in the collection
  * @since 3.0
- * @version $Id$
  */
 public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
 
@@ -70,7 +72,7 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
      * @since 4.1
      */
     public static <E> Builder<E> builder(final Predicate<? super E> predicate) {
-        return new Builder<E>(predicate);
+        return new Builder<>(predicate);
     }
 
     /**
@@ -81,7 +83,7 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
      * @since 4.1
      */
     public static <E> Builder<E> notNullBuilder() {
-        return new Builder<E>(NotNullPredicate.<E>notNullPredicate());
+        return new Builder<>(NotNullPredicate.<E>notNullPredicate());
     }
 
     /**
@@ -94,13 +96,13 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
      * @param coll  the collection to decorate, must not be null
      * @param predicate  the predicate to use for validation, must not be null
      * @return a new predicated collection
-     * @throws IllegalArgumentException if collection or predicate is null
+     * @throws NullPointerException if collection or predicate is null
      * @throws IllegalArgumentException if the collection contains invalid elements
      * @since 4.0
      */
     public static <T> PredicatedCollection<T> predicatedCollection(final Collection<T> coll,
                                                                    final Predicate<? super T> predicate) {
-        return new PredicatedCollection<T>(coll, predicate);
+        return new PredicatedCollection<>(coll, predicate);
     }
 
     //-----------------------------------------------------------------------
@@ -112,13 +114,13 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
      *
      * @param coll  the collection to decorate, must not be null
      * @param predicate  the predicate to use for validation, must not be null
-     * @throws IllegalArgumentException if collection or predicate is null
+     * @throws NullPointerException if collection or predicate is null
      * @throws IllegalArgumentException if the collection contains invalid elements
      */
     protected PredicatedCollection(final Collection<E> coll, final Predicate<? super E> predicate) {
         super(coll);
         if (predicate == null) {
-            throw new IllegalArgumentException("Predicate must not be null");
+            throw new NullPointerException("Predicate must not be null.");
         }
         this.predicate = predicate;
         for (final E item : coll) {
@@ -206,21 +208,21 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
         private final Predicate<? super E> predicate;
 
         /** The buffer containing valid elements. */
-        private final List<E> accepted = new ArrayList<E>();
+        private final List<E> accepted = new ArrayList<>();
 
         /** The buffer containing rejected elements. */
-        private final List<E> rejected = new ArrayList<E>();
+        private final List<E> rejected = new ArrayList<>();
 
         // -----------------------------------------------------------------------
         /**
          * Constructs a PredicatedCollectionBuilder with the specified Predicate.
          *
          * @param predicate  the predicate to use
-         * @throws IllegalArgumentException if predicate is null
+         * @throws NullPointerException if predicate is null
          */
         public Builder(final Predicate<? super E> predicate) {
             if (predicate == null) {
-                throw new IllegalArgumentException("Predicate must not be null");
+                throw new NullPointerException("Predicate must not be null");
             }
             this.predicate = predicate;
         }
@@ -254,7 +256,7 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
          */
         public Builder<E> addAll(final Collection<? extends E> items) {
             if (items != null) {
-                for (E item : items) {
+                for (final E item : items) {
                     add(item);
                 }
             }
@@ -282,11 +284,12 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
          *
          * @param list  the List to decorate, must not be null
          * @return the decorated list.
-         * @throws IllegalArgumentException if list is null or contains invalid elements
+         * @throws NullPointerException if list is null
+         * @throws IllegalArgumentException if list contains invalid elements
          */
         public List<E> createPredicatedList(final List<E> list) {
             if (list == null) {
-                throw new IllegalArgumentException("list must not be null");
+                throw new NullPointerException("List must not be null.");
             }
             final List<E> predicatedList = PredicatedList.predicatedList(list, predicate);
             predicatedList.addAll(accepted);
@@ -314,15 +317,50 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
          *
          * @param set  the set to decorate, must not be null
          * @return the decorated set.
-         * @throws IllegalArgumentException if set is null or contains invalid elements
+         * @throws NullPointerException if set is null
+         * @throws IllegalArgumentException if set contains invalid elements
          */
         public Set<E> createPredicatedSet(final Set<E> set) {
             if (set == null) {
-                throw new IllegalArgumentException("set must not be null");
+                throw new NullPointerException("Set must not be null.");
             }
             final PredicatedSet<E> predicatedSet = PredicatedSet.predicatedSet(set, predicate);
             predicatedSet.addAll(accepted);
             return predicatedSet;
+        }
+
+        /**
+         * Create a new predicated multiset filled with the accepted elements.
+         * <p>
+         * The builder is not modified by this method, so it is possible to create more collections
+         * or add more elements afterwards. Further changes will not propagate to the returned multiset.
+         *
+         * @return a new predicated multiset.
+         */
+        public MultiSet<E> createPredicatedMultiSet() {
+            return createPredicatedMultiSet(new HashMultiSet<E>());
+        }
+
+        /**
+         * Decorates the given multiset with validating behavior using the predicate. All accepted elements
+         * are appended to the multiset. If the multiset already contains elements, they are validated.
+         * <p>
+         * The builder is not modified by this method, so it is possible to create more collections
+         * or add more elements afterwards. Further changes will not propagate to the returned multiset.
+         *
+         * @param multiset  the multiset to decorate, must not be null
+         * @return the decorated multiset.
+         * @throws NullPointerException if multiset is null
+         * @throws IllegalArgumentException if multiset contains invalid elements
+         */
+        public MultiSet<E> createPredicatedMultiSet(final MultiSet<E> multiset) {
+            if (multiset == null) {
+                throw new NullPointerException("MultiSet must not be null.");
+            }
+            final PredicatedMultiSet<E> predicatedMultiSet =
+                    PredicatedMultiSet.predicatedMultiSet(multiset, predicate);
+            predicatedMultiSet.addAll(accepted);
+            return predicatedMultiSet;
         }
 
         /**
@@ -346,11 +384,12 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
          *
          * @param bag  the bag to decorate, must not be null
          * @return the decorated bag.
-         * @throws IllegalArgumentException if bag is null or contains invalid elements
+         * @throws NullPointerException if bag is null
+         * @throws IllegalArgumentException if bag contains invalid elements
          */
         public Bag<E> createPredicatedBag(final Bag<E> bag) {
             if (bag == null) {
-                throw new IllegalArgumentException("bag must not be null");
+                throw new NullPointerException("Bag must not be null.");
             }
             final PredicatedBag<E> predicatedBag = PredicatedBag.predicatedBag(bag, predicate);
             predicatedBag.addAll(accepted);
@@ -378,11 +417,12 @@ public class PredicatedCollection<E> extends AbstractCollectionDecorator<E> {
          *
          * @param queue  the queue to decorate, must not be null
          * @return the decorated queue.
-         * @throws IllegalArgumentException if queue is null or contains invalid elements
+         * @throws NullPointerException if queue is null
+         * @throws IllegalArgumentException if queue contains invalid elements
          */
         public Queue<E> createPredicatedQueue(final Queue<E> queue) {
             if (queue == null) {
-                throw new IllegalArgumentException("queue must not be null");
+                throw new NullPointerException("queue must not be null");
             }
             final PredicatedQueue<E> predicatedQueue = PredicatedQueue.predicatedQueue(queue, predicate);
             predicatedQueue.addAll(accepted);

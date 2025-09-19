@@ -28,7 +28,6 @@ import org.apache.commons.collections4.KeyValue;
  * map, however this will probably mess up any iterators.
  *
  * @since 3.0
- * @version $Id$
  */
 public class TiedMapEntry<K, V> implements Map.Entry<K, V>, KeyValue<K, V>, Serializable {
 
@@ -60,6 +59,7 @@ public class TiedMapEntry<K, V> implements Map.Entry<K, V>, KeyValue<K, V>, Seri
      *
      * @return the key
      */
+    @Override
     public K getKey() {
         return key;
     }
@@ -69,6 +69,7 @@ public class TiedMapEntry<K, V> implements Map.Entry<K, V>, KeyValue<K, V>, Seri
      *
      * @return the value
      */
+    @Override
     public V getValue() {
         return map.get(key);
     }
@@ -80,6 +81,7 @@ public class TiedMapEntry<K, V> implements Map.Entry<K, V>, KeyValue<K, V>, Seri
      * @return the old value
      * @throws IllegalArgumentException if the value is set to this map entry
      */
+    @Override
     public V setValue(final V value) {
         if (value == this) {
             throw new IllegalArgumentException("Cannot set value to this map entry");

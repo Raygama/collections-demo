@@ -23,7 +23,6 @@ import org.apache.commons.collections4.BulkTest;
 /**
  * JUnit tests.
  *
- * @version $Id$
  */
 public class DualTreeBidiMapTest<K extends Comparable<K>, V extends Comparable<V>> extends AbstractSortedBidiMapTest<K, V> {
 
@@ -40,7 +39,7 @@ public class DualTreeBidiMapTest<K extends Comparable<K>, V extends Comparable<V
      */
     @Override
     public DualTreeBidiMap<K, V> makeObject() {
-        return new DualTreeBidiMap<K, V>();
+        return new DualTreeBidiMap<>();
     }
 
     /**
@@ -49,26 +48,7 @@ public class DualTreeBidiMapTest<K extends Comparable<K>, V extends Comparable<V
     @Override
     public String[] ignoredTests() {
         final String recursiveTest = "DualTreeBidiMapTest.bulkTestInverseMap.bulkTestInverseMap";
-
-        if (IBMJDK16) {
-            final String preSub = "DualTreeBidiMapTest.bulkTestSubMap.";
-            final String preTail = "DualTreeBidiMapTest.bulkTestTailMap.";
-            return new String[] {
-                    recursiveTest,
-                    preSub + "bulkTestMapEntrySet.testCollectionIteratorRemove",
-                    preSub + "bulkTestMapValues.testCollectionIteratorRemove",
-                    preTail + "testMapRemove",
-                    preTail + "bulkTestMapEntrySet.testCollectionIteratorRemove",
-                    preTail + "bulkTestMapEntrySet.testCollectionRemoveAll",
-                    preTail + "bulkTestMapKeySet.testCollectionIteratorRemove",
-                    preTail + "bulkTestMapKeySet.testCollectionRemoveAll",                    
-                    preTail + "bulkTestMapValues.testCollectionClear",
-                    preTail + "bulkTestMapValues.testCollectionRemoveAll",
-                    preTail + "bulkTestMapValues.testCollectionRetainAll"
-            };
-        } else {
-            return new String[] { recursiveTest };
-        }
+        return new String[] { recursiveTest };
     }
 
 //    public void testCreate() throws Exception {

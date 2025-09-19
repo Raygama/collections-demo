@@ -36,8 +36,8 @@ import org.apache.commons.collections4.SortedBag;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
+ * @param <E> the type of elements in this bag
  * @since 3.0
- * @version $Id$
  */
 public class PredicatedSortedBag<E> extends PredicatedBag<E> implements SortedBag<E> {
 
@@ -54,13 +54,13 @@ public class PredicatedSortedBag<E> extends PredicatedBag<E> implements SortedBa
      * @param bag  the bag to decorate, must not be null
      * @param predicate  the predicate to use for validation, must not be null
      * @return a new predicated SortedBag
-     * @throws IllegalArgumentException if bag or predicate is null
+     * @throws NullPointerException if bag or predicate is null
      * @throws IllegalArgumentException if the bag contains invalid elements
      * @since 4.0
      */
     public static <E> PredicatedSortedBag<E> predicatedSortedBag(final SortedBag<E> bag,
                                                                  final Predicate<? super E> predicate) {
-        return new PredicatedSortedBag<E>(bag, predicate);
+        return new PredicatedSortedBag<>(bag, predicate);
     }
 
     //-----------------------------------------------------------------------
@@ -71,7 +71,7 @@ public class PredicatedSortedBag<E> extends PredicatedBag<E> implements SortedBa
      *
      * @param bag  the bag to decorate, must not be null
      * @param predicate  the predicate to use for validation, must not be null
-     * @throws IllegalArgumentException if bag or predicate is null
+     * @throws NullPointerException if bag or predicate is null
      * @throws IllegalArgumentException if the bag contains invalid elements
      */
     protected PredicatedSortedBag(final SortedBag<E> bag, final Predicate<? super E> predicate) {

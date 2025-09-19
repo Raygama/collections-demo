@@ -29,7 +29,6 @@ import org.apache.commons.collections4.collection.AbstractCollectionTest;
  * {@link UnmodifiableQueue} implementation.
  *
  * @since 4.0
- * @version $Id$
  */
 public class UnmodifiableQueueTest<E> extends AbstractQueueTest<E> {
 
@@ -45,19 +44,19 @@ public class UnmodifiableQueueTest<E> extends AbstractQueueTest<E> {
 
     @Override
     public Queue<E> makeFullCollection() {
-        final Queue<E> queue = new LinkedList<E>();
+        final Queue<E> queue = new LinkedList<>();
         queue.addAll(Arrays.asList(getFullElements()));
         return UnmodifiableQueue.unmodifiableQueue(queue);
     }
 
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new LinkedList<E>();
+        return new LinkedList<>();
     }
 
     @Override
     public Collection<E> makeConfirmedFullCollection() {
-        final LinkedList<E> list = new LinkedList<E>();
+        final LinkedList<E> list = new LinkedList<>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -96,7 +95,7 @@ public class UnmodifiableQueueTest<E> extends AbstractQueueTest<E> {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-    
+
     public void testDecorateFactory() {
         final Queue<E> queue = makeFullCollection();
         assertSame(queue, UnmodifiableQueue.unmodifiableQueue(queue));
@@ -104,7 +103,7 @@ public class UnmodifiableQueueTest<E> extends AbstractQueueTest<E> {
         try {
             UnmodifiableQueue.unmodifiableQueue(null);
             fail();
-        } catch (final IllegalArgumentException ex) {}
+        } catch (final NullPointerException ex) {}
     }
 
     //-----------------------------------------------------------------------

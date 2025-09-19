@@ -37,7 +37,6 @@ import org.apache.commons.collections4.comparators.ReverseComparator;
 /**
  * JUnit tests.
  *
- * @version $Id$
  */
 @SuppressWarnings("boxing")
 public class DualTreeBidiMap2Test<K extends Comparable<K>, V extends Comparable<V>> extends AbstractSortedBidiMapTest<K, V> {
@@ -52,14 +51,14 @@ public class DualTreeBidiMap2Test<K extends Comparable<K>, V extends Comparable<
 
     @Override
     public DualTreeBidiMap<K, V> makeObject() {
-        return new DualTreeBidiMap<K, V>(
-                new ReverseComparator<K>(ComparableComparator.<K> comparableComparator()),
-                new ReverseComparator<V>(ComparableComparator.<V> comparableComparator()));
+        return new DualTreeBidiMap<>(
+                new ReverseComparator<>(ComparableComparator.<K> comparableComparator()),
+                new ReverseComparator<>(ComparableComparator.<V> comparableComparator()));
     }
 
     @Override
     public TreeMap<K, V> makeConfirmedMap() {
-        return new TreeMap<K, V>(new ReverseComparator<K>(ComparableComparator.<K>comparableComparator()));
+        return new TreeMap<>(new ReverseComparator<>(ComparableComparator.<K>comparableComparator()));
     }
 
     public void testComparator() {
@@ -70,7 +69,7 @@ public class DualTreeBidiMap2Test<K extends Comparable<K>, V extends Comparable<
     }
 
     public void testComparator2() {
-        final DualTreeBidiMap<String, Integer> dtbm = new DualTreeBidiMap<String, Integer>(
+        final DualTreeBidiMap<String, Integer> dtbm = new DualTreeBidiMap<>(
                 String.CASE_INSENSITIVE_ORDER, null);
         dtbm.put("two", 0);
         dtbm.put("one", 1);
@@ -100,13 +99,14 @@ public class DualTreeBidiMap2Test<K extends Comparable<K>, V extends Comparable<
 
     private static class IntegerComparator implements Comparator<Integer>, Serializable{
         private static final long serialVersionUID = 1L;
+        @Override
         public int compare(final Integer o1, final Integer o2) {
             return o1.compareTo(o2);
         }
     }
 
     public void testCollections364() throws Exception {
-        final DualTreeBidiMap<String, Integer> original = new DualTreeBidiMap<String, Integer>(
+        final DualTreeBidiMap<String, Integer> original = new DualTreeBidiMap<>(
                 String.CASE_INSENSITIVE_ORDER, new IntegerComparator());
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final ObjectOutputStream out = new ObjectOutputStream(buffer);
@@ -129,7 +129,7 @@ public class DualTreeBidiMap2Test<K extends Comparable<K>, V extends Comparable<
 
         // Sort by the comparator used in the makeEmptyBidiMap() method
         List<K> newSortedKeys = getAsList(getSampleKeys());
-        Collections.sort(newSortedKeys, new ReverseComparator<K>(ComparableComparator.<K>comparableComparator()));
+        Collections.sort(newSortedKeys, new ReverseComparator<>(ComparableComparator.<K>comparableComparator()));
         newSortedKeys = Collections.unmodifiableList(newSortedKeys);
 
         final Iterator<K> mapIter = sm.keySet().iterator();
@@ -153,27 +153,8 @@ public class DualTreeBidiMap2Test<K extends Comparable<K>, V extends Comparable<
      */
     @Override
     public String[] ignoredTests() {
-        String recursiveTest = "DualTreeBidiMap2Test.bulkTestInverseMap.bulkTestInverseMap";
-
-        if (IBMJDK16) {
-            final String preSub = "DualTreeBidiMap2Test.bulkTestSubMap.";
-            final String preTail = "DualTreeBidiMap2Test.bulkTestTailMap.";
-            return new String[] {
-                    recursiveTest,
-                    preSub + "bulkTestMapEntrySet.testCollectionIteratorRemove",
-                    preSub + "bulkTestMapValues.testCollectionIteratorRemove",
-                    preTail + "testMapRemove",
-                    preTail + "bulkTestMapEntrySet.testCollectionIteratorRemove",
-                    preTail + "bulkTestMapEntrySet.testCollectionRemoveAll",
-                    preTail + "bulkTestMapKeySet.testCollectionIteratorRemove",
-                    preTail + "bulkTestMapKeySet.testCollectionRemoveAll",                    
-                    preTail + "bulkTestMapValues.testCollectionClear",
-                    preTail + "bulkTestMapValues.testCollectionRemoveAll",
-                    preTail + "bulkTestMapValues.testCollectionRetainAll"
-            };
-        } else {
-            return new String[] { recursiveTest };
-        }
+        final String recursiveTest = "DualTreeBidiMap2Test.bulkTestInverseMap.bulkTestInverseMap";
+        return new String[] { recursiveTest };
     }
 
 

@@ -34,9 +34,9 @@ import org.apache.commons.collections4.FunctorException;
  * };
  *
  * // use catch and re-throw closure
- * java.util.List<String> strList = // some list
+ * java.util.List&lt;String&gt; strList = // some list
  * try {
- *     CollctionUtils.forAllDo(strList, writer);
+ *     CollectionUtils.forAllDo(strList, writer);
  * } catch (FunctorException ex) {
  *     Throwable originalError = ex.getCause();
  *     // handle error
@@ -44,7 +44,6 @@ import org.apache.commons.collections4.FunctorException;
  * </pre>
  *
  * @since 4.0
- * @version $Id$
  */
 public abstract class CatchAndRethrowClosure<E> implements Closure<E> {
 
@@ -55,6 +54,7 @@ public abstract class CatchAndRethrowClosure<E> implements Closure<E> {
      * @throws FunctorException (runtime) if the closure execution resulted in a
      *             checked exception.
      */
+    @Override
     public void execute(final E input) {
         try {
             executeAndThrow(input);

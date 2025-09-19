@@ -24,12 +24,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections4.set.UnmodifiableSet;
 import org.apache.commons.collections4.OrderedMap;
 import org.apache.commons.collections4.OrderedMapIterator;
 import org.apache.commons.collections4.Unmodifiable;
 import org.apache.commons.collections4.collection.UnmodifiableCollection;
 import org.apache.commons.collections4.iterators.UnmodifiableOrderedMapIterator;
+import org.apache.commons.collections4.set.UnmodifiableSet;
 
 /**
  * Decorates another <code>OrderedMap</code> to ensure it can't be altered.
@@ -38,8 +38,9 @@ import org.apache.commons.collections4.iterators.UnmodifiableOrderedMapIterator;
  * <p>
  * Attempts to modify it will result in an UnsupportedOperationException.
  *
+ * @param <K> the type of the keys in this map
+ * @param <V> the type of the values in this map
  * @since 3.0
- * @version $Id$
  */
 public final class UnmodifiableOrderedMap<K, V> extends AbstractOrderedMapDecorator<K, V> implements
         Unmodifiable, Serializable {
@@ -54,7 +55,7 @@ public final class UnmodifiableOrderedMap<K, V> extends AbstractOrderedMapDecora
      * @param <V>  the value type
      * @param map  the map to decorate, must not be null
      * @return a new ordered map
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      * @since 4.0
      */
     public static <K, V> OrderedMap<K, V> unmodifiableOrderedMap(final OrderedMap<? extends K, ? extends V> map) {
@@ -63,7 +64,7 @@ public final class UnmodifiableOrderedMap<K, V> extends AbstractOrderedMapDecora
             final OrderedMap<K, V> tmpMap = (OrderedMap<K, V>) map;
             return tmpMap;
         }
-        return new UnmodifiableOrderedMap<K, V>(map);
+        return new UnmodifiableOrderedMap<>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -71,7 +72,7 @@ public final class UnmodifiableOrderedMap<K, V> extends AbstractOrderedMapDecora
      * Constructor that wraps (not copies).
      *
      * @param map  the map to decorate, must not be null
-     * @throws IllegalArgumentException if map is null
+     * @throws NullPointerException if map is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnmodifiableOrderedMap(final OrderedMap<? extends K, ? extends V> map) {
@@ -83,7 +84,7 @@ public final class UnmodifiableOrderedMap<K, V> extends AbstractOrderedMapDecora
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException
+     * @throws IOException if an error occurs while writing to the stream
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -95,8 +96,8 @@ public final class UnmodifiableOrderedMap<K, V> extends AbstractOrderedMapDecora
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if an error occurs while reading from the stream
+     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      * @since 3.1
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect

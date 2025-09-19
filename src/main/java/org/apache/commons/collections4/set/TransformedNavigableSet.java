@@ -29,8 +29,8 @@ import org.apache.commons.collections4.Transformer;
  * For example, if the transformation converts Strings to Integers, you must
  * use the Integer form to remove objects.
  *
+ * @param <E> the type of the elements in this set
  * @since 4.1
- * @version $Id$
  */
 public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implements NavigableSet<E> {
 
@@ -48,11 +48,11 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed {@link NavigableSet}
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      */
     public static <E> TransformedNavigableSet<E> transformingNavigableSet(final NavigableSet<E> set,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedNavigableSet<E>(set, transformer);
+        return new TransformedNavigableSet<>(set, transformer);
     }
 
     /**
@@ -67,13 +67,13 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
      * @return a new transformed {@link NavigableSet}
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      */
     public static <E> TransformedNavigableSet<E> transformedNavigableSet(final NavigableSet<E> set,
             final Transformer<? super E, ? extends E> transformer) {
 
-        final TransformedNavigableSet<E> decorated = new TransformedNavigableSet<E>(set, transformer);
-        if (transformer != null && set != null && set.size() > 0) {
+        final TransformedNavigableSet<E> decorated = new TransformedNavigableSet<>(set, transformer);
+        if (set.size() > 0) {
             @SuppressWarnings("unchecked") // set is type E
             final E[] values = (E[]) set.toArray(); // NOPMD - false positive for generics
             set.clear();
@@ -93,7 +93,7 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
      *
      * @param set  the set to decorate, must not be null
      * @param transformer  the transformer to use for conversion, must not be null
-     * @throws IllegalArgumentException if set or transformer is null
+     * @throws NullPointerException if set or transformer is null
      */
     protected TransformedNavigableSet(final NavigableSet<E> set,
                                       final Transformer<? super E, ? extends E> transformer) {
@@ -113,22 +113,22 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
     //-----------------------------------------------------------------------
 
     @Override
-    public E lower(E e) {
+    public E lower(final E e) {
         return decorated().lower(e);
     }
 
     @Override
-    public E floor(E e) {
+    public E floor(final E e) {
         return decorated().floor(e);
     }
 
     @Override
-    public E ceiling(E e) {
+    public E ceiling(final E e) {
         return decorated().ceiling(e);
     }
 
     @Override
-    public E higher(E e) {
+    public E higher(final E e) {
         return decorated().higher(e);
     }
 
@@ -153,19 +153,20 @@ public class TransformedNavigableSet<E> extends TransformedSortedSet<E> implemen
     }
 
     @Override
-    public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
+    public NavigableSet<E> subSet(final E fromElement, final boolean fromInclusive, final E toElement,
+            final boolean toInclusive) {
         final NavigableSet<E> sub = decorated().subSet(fromElement, fromInclusive, toElement, toInclusive);
         return transformingNavigableSet(sub, transformer);
     }
 
     @Override
-    public NavigableSet<E> headSet(E toElement, boolean inclusive) {
+    public NavigableSet<E> headSet(final E toElement, final boolean inclusive) {
         final NavigableSet<E> head = decorated().headSet(toElement, inclusive);
         return transformingNavigableSet(head, transformer);
     }
 
     @Override
-    public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
+    public NavigableSet<E> tailSet(final E fromElement, final boolean inclusive) {
         final NavigableSet<E> tail = decorated().tailSet(fromElement, inclusive);
         return transformingNavigableSet(tail, transformer);
     }
