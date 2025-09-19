@@ -172,7 +172,7 @@ public class IterableUtils {
             public Iterator<E> iterator() {
                 return new LazyIteratorChain<E>() {
                     @Override
-                    protected Iterator<? extends E> nextIterator(final int count) {
+                    protected Iterator<? extends E> nextIterator(int count) {
                         if (count > iterables.length) {
                             return null;
                         }
@@ -324,7 +324,7 @@ public class IterableUtils {
             public Iterator<E> iterator() {
                 return new LazyIteratorChain<E>() {
                     @Override
-                    protected Iterator<? extends E> nextIterator(final int count) {
+                    protected Iterator<? extends E> nextIterator(int count) {
                         if (IterableUtils.isEmpty(iterable)) {
                             return null;
                         }
@@ -546,7 +546,6 @@ public class IterableUtils {
             @Override
             public Iterator<E> iterator() {
                 @SuppressWarnings("unchecked") // safe
-                final
                 Iterator<? extends E>[] iterators = new Iterator[others.length + 1];
                 iterators[0] = first.iterator();
                 for (int i = 0; i < others.length; i++) {
@@ -742,7 +741,7 @@ public class IterableUtils {
      * @param <T> the element type of the object to find
      * @param iterable  the {@link Iterable} to search
      * @param obj  the object to find the cardinality of
-     * @return the number of occurrences of obj in iterable
+     * @return the the number of occurrences of obj in iterable
      */
     public static <E, T extends E> int frequency(final Iterable<E> iterable, final T obj) {
         if (iterable instanceof Set<?>) {
@@ -772,26 +771,6 @@ public class IterableUtils {
             return ((List<T>) iterable).get(index);
         }
         return IteratorUtils.get(emptyIteratorIfNull(iterable), index);
-    }
-
-    /**
-     * Shortcut for {@code get(iterator, 0)}.
-     * <p>
-     * Returns the <code>first</code> value in the <code>iterable</code>'s {@link Iterator}, throwing
-     * <code>IndexOutOfBoundsException</code> if there is no such element.
-     * </p>
-     * <p>
-     * If the {@link Iterable} is a {@link List}, then it will use {@link List#get(int)}.
-     * </p>
-     *
-     * @param <T> the type of object in the {@link Iterable}.
-     * @param iterable  the {@link Iterable} to get a value from, may be null
-     * @return the first object
-     * @throws IndexOutOfBoundsException if the request  is invalid
-     * @since 4.2
-     */
-    public static <T> T first(final Iterable<T> iterable) {
-        return get(iterable, 0);
     }
 
     /**
@@ -936,7 +915,7 @@ public class IterableUtils {
             throw new NullPointerException("Predicates must not be null.");
         }
 
-        for (final Predicate<?> p : predicates) {
+        for (Predicate<?> p : predicates) {
             if (p == null) {
                 throw new NullPointerException("Predicate must not be null.");
             }
@@ -1074,7 +1053,7 @@ public class IterableUtils {
     /**
      * Fail-fast check for null arguments.
      *
-     * @param iterables  the iterables to check
+     * @param iterable  the iterable to check
      * @throws NullPointerException if the argument or any of its contents is null
      */
     static void checkNotNull(final Iterable<?>... iterables) {

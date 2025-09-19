@@ -433,7 +433,7 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if max is negative
      * @since 4.1
      */
-    public static <E> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator, final long max) {
+    public static <E> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator, long max) {
         return boundedIterator(iterator, 0, max);
     }
 
@@ -455,7 +455,7 @@ public class IteratorUtils {
      * @since 4.1
      */
     public static <E> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator,
-                                                         final long offset, final long max) {
+                                                         long offset, long max) {
         return new BoundedIterator<>(iterator, offset, max);
     }
 
@@ -890,7 +890,7 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if offset is negative
      * @since 4.1
      */
-    public static <E> SkippingIterator<E> skippingIterator(final Iterator<E> iterator, final long offset) {
+    public static <E> SkippingIterator<E> skippingIterator(final Iterator<E> iterator, long offset) {
         return new SkippingIterator<>(iterator, offset);
     }
 
@@ -1410,26 +1410,6 @@ public class IteratorUtils {
             iterator.next();
         }
         throw new IndexOutOfBoundsException("Entry does not exist: " + i);
-    }
-
-    /**
-     * Shortcut for {@code get(iterator, 0)}.
-     * <p>
-     * Returns the <code>first</code> value in {@link Iterator}, throwing
-     * <code>IndexOutOfBoundsException</code> if there is no such element.
-     * </p>
-     * <p>
-     * The Iterator is advanced to <code>0</code> (or to the end, if
-     * <code>0</code> exceeds the number of entries) as a side effect of this method.
-     * </p>
-     * @param <E> the type of object in the {@link Iterator}
-     * @param iterator the iterator to get a value from
-     * @return the first object
-     * @throws IndexOutOfBoundsException if the request is invalid
-     * @since 4.2
-     */
-    public static <E> E first(final Iterator<E> iterator) {
-        return get(iterator, 0);
     }
 
     /**

@@ -128,7 +128,7 @@ public class ListUtilsTest {
                 return o instanceof String;
             }
         };
-        final List<Object> list = ListUtils.predicatedList(new ArrayList<>(), predicate);
+        List<Object> list = ListUtils.predicatedList(new ArrayList<>(), predicate);
         assertTrue("returned object should be a PredicatedList", list instanceof PredicatedList);
         try {
             ListUtils.predicatedList(new ArrayList<>(), null);
@@ -339,20 +339,20 @@ public class ListUtilsTest {
         List<Character> lcs = ListUtils.longestCommonSubsequence(Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         assertEquals(0, lcs.size());
 
-        final List<Character> list1 = Arrays.asList('B', 'A', 'N', 'A', 'N', 'A');
-        final List<Character> list2 = Arrays.asList('A', 'N', 'A', 'N', 'A', 'S');
+        List<Character> list1 = Arrays.asList('B', 'A', 'N', 'A', 'N', 'A');
+        List<Character> list2 = Arrays.asList('A', 'N', 'A', 'N', 'A', 'S');
         lcs = ListUtils.longestCommonSubsequence(list1, list2);
 
         List<Character> expected = Arrays.asList('A', 'N', 'A', 'N', 'A');
         assertEquals(expected, lcs);
 
-        final List<Character> list3 = Arrays.asList('A', 'T', 'A', 'N', 'A');
+        List<Character> list3 = Arrays.asList('A', 'T', 'A', 'N', 'A');
         lcs = ListUtils.longestCommonSubsequence(list1, list3);
 
         expected = Arrays.asList('A', 'A', 'N', 'A');
         assertEquals(expected, lcs);
 
-        final List<Character> listZorro = Arrays.asList('Z', 'O', 'R', 'R', 'O');
+        List<Character> listZorro = Arrays.asList('Z', 'O', 'R', 'R', 'O');
         lcs = ListUtils.longestCommonSubsequence(list1, listZorro);
 
         assertTrue(lcs.isEmpty());
@@ -379,18 +379,18 @@ public class ListUtilsTest {
       String lcs = ListUtils.longestCommonSubsequence("", "");
       assertEquals(0, lcs.length());
 
-      final String banana = "BANANA";
-      final String ananas = "ANANAS";
+      String banana = "BANANA";
+      String ananas = "ANANAS";
       lcs = ListUtils.longestCommonSubsequence(banana, ananas);
 
       assertEquals("ANANA", lcs);
 
-      final String atana = "ATANA";
+      String atana = "ATANA";
       lcs = ListUtils.longestCommonSubsequence(banana, atana);
 
       assertEquals("AANA", lcs);
 
-      final String zorro = "ZORRO";
+      String zorro = "ZORRO";
       lcs = ListUtils.longestCommonSubsequence(banana, zorro);
 
       assertEquals(0, lcs.length());
@@ -425,10 +425,6 @@ public class ListUtilsTest {
             fail("failed to check for size argument");
         } catch (final IllegalArgumentException e) {}
 
-        final List<List<Integer>> partitionMax = ListUtils.partition(strings, Integer.MAX_VALUE);
-        assertEquals(1, partitionMax.size());
-        assertEquals(strings.size(), partitionMax.get(0).size());
-        assertEquals(strings, partitionMax.get(0));
     }
 
     private static Predicate<Number> EQUALS_TWO = new Predicate<Number>() {

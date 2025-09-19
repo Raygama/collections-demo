@@ -137,7 +137,7 @@ public final class UnmodifiableMultiSet<E>
 
     //-----------------------------------------------------------------------
     @Override
-    public int setCount(final E object, final int count) {
+    public int setCount(E object, int count) {
         throw new UnsupportedOperationException();
     }
 

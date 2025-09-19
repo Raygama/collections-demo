@@ -264,8 +264,8 @@ public class CollectionUtils {
      * <p>
      * The cardinality of each element <i>e</i> in the returned
      * {@link Collection} will be equal to
-     * <code>max(cardinality(<i>e</i>,<i>a</i>),cardinality(<i>e</i>,<i>b</i>)) - min(cardinality(<i>e</i>,<i>a</i>),
-     * cardinality(<i>e</i>,<i>b</i>))</code>.
+     * <tt>max(cardinality(<i>e</i>,<i>a</i>),cardinality(<i>e</i>,<i>b</i>)) - min(cardinality(<i>e</i>,<i>a</i>),
+     * cardinality(<i>e</i>,<i>b</i>))</tt>.
      * <p>
      * This is equivalent to
      * {@code {@link #subtract subtract}({@link #union union(a,b)},{@link #intersection intersection(a,b)})}
@@ -638,7 +638,7 @@ public class CollectionUtils {
      * @param obj the object to find the cardinality of
      * @param coll the {@link Iterable} to search
      * @param <O> the type of object that the {@link Iterable} may contain.
-     * @return the number of occurrences of obj in coll
+     * @return the the number of occurrences of obj in coll
      * @throws NullPointerException if coll is null
      * @deprecated since 4.1, use {@link IterableUtils#frequency(Iterable, Object)} instead.
      *   Be aware that the order of parameters has changed.
@@ -951,7 +951,7 @@ public class CollectionUtils {
      * @since 4.1
      */
     public static <O, R extends Collection<? super O>> R select(final Iterable<? extends O> inputCollection,
-            final Predicate<? super O> predicate, final R outputCollection, final R rejectedCollection) {
+            final Predicate<? super O> predicate, R outputCollection, R rejectedCollection) {
 
         if (inputCollection != null && predicate != null) {
             for (final O element : inputCollection) {
@@ -1273,7 +1273,7 @@ public class CollectionUtils {
      * @throws IllegalArgumentException if the object type is invalid
      */
     public static Object get(final Object object, final int index) {
-        final int i = index;
+        int i = index;
         if (i < 0) {
             throw new IndexOutOfBoundsException("Index cannot be negative: " + i);
         }
@@ -1534,8 +1534,8 @@ public class CollectionUtils {
      * @throws NullPointerException if either collection is null
      * @since 4.0
      */
-    public static <O extends Comparable<? super O>> List<O> collate(final Iterable<? extends O> a,
-                                                                    final Iterable<? extends O> b) {
+    public static <O extends Comparable<? super O>> List<O> collate(Iterable<? extends O> a,
+                                                                    Iterable<? extends O> b) {
         return collate(a, b, ComparatorUtils.<O>naturalComparator(), true);
     }
 
@@ -1715,7 +1715,7 @@ public class CollectionUtils {
 
         final Transformer<E, EquatorWrapper<E>> transformer = new Transformer<E, EquatorWrapper<E>>() {
             @Override
-            public EquatorWrapper<E> transform(final E input) {
+            public EquatorWrapper<E> transform(E input) {
                 return new EquatorWrapper<>(equator, input);
             }
         };
@@ -1791,7 +1791,7 @@ public class CollectionUtils {
 
         final Transformer<E, EquatorWrapper<E>> transformer = new Transformer<E, EquatorWrapper<E>>() {
             @Override
-            public EquatorWrapper<E> transform(final E input) {
+            public EquatorWrapper<E> transform(E input) {
                 return new EquatorWrapper<>(equator, input);
             }
         };
