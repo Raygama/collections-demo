@@ -400,15 +400,13 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
         HashEntry<K, V> previous = null;
         HashEntry<K, V> entry = data[index];
         while (entry != null) {
-            ReferenceEntry<K, V> refEntry = (ReferenceEntry<K, V>) entry;
-            if (refEntry.purge(ref)) {
+            if (((ReferenceEntry<K, V>) entry).purge(ref)) {
                 if (previous == null) {
                     data[index] = entry.next;
                 } else {
                     previous.next = entry.next;
                 }
                 this.size--;
-                refEntry.onPurge();
                 return;
             }
             previous = entry;
@@ -724,17 +722,11 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
         }
 
         /**
-         * This is the callback for custom "after purge" logic
-         */
-        protected void onPurge() {
-        }
-
-        /**
          * Purges the specified reference
          * @param ref  the reference to purge
          * @return true or false
          */
-        protected boolean purge(final Reference<?> ref) {
+        boolean purge(final Reference<?> ref) {
             boolean r = parent.keyType != ReferenceStrength.HARD && key == ref;
             r = r || parent.valueType != ReferenceStrength.HARD && value == ref;
             if (r) {
@@ -744,7 +736,7 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
                 if (parent.valueType != ReferenceStrength.HARD) {
                     ((Reference<?>) value).clear();
                 } else if (parent.purgeValues) {
-                    nullValue();
+                    value = null;
                 }
             }
             return r;
@@ -757,13 +749,6 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
          */
         protected ReferenceEntry<K, V> next() {
             return (ReferenceEntry<K, V>) next;
-        }
-
-        /**
-         * This method can be overriden to provide custom logic to purge value
-         */
-        protected void nullValue() {
-            value = null;
         }
     }
 
@@ -1087,14 +1072,5 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
      */
     protected boolean isKeyType(final ReferenceStrength type) {
         return this.keyType == type;
-    }
-
-    /**
-     * Provided protected read-only access to the value type.
-     * @param type the type to check against.
-     * @return true if valueType has the specified type
-     */
-    protected boolean isValueType(final ReferenceStrength type) {
-        return this.valueType == type;
     }
 }

@@ -31,11 +31,6 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  * The add, remove, clear and retain operations are unsupported.
  * The set method is allowed (as it doesn't change the list size).
  * <p>
- * NOTE:
- * Modifying the decorated list directly would results in influencing the outcome
- * of method calls on this object. For example, the bounds of this list would reflect
- * a newly added object to the underlying list.
- * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
  * @param <E> the type of elements in this collection
@@ -75,27 +70,27 @@ public class FixedSizeList<E>
     //-----------------------------------------------------------------------
     @Override
     public boolean add(final E object) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public void add(final int index, final E object) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public boolean addAll(final Collection<? extends E> coll) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public boolean addAll(final int index, final Collection<? extends E> coll) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public void clear() {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
@@ -130,22 +125,22 @@ public class FixedSizeList<E>
 
     @Override
     public E remove(final int index) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public boolean remove(final Object object) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public boolean removeAll(final Collection<?> coll) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
     public boolean retainAll(final Collection<?> coll) {
-        throw unsupportedOperationException();
+        throw new UnsupportedOperationException("List is fixed size");
     }
 
     @Override
@@ -168,11 +163,11 @@ public class FixedSizeList<E>
         }
         @Override
         public void remove() {
-            throw unsupportedOperationException();
+            throw new UnsupportedOperationException("List is fixed size");
         }
         @Override
         public void add(final Object object) {
-            throw unsupportedOperationException();
+            throw new UnsupportedOperationException("List is fixed size");
         }
     }
 
@@ -184,10 +179,6 @@ public class FixedSizeList<E>
     @Override
     public int maxSize() {
         return size();
-    }
-
-    private static UnsupportedOperationException unsupportedOperationException() {
-        return new UnsupportedOperationException("List is fixed size");
     }
 
 }

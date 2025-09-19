@@ -560,7 +560,7 @@ public class MultiValueMap<K, V> extends AbstractMapDecorator<K, Object> impleme
         @Override
         public T create() {
             try {
-                return clazz.getDeclaredConstructor().newInstance();
+                return clazz.newInstance();
             } catch (final Exception ex) {
                 throw new FunctorException("Cannot instantiate class: " + clazz, ex);
             }
