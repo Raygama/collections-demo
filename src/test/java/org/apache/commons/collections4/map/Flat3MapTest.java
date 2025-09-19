@@ -33,6 +33,7 @@ import org.apache.commons.collections4.iterators.AbstractMapIteratorTest;
 /**
  * JUnit tests.
  *
+ * @version $Id$
  */
 public class Flat3MapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
@@ -53,7 +54,7 @@ public class Flat3MapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
     @Override
     public Flat3Map<K, V> makeObject() {
-        return new Flat3Map<>();
+        return new Flat3Map<K, V>();
     }
 
     //-----------------------------------------------------------------------
@@ -409,22 +410,22 @@ public class Flat3MapTest<K, V> extends AbstractIterableMapTest<K, V> {
 //    }
 
     public void testCollections261() {
-        final Flat3Map<Integer, Integer> m = new Flat3Map<>();
+        final Flat3Map<Integer, Integer> m = new Flat3Map<Integer, Integer>();
         m.put( Integer.valueOf(1), Integer.valueOf(1) );
         m.put( Integer.valueOf(0), Integer.valueOf(0) );
-        assertEquals( Integer.valueOf(1), m.remove( Integer.valueOf(1) ) );
-        assertEquals( Integer.valueOf(0), m.remove( Integer.valueOf(0) ) );
+        assertEquals( Integer.valueOf(1), m.remove( Integer.valueOf(1) ) ); 
+        assertEquals( Integer.valueOf(0), m.remove( Integer.valueOf(0) ) ); 
 
         m.put( Integer.valueOf(2), Integer.valueOf(2) );
         m.put( Integer.valueOf(1), Integer.valueOf(1) );
         m.put( Integer.valueOf(0), Integer.valueOf(0) );
-        assertEquals( Integer.valueOf(2), m.remove( Integer.valueOf(2) ) );
-        assertEquals( Integer.valueOf(1), m.remove( Integer.valueOf(1) ) );
-        assertEquals( Integer.valueOf(0), m.remove( Integer.valueOf(0) ) );
+        assertEquals( Integer.valueOf(2), m.remove( Integer.valueOf(2) ) ); 
+        assertEquals( Integer.valueOf(1), m.remove( Integer.valueOf(1) ) ); 
+        assertEquals( Integer.valueOf(0), m.remove( Integer.valueOf(0) ) ); 
     }
 
     public void testToString() {
-        final Flat3Map<Integer, Integer> m = new Flat3Map<>();
+        final Flat3Map<Integer, Integer> m = new Flat3Map<Integer, Integer>();
         final String string0 = m.toString();
         assertNotNull(string0);
         m.put( Integer.valueOf(1), Integer.valueOf(1) );

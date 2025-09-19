@@ -30,6 +30,7 @@ import org.apache.commons.collections4.functors.TruePredicate;
  * implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedBagTest<T> extends AbstractBagTest<T> {
 
@@ -103,7 +104,7 @@ public class PredicatedBagTest<T> extends AbstractBagTest<T> {
 
     @SuppressWarnings("unchecked")
     public void testIllegalDecorate() {
-        final HashBag<Object> elements = new HashBag<>();
+        final HashBag<Object> elements = new HashBag<Object>();
         elements.add("one");
         elements.add("two");
         elements.add(Integer.valueOf(3));

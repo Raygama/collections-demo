@@ -50,6 +50,7 @@ import java.util.List;
  *
  * @see LazyList
  * @since 3.2
+ * @version $Id$
  */
 public class GrowthList<E> extends AbstractSerializableListDecorator<E> {
 
@@ -66,7 +67,7 @@ public class GrowthList<E> extends AbstractSerializableListDecorator<E> {
      * @since 4.0
      */
     public static <E> GrowthList<E> growthList(final List<E> list) {
-        return new GrowthList<>(list);
+        return new GrowthList<E>(list);
     }
 
     //-----------------------------------------------------------------------

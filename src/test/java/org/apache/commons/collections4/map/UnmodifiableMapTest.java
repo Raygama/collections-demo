@@ -27,6 +27,7 @@ import org.apache.commons.collections4.Unmodifiable;
  * {@link UnmodifiableMap} implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class UnmodifiableMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
@@ -58,7 +59,7 @@ public class UnmodifiableMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
     @Override
     public IterableMap<K, V> makeFullMap() {
-        final Map<K, V> m = new HashMap<>();
+        final Map<K, V> m = new HashMap<K, V>();
         addSampleMappings(m);
         return (IterableMap<K, V>) UnmodifiableMap.unmodifiableMap(m);
     }

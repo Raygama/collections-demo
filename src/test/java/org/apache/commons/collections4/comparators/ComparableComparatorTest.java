@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * Tests for ComparableComparator.
  *
+ * @version $Id$
  *
  */
 @SuppressWarnings("boxing")
@@ -34,12 +35,12 @@ public class ComparableComparatorTest extends AbstractComparatorTest<Integer> {
 
     @Override
     public Comparator<Integer> makeObject() {
-        return new ComparableComparator<>();
+        return new ComparableComparator<Integer>();
     }
 
     @Override
     public List<Integer> getComparableObjectsOrdered() {
-        final List<Integer> list = new LinkedList<>();
+        final List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(2);
         list.add(3);

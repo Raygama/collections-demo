@@ -26,6 +26,7 @@ import org.apache.commons.collections4.Transformer;
  * and then returns the result.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class PredicateTransformer<T> implements Transformer<T, Boolean>, Serializable {
 
@@ -47,7 +48,7 @@ public class PredicateTransformer<T> implements Transformer<T, Boolean>, Seriali
         if (predicate == null) {
             throw new IllegalArgumentException("Predicate must not be null");
         }
-        return new PredicateTransformer<>(predicate);
+        return new PredicateTransformer<T>(predicate);
     }
 
     /**

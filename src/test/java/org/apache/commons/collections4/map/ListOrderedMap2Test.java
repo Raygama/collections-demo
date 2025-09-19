@@ -30,6 +30,7 @@ import org.apache.commons.collections4.list.AbstractListTest;
  * implementation.
  *
  * @since 3.1
+ * @version $Id$
  */
 public class ListOrderedMap2Test<K, V> extends AbstractOrderedMapTest<K, V> {
 
@@ -43,7 +44,7 @@ public class ListOrderedMap2Test<K, V> extends AbstractOrderedMapTest<K, V> {
 
     @Override
     public ListOrderedMap<K, V> makeObject() {
-        return new ListOrderedMap<>();
+        return new ListOrderedMap<K, V>();
     }
 
     /**
@@ -113,7 +114,7 @@ public class ListOrderedMap2Test<K, V> extends AbstractOrderedMapTest<K, V> {
 
         resetFull();
         lom = getMap();
-        final List<K> list = new ArrayList<>();
+        final List<K> list = new ArrayList<K>();
         for (final MapIterator<K, V> it = lom.mapIterator(); it.hasNext();) {
             list.add(it.next());
         }
@@ -141,7 +142,7 @@ public class ListOrderedMap2Test<K, V> extends AbstractOrderedMapTest<K, V> {
             lom.remove(lom.size());
         } catch (final IndexOutOfBoundsException ex) {}
 
-        final List<K> list = new ArrayList<>();
+        final List<K> list = new ArrayList<K>();
         for (final MapIterator<K, V> it = lom.mapIterator(); it.hasNext();) {
             list.add(it.next());
         }

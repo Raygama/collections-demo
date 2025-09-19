@@ -38,5 +38,6 @@
  * <li>WhileClosure</li>
  * </ul>
  *
+ * @version $Id$
  */
 package org.apache.commons.collections4.functors;

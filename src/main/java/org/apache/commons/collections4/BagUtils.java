@@ -32,6 +32,7 @@ import org.apache.commons.collections4.bag.UnmodifiableSortedBag;
  * Provides utility methods and decorators for {@link Bag} and {@link SortedBag} instances.
  *
  * @since 2.1
+ * @version $Id$
  */
 public class BagUtils {
 
@@ -39,14 +40,14 @@ public class BagUtils {
      * An empty unmodifiable bag.
      */
     @SuppressWarnings("rawtypes") // OK, empty bag is compatible with any type
-    public static final Bag EMPTY_BAG = UnmodifiableBag.unmodifiableBag(new HashBag<>());
+    public static final Bag EMPTY_BAG = UnmodifiableBag.unmodifiableBag(new HashBag<Object>());
 
     /**
      * An empty unmodifiable sorted bag.
      */
     @SuppressWarnings("rawtypes") // OK, empty bag is compatible with any type
     public static final Bag EMPTY_SORTED_BAG =
-            UnmodifiableSortedBag.unmodifiableSortedBag(new TreeBag<>());
+            UnmodifiableSortedBag.unmodifiableSortedBag(new TreeBag<Object>());
 
     /**
      * Instantiation of BagUtils is not intended or required.
@@ -245,7 +246,7 @@ public class BagUtils {
      */
     @SuppressWarnings("unchecked") // OK, empty bag is compatible with any type
     public static <E> Bag<E> emptyBag() {
-        return EMPTY_BAG;
+        return (Bag<E>) EMPTY_BAG;
     }
 
     /**

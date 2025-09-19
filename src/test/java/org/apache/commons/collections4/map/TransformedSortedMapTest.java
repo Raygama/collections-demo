@@ -33,6 +33,7 @@ import org.apache.commons.collections4.collection.TransformedCollectionTest;
  * implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class TransformedSortedMapTest<K, V> extends AbstractSortedMapTest<K, V> {
 
@@ -57,13 +58,14 @@ public class TransformedSortedMapTest<K, V> extends AbstractSortedMapTest<K, V> 
                     preTailMap + "bulkTestMapEntrySet.testCollectionIteratorRemove",
                     preTailMap + "bulkTestMapEntrySet.testCollectionRemoveAll",
                     preTailMap + "bulkTestMapKeySet.testCollectionIteratorRemove",
-                    preTailMap + "bulkTestMapKeySet.testCollectionRemoveAll",
+                    preTailMap + "bulkTestMapKeySet.testCollectionRemoveAll",                    
                     preTailMap + "bulkTestMapValues.testCollectionClear",
                     preTailMap + "bulkTestMapValues.testCollectionRemoveAll",
                     preTailMap + "bulkTestMapValues.testCollectionRetainAll"
             };
+        } else {
+            return null;
         }
-        return null;
     }
 
     //-----------------------------------------------------------------------
@@ -142,7 +144,7 @@ public class TransformedSortedMapTest<K, V> extends AbstractSortedMapTest<K, V> 
     //-----------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     public void testFactory_Decorate() {
-        final SortedMap<K, V> base = new TreeMap<>();
+        final SortedMap<K, V> base = new TreeMap<K, V>();
         base.put((K) "A", (V) "1");
         base.put((K) "B", (V) "2");
         base.put((K) "C", (V) "3");
@@ -162,7 +164,7 @@ public class TransformedSortedMapTest<K, V> extends AbstractSortedMapTest<K, V> 
 
     @SuppressWarnings("unchecked")
     public void testFactory_decorateTransform() {
-        final SortedMap<K, V> base = new TreeMap<>();
+        final SortedMap<K, V> base = new TreeMap<K, V>();
         base.put((K) "A", (V) "1");
         base.put((K) "B", (V) "2");
         base.put((K) "C", (V) "3");

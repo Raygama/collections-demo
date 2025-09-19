@@ -43,8 +43,8 @@ import java.util.Map;
  * <p>
  * This class is Serializable from Commons Collections 4.0.
  *
- * @param <T> the type of objects compared by this comparator
  * @since 3.0
+ * @version $Id$
  */
 public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
 
@@ -60,7 +60,7 @@ public class FixedOrderComparator<T> implements Comparator<T>, Serializable {
     }
 
     /** Internal map of object to position */
-    private final Map<T, Integer> map = new HashMap<>();
+    private final Map<T, Integer> map = new HashMap<T, Integer>();
 
     /** Counter used in determining the position in the map */
     private int counter = 0;

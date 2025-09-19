@@ -31,6 +31,7 @@ import org.apache.commons.collections4.functors.TruePredicate;
  * {@link PredicatedQueue} implementation.
  *
  * @since 4.0
+ * @version $Id$
  */
 public class PredicatedQueueTest<E> extends AbstractQueueTest<E> {
 
@@ -53,19 +54,19 @@ public class PredicatedQueueTest<E> extends AbstractQueueTest<E> {
 
     @Override
     public Queue<E> makeFullCollection() {
-        final Queue<E> queue = new LinkedList<>();
+        final Queue<E> queue = new LinkedList<E>();
         queue.addAll(Arrays.asList(getFullElements()));
         return decorateCollection(queue, truePredicate);
     }
 
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new LinkedList<>();
+        return new LinkedList<E>();
     }
 
     @Override
     public Collection<E> makeConfirmedFullCollection() {
-        final List<E> list = new LinkedList<>();
+        final List<E> list = new LinkedList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }

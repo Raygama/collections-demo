@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 /**
  * Tests the UniqueFilterIterator class.
  *
+ * @version $Id$
  */
 public class UniqueFilterIteratorTest<E> extends AbstractIteratorTest<E> {
 
@@ -40,7 +41,7 @@ public class UniqueFilterIteratorTest<E> extends AbstractIteratorTest<E> {
     @Override
     @SuppressWarnings("unchecked")
     public void setUp() {
-        list1 = new ArrayList<>();
+        list1 = new ArrayList<E>();
         list1.add((E) "One");
         list1.add((E) "Two");
         list1.add((E) "Three");
@@ -55,14 +56,14 @@ public class UniqueFilterIteratorTest<E> extends AbstractIteratorTest<E> {
 
     @Override
     public UniqueFilterIterator<E> makeEmptyIterator() {
-        final ArrayList<E> list = new ArrayList<>();
-        return new UniqueFilterIterator<>(list.iterator());
+        final ArrayList<E> list = new ArrayList<E>();
+        return new UniqueFilterIterator<E>(list.iterator());
     }
 
     @Override
     public UniqueFilterIterator<E> makeObject() {
         final Iterator<E> i = list1.iterator();
-        return new UniqueFilterIterator<>(i);
+        return new UniqueFilterIterator<E>(i);
     }
 
     public void testIterator() {
@@ -78,7 +79,7 @@ public class UniqueFilterIteratorTest<E> extends AbstractIteratorTest<E> {
         try {
             iter.next();
         } catch (final Exception e) {
-            assertTrue("NoSuchElementException must be thrown",
+            assertTrue("NoSuchElementException must be thrown", 
                        e.getClass().equals(new NoSuchElementException().getClass()));
         }
     }

@@ -90,9 +90,8 @@ import org.apache.commons.collections4.KeyValue;
  * iterations, or if you can make your own guarantees about how bulk
  * operations will affect the map.<p>
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0 (previously in main package v2.1)
+ * @version $Id$
  */
 public final class StaticBucketMap<K, V> extends AbstractIterableMap<K, V> {
 
@@ -282,7 +281,7 @@ public final class StaticBucketMap<K, V> extends AbstractIterableMap<K, V> {
             Node<K, V> n = buckets[hash];
 
             if (n == null) {
-                n = new Node<>();
+                n = new Node<K, V>();
                 n.key = key;
                 n.value = value;
                 buckets[hash] = n;
@@ -305,7 +304,7 @@ public final class StaticBucketMap<K, V> extends AbstractIterableMap<K, V> {
 
             // The key was not found in the current list of nodes, add it to the end
             //  in a new node.
-            final Node<K, V> newNode = new Node<>();
+            final Node<K, V> newNode = new Node<K, V>();
             newNode.key = key;
             newNode.value = value;
             n.next = newNode;
@@ -505,7 +504,7 @@ public final class StaticBucketMap<K, V> extends AbstractIterableMap<K, V> {
 
     //-----------------------------------------------------------------------
     private class BaseIterator {
-        private final ArrayList<Map.Entry<K, V>> current = new ArrayList<>();
+        private final ArrayList<Map.Entry<K, V>> current = new ArrayList<Map.Entry<K,V>>();
         private int bucket;
         private Map.Entry<K, V> last;
 

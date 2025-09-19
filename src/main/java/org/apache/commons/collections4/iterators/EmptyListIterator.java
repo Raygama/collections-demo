@@ -28,6 +28,7 @@ import org.apache.commons.collections4.ResettableListIterator;
  * due to issues with <code>IteratorUtils</code>.
  *
  * @since 2.1.1 and 3.1
+ * @version $Id$
  */
 public class EmptyListIterator<E> extends AbstractEmptyIterator<E> implements
         ResettableListIterator<E> {
@@ -37,7 +38,7 @@ public class EmptyListIterator<E> extends AbstractEmptyIterator<E> implements
      * @since 3.1
      */
     @SuppressWarnings("rawtypes")
-    public static final ResettableListIterator RESETTABLE_INSTANCE = new EmptyListIterator<>();
+    public static final ResettableListIterator RESETTABLE_INSTANCE = new EmptyListIterator<Object>();
 
     /**
      * Singleton instance of the iterator.
@@ -49,21 +50,21 @@ public class EmptyListIterator<E> extends AbstractEmptyIterator<E> implements
     /**
      * Get a typed instance of the iterator.
      * @param <E> the element type
-     * @return {@link ResettableListIterator}&lt;E&gt;
+     * @return {@link ResettableListIterator}<E>
      */
     @SuppressWarnings("unchecked")
     public static <E> ResettableListIterator<E> resettableEmptyListIterator() {
-        return RESETTABLE_INSTANCE;
+        return (ResettableListIterator<E>) RESETTABLE_INSTANCE;
     }
 
     /**
      * Get a typed instance of the iterator.
      * @param <E> the element type
-     * @return {@link ListIterator}&lt;E&gt;
+     * @return {@link ListIterator}<E>
      */
     @SuppressWarnings("unchecked")
     public static <E> ListIterator<E> emptyListIterator() {
-        return INSTANCE;
+        return (ListIterator<E>) INSTANCE;
     }
 
     /**

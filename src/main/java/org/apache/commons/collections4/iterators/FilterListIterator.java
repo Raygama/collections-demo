@@ -28,6 +28,7 @@ import org.apache.commons.collections4.Predicate;
  * those elements that match the specified {@link Predicate Predicate}.
  *
  * @since 2.0
+ * @version $Id$
  */
 public class FilterListIterator<E> implements ListIterator<E> {
 
@@ -111,10 +112,7 @@ public class FilterListIterator<E> implements ListIterator<E> {
     }
 
     //-----------------------------------------------------------------------
-    /**
-     * Not supported.
-     * @param o the element to insert
-     */
+    /** Not supported. */
     @Override
     public void add(final E o) {
         throw new UnsupportedOperationException("FilterListIterator.add(Object) is not supported.");
@@ -132,8 +130,10 @@ public class FilterListIterator<E> implements ListIterator<E> {
 
     @Override
     public E next() {
-        if (!nextObjectSet && !setNextObject()) {
-            throw new NoSuchElementException();
+        if (!nextObjectSet) {
+            if (!setNextObject()) {
+                throw new NoSuchElementException();
+            }
         }
         nextIndex++;
         final E temp = nextObject;
@@ -148,8 +148,10 @@ public class FilterListIterator<E> implements ListIterator<E> {
 
     @Override
     public E previous() {
-        if (!previousObjectSet && !setPreviousObject()) {
-            throw new NoSuchElementException();
+        if (!previousObjectSet) {
+            if (!setPreviousObject()) {
+                throw new NoSuchElementException();
+            }
         }
         nextIndex--;
         final E temp = previousObject;
@@ -168,11 +170,7 @@ public class FilterListIterator<E> implements ListIterator<E> {
         throw new UnsupportedOperationException("FilterListIterator.remove() is not supported.");
     }
 
-    /**
-     * Not supported.
-     * @param o the element with which to replace the last element returned by
-     *          {@code next} or {@code previous}
-     */
+    /** Not supported. */
     @Override
     public void set(final E o) {
         throw new UnsupportedOperationException("FilterListIterator.set(Object) is not supported.");

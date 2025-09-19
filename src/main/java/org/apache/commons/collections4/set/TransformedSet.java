@@ -31,8 +31,8 @@ import org.apache.commons.collections4.collection.TransformedCollection;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of the elements in this set
  * @since 3.0
+ * @version $Id$
  */
 public class TransformedSet<E> extends TransformedCollection<E> implements Set<E> {
 
@@ -55,7 +55,7 @@ public class TransformedSet<E> extends TransformedCollection<E> implements Set<E
      */
     public static <E> TransformedSet<E> transformingSet(final Set<E> set,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedSet<>(set, transformer);
+        return new TransformedSet<E>(set, transformer);
     }
 
     /**
@@ -74,7 +74,7 @@ public class TransformedSet<E> extends TransformedCollection<E> implements Set<E
      * @since 4.0
      */
     public static <E> Set<E> transformedSet(final Set<E> set, final Transformer<? super E, ? extends E> transformer) {
-        final TransformedSet<E> decorated = new TransformedSet<>(set, transformer);
+        final TransformedSet<E> decorated = new TransformedSet<E>(set, transformer);
         if (set.size() > 0) {
             @SuppressWarnings("unchecked") // set is type E
             final E[] values = (E[]) set.toArray(); // NOPMD - false positive for generics

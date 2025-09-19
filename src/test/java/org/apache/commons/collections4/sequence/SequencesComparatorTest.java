@@ -36,7 +36,7 @@ public class SequencesComparatorTest {
     public void testLength() {
         for (int i = 0; i < before.size(); ++i) {
             final SequencesComparator<Character> comparator =
-                    new SequencesComparator<>(sequence(before.get(i)),
+                    new SequencesComparator<Character>(sequence(before.get(i)),
                             sequence(after.get(i)));
             Assert.assertEquals(length[i], comparator.getScript().getModifications());
         }
@@ -44,10 +44,10 @@ public class SequencesComparatorTest {
 
     @Test
     public void testExecution() {
-        final ExecutionVisitor<Character> ev = new ExecutionVisitor<>();
+        final ExecutionVisitor<Character> ev = new ExecutionVisitor<Character>();
         for (int i = 0; i < before.size(); ++i) {
             ev.setList(sequence(before.get(i)));
-            new SequencesComparator<>(sequence(before.get(i)),
+            new SequencesComparator<Character>(sequence(before.get(i)),
                     sequence(after.get(i))).getScript().visit(ev);
             Assert.assertEquals(after.get(i), ev.getString());
         }
@@ -61,8 +61,8 @@ public class SequencesComparatorTest {
             new String("ZO"),
             new String("MEU")
         };
-        final List<String> sentenceBefore = new ArrayList<>();
-        final List<String> sentenceAfter  = new ArrayList<>();
+        final List<String> sentenceBefore = new ArrayList<String>();
+        final List<String> sentenceAfter  = new ArrayList<String>();
         sentenceBefore.add(shadokAlph[0]);
         sentenceBefore.add(shadokAlph[2]);
         sentenceBefore.add(shadokAlph[3]);
@@ -99,7 +99,7 @@ public class SequencesComparatorTest {
             }
 
             final SequencesComparator<String> comparator =
-                    new SequencesComparator<>(sentenceBefore, sentenceAfter);
+                    new SequencesComparator<String>(sentenceBefore, sentenceAfter);
             Assert.assertTrue(comparator.getScript().getModifications() <= nbCom);
         }
     }
@@ -113,13 +113,13 @@ public class SequencesComparatorTest {
             new String("ZO"),
             new String("MEU")
         };
-        List<List<String>> shadokSentences = new ArrayList<>();
+        List<List<String>> shadokSentences = new ArrayList<List<String>>();
         for (int lg=0; lg<lgMax; ++lg) {
-            final List<List<String>> newTab = new ArrayList<>();
+            final List<List<String>> newTab = new ArrayList<List<String>>();
             newTab.add(new ArrayList<String>());
             for (final String element : shadokAlph) {
                 for (final List<String> sentence : shadokSentences) {
-                    final List<String> newSentence = new ArrayList<>(sentence);
+                    final List<String> newSentence = new ArrayList<String>(sentence);
                     newSentence.add(element);
                     newTab.add(newSentence);
                 }
@@ -127,12 +127,12 @@ public class SequencesComparatorTest {
             shadokSentences = newTab;
         }
 
-        final ExecutionVisitor<String> ev = new ExecutionVisitor<>();
+        final ExecutionVisitor<String> ev = new ExecutionVisitor<String>();
 
         for (int i = 0; i < shadokSentences.size(); ++i) {
             for (List<String> shadokSentence : shadokSentences) {
                 ev.setList(shadokSentences.get(i));
-                new SequencesComparator<>(shadokSentences.get(i),
+                new SequencesComparator<String>(shadokSentences.get(i),
                         shadokSentence).getScript().visit(ev);
 
                 final StringBuilder concat = new StringBuilder();
@@ -145,7 +145,7 @@ public class SequencesComparatorTest {
     }
 
     private List<Character> sequence(final String string) {
-        final List<Character> list = new ArrayList<>();
+        final List<Character> list = new ArrayList<Character>();
         for (int i = 0; i < string.length(); ++i) {
             list.add(new Character(string.charAt(i)));
         }
@@ -158,7 +158,7 @@ public class SequencesComparatorTest {
         private int index;
 
         public void setList(final List<T> array) {
-            v = new ArrayList<>(array);
+            v = new ArrayList<T>(array);
             index = 0;
         }
 

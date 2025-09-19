@@ -28,6 +28,7 @@ import org.apache.commons.collections4.SortedBag;
  * Extension of {@link AbstractBagTest} for exercising the {@link TreeBag}
  * implementation.
  *
+ * @version $Id$
  */
 public class TreeBagTest<T> extends AbstractSortedBagTest<T> {
 
@@ -43,7 +44,7 @@ public class TreeBagTest<T> extends AbstractSortedBagTest<T> {
 
     @Override
     public SortedBag<T> makeObject() {
-        return new TreeBag<>();
+        return new TreeBag<T>();
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +58,7 @@ public class TreeBagTest<T> extends AbstractSortedBagTest<T> {
     }
 
     public void testCollections265() {
-        final Bag<Object> bag = new TreeBag<>();
+        final Bag<Object> bag = new TreeBag<Object>();
         try {
             bag.add(new Object());
             fail("IllegalArgumentException expected");
@@ -67,15 +68,15 @@ public class TreeBagTest<T> extends AbstractSortedBagTest<T> {
     }
 
     public void testCollections555() {
-        final Bag<Object> bag = new TreeBag<>();
+        final Bag<Object> bag = new TreeBag<Object>();
         try {
             bag.add(null);
             fail("NullPointerException expected");
         } catch(final NullPointerException npe) {
             // expected;
         }
-
-        final Bag<String> bag2 = new TreeBag<>(new Comparator<String>() {
+        
+        final Bag<String> bag2 = new TreeBag<String>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return o1.compareTo(o2);

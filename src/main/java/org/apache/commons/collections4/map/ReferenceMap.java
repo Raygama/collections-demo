@@ -65,11 +65,10 @@ import java.io.Serializable;
  * (previously it extended AbstractMap). As a result, the implementation is now
  * extensible and provides a <code>MapIterator</code>.
  *
- * @param <K> the type of the keys in the map
- * @param <V> the type of the values in the map
- *
  * @see java.lang.ref.Reference
+ *
  * @since 3.0 (previously in main package v2.1)
+ * @version $Id$
  */
 public class ReferenceMap<K, V> extends AbstractReferenceMap<K, V> implements Serializable {
 
@@ -168,9 +167,6 @@ public class ReferenceMap<K, V> extends AbstractReferenceMap<K, V> implements Se
     //-----------------------------------------------------------------------
     /**
      * Write the map out using a custom routine.
-     *
-     * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -179,10 +175,6 @@ public class ReferenceMap<K, V> extends AbstractReferenceMap<K, V> implements Se
 
     /**
      * Read the map in using a custom routine.
-     *
-     * @param in the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();

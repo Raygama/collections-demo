@@ -29,6 +29,7 @@ import org.apache.commons.collections4.collection.TransformedCollectionTest;
  * implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class TransformedListTest<E> extends AbstractListTest<E> {
 
@@ -38,12 +39,12 @@ public class TransformedListTest<E> extends AbstractListTest<E> {
 
     @Override
     public List<E> makeConfirmedCollection() {
-        return new ArrayList<>();
+        return new ArrayList<E>();
     }
 
     @Override
     public List<E> makeConfirmedFullCollection() {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return list;
     }
@@ -57,7 +58,7 @@ public class TransformedListTest<E> extends AbstractListTest<E> {
     @Override
     @SuppressWarnings("unchecked")
     public List<E> makeFullCollection() {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
         return TransformedList.transformingList(list, (Transformer<E, E>) TransformedCollectionTest.NOOP_TRANSFORMER);
     }
@@ -94,7 +95,7 @@ public class TransformedListTest<E> extends AbstractListTest<E> {
         it.add((E) "44");
         assertEquals(Integer.valueOf(44), list.get(1));
 
-        final List<E> adds = new ArrayList<>();
+        final List<E> adds = new ArrayList<E>();
         adds.add((E) "1");
         adds.add((E) "2");
         list.clear();
@@ -111,7 +112,7 @@ public class TransformedListTest<E> extends AbstractListTest<E> {
     }
 
     public void testTransformedList_decorateTransform() {
-        final List<Object> originalList = new ArrayList<>();
+        final List<Object> originalList = new ArrayList<Object>();
         final Object[] els = new Object[] {"1", "3", "5", "7", "2", "4", "6"};
         for (final Object el : els) {
             originalList.add(el);

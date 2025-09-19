@@ -32,9 +32,8 @@ import java.util.Set;
  * Most map implementation can be used to create a set by passing in dummy values.
  * Exceptions include <code>BidiMap</code> implementations, as they require unique values.
  *
- * @param <E> the type of the elements in this set
- * @param <V> the dummy value type in this map
  * @since 3.1
+ * @version $Id$
  */
 public final class MapBackedSet<E, V> implements Set<E>, Serializable {
 
@@ -73,7 +72,7 @@ public final class MapBackedSet<E, V> implements Set<E>, Serializable {
      * @since 4.0
      */
     public static <E, V> MapBackedSet<E, V> mapBackedSet(final Map<E, ? super V> map, final V dummyValue) {
-        return new MapBackedSet<>(map, dummyValue);
+        return new MapBackedSet<E, V>(map, dummyValue);
     }
 
     //-----------------------------------------------------------------------

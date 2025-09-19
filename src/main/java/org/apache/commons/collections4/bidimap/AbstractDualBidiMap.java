@@ -34,12 +34,10 @@ import org.apache.commons.collections4.keyvalue.AbstractMapEntryDecorator;
  * An implementation can be written simply by implementing the
  * {@link #createBidiMap(Map, Map, BidiMap)} method.
  *
- * @param <K> the type of the keys in the map
- * @param <V> the type of the values in the map
- *
  * @see DualHashBidiMap
  * @see DualTreeBidiMap
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
 
@@ -227,7 +225,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
      */
     @Override
     public MapIterator<K, V> mapIterator() {
-        return new BidiMapIterator<>(this);
+        return new BidiMapIterator<K, V>(this);
     }
 
     @Override
@@ -265,7 +263,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
     @Override
     public Set<K> keySet() {
         if (keySet == null) {
-            keySet = new KeySet<>(this);
+            keySet = new KeySet<K>(this);
         }
         return keySet;
     }
@@ -278,7 +276,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
      * @return the keySet iterator
      */
     protected Iterator<K> createKeySetIterator(final Iterator<K> iterator) {
-        return new KeySetIterator<>(iterator, this);
+        return new KeySetIterator<K>(iterator, this);
     }
 
     /**
@@ -291,7 +289,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
     @Override
     public Set<V> values() {
         if (values == null) {
-            values = new Values<>(this);
+            values = new Values<V>(this);
         }
         return values;
     }
@@ -304,7 +302,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
      * @return the values iterator
      */
     protected Iterator<V> createValuesIterator(final Iterator<V> iterator) {
-        return new ValuesIterator<>(iterator, this);
+        return new ValuesIterator<V>(iterator, this);
     }
 
     /**
@@ -321,7 +319,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         if (entrySet == null) {
-            entrySet = new EntrySet<>(this);
+            entrySet = new EntrySet<K, V>(this);
         }
         return entrySet;
     }
@@ -334,7 +332,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
      * @return the entrySet iterator
      */
     protected Iterator<Map.Entry<K, V>> createEntrySetIterator(final Iterator<Map.Entry<K, V>> iterator) {
-        return new EntrySetIterator<>(iterator, this);
+        return new EntrySetIterator<K, V>(iterator, this);
     }
 
     //-----------------------------------------------------------------------
@@ -654,7 +652,7 @@ public abstract class AbstractDualBidiMap<K, V> implements BidiMap<K, V> {
 
         @Override
         public Map.Entry<K, V> next() {
-            last = new MapEntry<>(super.next(), parent);
+            last = new MapEntry<K, V>(super.next(), parent);
             canRemove = true;
             return last;
         }

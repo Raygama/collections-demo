@@ -26,6 +26,7 @@ package org.apache.commons.collections4;
  * @param <K> the type of the key
  * @param <V> the type of the value
  * @since 3.0
+ * @version $Id$
  */
 public interface KeyValue<K, V> {
 

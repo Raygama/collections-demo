@@ -56,10 +56,9 @@ import org.apache.commons.collections4.functors.FactoryTransformer;
  * using {@link java.util.Collections#synchronizedMap(Map)}. This class may throw
  * exceptions when accessed by concurrent threads without synchronization.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
- *
  * @since 3.2
+ * @version $Id$
+ *
  * @see LazyMap
  */
 public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Serializable {
@@ -85,7 +84,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * @since 4.0
      */
     public static <K, V> DefaultedMap<K, V> defaultedMap(final Map<K, V> map, final V defaultValue) {
-        return new DefaultedMap<>(map, ConstantTransformer.constantTransformer(defaultValue));
+        return new DefaultedMap<K, V>(map, ConstantTransformer.constantTransformer(defaultValue));
     }
 
     /**
@@ -106,7 +105,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
         if (factory == null) {
             throw new IllegalArgumentException("Factory must not be null");
         }
-        return new DefaultedMap<>(map, FactoryTransformer.factoryTransformer(factory));
+        return new DefaultedMap<K, V>(map, FactoryTransformer.factoryTransformer(factory));
     }
 
     /**
@@ -129,7 +128,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
         if (transformer == null) {
            throw new IllegalArgumentException("Transformer must not be null");
        }
-       return new DefaultedMap<>(map, transformer);
+       return new DefaultedMap<K, V>(map, transformer);
     }
 
     //-----------------------------------------------------------------------
@@ -175,7 +174,7 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -186,8 +185,8 @@ public class DefaultedMap<K, V> extends AbstractMapDecorator<K, V> implements Se
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

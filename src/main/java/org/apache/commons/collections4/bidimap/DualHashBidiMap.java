@@ -36,10 +36,8 @@ import org.apache.commons.collections4.BidiMap;
  * NOTE: From Commons Collections 3.1, all subclasses will use {@link HashMap}
  * and the flawed <code>createMap</code> method is ignored.
  *
- * @param <K> the type of the keys in the map
- * @param <V> the type of the values in the map
- *
  * @since 3.0
+ * @version $Id$
  */
 public class DualHashBidiMap<K, V> extends AbstractDualBidiMap<K, V> implements Serializable {
 
@@ -87,7 +85,7 @@ public class DualHashBidiMap<K, V> extends AbstractDualBidiMap<K, V> implements 
     @Override
     protected BidiMap<V, K> createBidiMap(final Map<V, K> normalMap, final Map<K, V> reverseMap,
                                           final BidiMap<K, V> inverseBidiMap) {
-        return new DualHashBidiMap<>(normalMap, reverseMap, inverseBidiMap);
+        return new DualHashBidiMap<V, K>(normalMap, reverseMap, inverseBidiMap);
     }
 
     // Serialization
@@ -99,8 +97,8 @@ public class DualHashBidiMap<K, V> extends AbstractDualBidiMap<K, V> implements 
 
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        normalMap = new HashMap<>();
-        reverseMap = new HashMap<>();
+        normalMap = new HashMap<K, V>();
+        reverseMap = new HashMap<V, K>();
         @SuppressWarnings("unchecked") // will fail at runtime if stream is incorrect
         final Map<K, V> map = (Map<K, V>) in.readObject();
         putAll(map);

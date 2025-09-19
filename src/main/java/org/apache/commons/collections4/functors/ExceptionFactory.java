@@ -25,6 +25,7 @@ import org.apache.commons.collections4.FunctorException;
  * Factory implementation that always throws an exception.
  *
  * @since 3.0
+ * @version $Id$
  */
 public final class ExceptionFactory<T> implements Factory<T>, Serializable {
 
@@ -33,7 +34,7 @@ public final class ExceptionFactory<T> implements Factory<T>, Serializable {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes") // the static instance works for all types
-    public static final Factory INSTANCE = new ExceptionFactory<>();
+    public static final Factory INSTANCE = new ExceptionFactory<Object>();
 
     /**
      * Factory returning the singleton instance.
@@ -44,7 +45,7 @@ public final class ExceptionFactory<T> implements Factory<T>, Serializable {
      */
     @SuppressWarnings("unchecked") // the static instance works for all types
     public static <T> Factory<T> exceptionFactory() {
-        return INSTANCE;
+        return (Factory<T>) INSTANCE;
     }
 
     /**

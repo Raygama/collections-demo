@@ -30,6 +30,7 @@ import org.apache.commons.collections4.collection.AbstractCollectionTest;
  * {@link UnmodifiableBag} implementation.
  *
  * @since 4.0
+ * @version $Id$
  */
 public class UnmodifiableBagTest<E> extends AbstractBagTest<E> {
 
@@ -49,7 +50,7 @@ public class UnmodifiableBagTest<E> extends AbstractBagTest<E> {
 
     @Override
     public Bag<E> makeFullCollection() {
-        final Bag<E> bag = new HashBag<>();
+        final Bag<E> bag = new HashBag<E>();
         bag.addAll(Arrays.asList(getFullElements()));
         return UnmodifiableBag.unmodifiableBag(bag);
     }
@@ -80,7 +81,7 @@ public class UnmodifiableBagTest<E> extends AbstractBagTest<E> {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-
+    
     public void testDecorateFactory() {
         final Bag<E> queue = makeFullCollection();
         assertSame(queue, UnmodifiableBag.unmodifiableBag(queue));

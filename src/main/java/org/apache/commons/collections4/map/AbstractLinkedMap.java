@@ -56,9 +56,8 @@ import org.apache.commons.collections4.iterators.EmptyOrderedMapIterator;
  * The implementation is also designed to be subclassed, with lots of useful
  * methods exposed.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> implements OrderedMap<K, V> {
 
@@ -76,7 +75,7 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
      * Constructor which performs no validation on the passed in parameters.
      *
      * @param initialCapacity  the initial capacity, must be a power of two
-     * @param loadFactor  the load factor, must be &gt; 0.0f and generally &lt; 1.0f
+     * @param loadFactor  the load factor, must be > 0.0f and generally < 1.0f
      * @param threshold  the threshold, must be sensible
      */
     protected AbstractLinkedMap(final int initialCapacity, final float loadFactor, final int threshold) {
@@ -286,7 +285,7 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
      */
     @Override
     protected LinkEntry<K, V> createEntry(final HashEntry<K, V> next, final int hashCode, final K key, final V value) {
-        return new LinkEntry<>(next, hashCode, convertKey(key), value);
+        return new LinkEntry<K, V>(next, hashCode, convertKey(key), value);
     }
 
     /**
@@ -345,7 +344,7 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
         if (size == 0) {
             return EmptyOrderedMapIterator.<K, V>emptyOrderedMapIterator();
         }
-        return new LinkMapIterator<>(this);
+        return new LinkMapIterator<K, V>(this);
     }
 
     /**
@@ -408,7 +407,7 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
         if (size() == 0) {
             return EmptyOrderedIterator.<Map.Entry<K, V>>emptyOrderedIterator();
         }
-        return new EntrySetIterator<>(this);
+        return new EntrySetIterator<K, V>(this);
     }
 
     /**
@@ -444,7 +443,7 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
         if (size() == 0) {
             return EmptyOrderedIterator.<K>emptyOrderedIterator();
         }
-        return new KeySetIterator<>(this);
+        return new KeySetIterator<K>(this);
     }
 
     /**
@@ -481,7 +480,7 @@ public abstract class AbstractLinkedMap<K, V> extends AbstractHashedMap<K, V> im
         if (size() == 0) {
             return EmptyOrderedIterator.<V>emptyOrderedIterator();
         }
-        return new ValuesIterator<>(this);
+        return new ValuesIterator<V>(this);
     }
 
     /**

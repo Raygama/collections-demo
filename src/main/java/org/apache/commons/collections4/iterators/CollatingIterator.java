@@ -36,6 +36,7 @@ import org.apache.commons.collections4.list.UnmodifiableList;
  * lesser of <code>A.next()</code> and <code>B.next()</code>.
  *
  * @since 2.1
+ * @version $Id$
  */
 public class CollatingIterator<E> implements Iterator<E> {
 
@@ -94,7 +95,7 @@ public class CollatingIterator<E> implements Iterator<E> {
      *   child iterators
      */
     public CollatingIterator(final Comparator<? super E> comp, final int initIterCapacity) {
-        iterators = new ArrayList<>(initIterCapacity);
+        iterators = new ArrayList<Iterator<? extends E>>(initIterCapacity);
         setComparator(comp);
     }
 
@@ -288,7 +289,7 @@ public class CollatingIterator<E> implements Iterator<E> {
      */
     private void start() {
         if (values == null) {
-            values = new ArrayList<>(iterators.size());
+            values = new ArrayList<E>(iterators.size());
             valueSet = new BitSet(iterators.size());
             for (int i = 0; i < iterators.size(); i++) {
                 values.add(null);

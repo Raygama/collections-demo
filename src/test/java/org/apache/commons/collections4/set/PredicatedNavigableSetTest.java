@@ -33,6 +33,7 @@ import org.apache.commons.collections4.functors.TruePredicate;
  * {@link PredicatedNavigableSet} implementation.
  *
  * @since 4.1
+ * @version $Id$
  */
 public class PredicatedNavigableSetTest<E> extends AbstractNavigableSetTest<E> {
 
@@ -55,7 +56,7 @@ public class PredicatedNavigableSetTest<E> extends AbstractNavigableSetTest<E> {
 
     @Override
     public NavigableSet<E> makeFullCollection() {
-        final TreeSet<E> set = new TreeSet<>();
+        final TreeSet<E> set = new TreeSet<E>();
         set.addAll(Arrays.asList(getFullElements()));
         return PredicatedNavigableSet.predicatedNavigableSet(set, truePredicate);
     }
@@ -95,7 +96,7 @@ public class PredicatedNavigableSetTest<E> extends AbstractNavigableSetTest<E> {
     @SuppressWarnings("unchecked")
     public void testIllegalAddAll() {
         final NavigableSet<E> set = makeTestSet();
-        final Set<E> elements = new TreeSet<>();
+        final Set<E> elements = new TreeSet<E>();
         elements.add((E) "Aone");
         elements.add((E) "Atwo");
         elements.add((E) "Bthree");

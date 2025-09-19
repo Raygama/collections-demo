@@ -25,6 +25,7 @@ import java.util.Iterator;
  *
  * @param <E> the type to iterate over
  * @since 3.0
+ * @version $Id$
  */
 public interface ResettableIterator<E> extends Iterator<E> {
 

@@ -28,6 +28,7 @@ import org.apache.commons.collections4.Factory;
  * use the prototype factory.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class ConstantFactory<T> implements Factory<T>, Serializable {
 
@@ -36,7 +37,7 @@ public class ConstantFactory<T> implements Factory<T>, Serializable {
 
     /** Returns null each time */
     @SuppressWarnings("rawtypes") // The null factory works for all object types
-    public static final Factory NULL_INSTANCE = new ConstantFactory<>(null);
+    public static final Factory NULL_INSTANCE = new ConstantFactory<Object>(null);
 
     /** The closures to call in turn */
     private final T iConstant;
@@ -51,9 +52,9 @@ public class ConstantFactory<T> implements Factory<T>, Serializable {
     @SuppressWarnings("unchecked") // The null factory works for all object types
     public static <T> Factory<T> constantFactory(final T constantToReturn) {
         if (constantToReturn == null) {
-            return NULL_INSTANCE;
+            return (Factory<T>) NULL_INSTANCE;
         }
-        return new ConstantFactory<>(constantToReturn);
+        return new ConstantFactory<T>(constantToReturn);
     }
 
     /**

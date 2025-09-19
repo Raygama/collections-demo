@@ -33,8 +33,8 @@ import org.apache.commons.collections4.Transformer;
  * Abstract implementation of the {@link MultiSet} interface to simplify the
  * creation of subclass implementations.
  *
- * @param <E> the type held in the multiset
  * @since 4.1
+ * @version $Id$
  */
 public abstract class AbstractMultiSet<E> extends AbstractCollection<E> implements MultiSet<E> {
 
@@ -120,7 +120,7 @@ public abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
      */
     @Override
     public Iterator<E> iterator() {
-        return new MultiSetIterator<>(this);
+        return new MultiSetIterator<E>(this);
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
      * @return a view of the set of unique elements
      */
     protected Set<E> createUniqueSet() {
-        return new UniqueSet<>(this);
+        return new UniqueSet<E>(this);
     }
 
     /**
@@ -284,7 +284,7 @@ public abstract class AbstractMultiSet<E> extends AbstractCollection<E> implemen
      * @return a view of the set of entries
      */
     protected Set<Entry<E>> createEntrySet() {
-        return new EntrySet<>(this);
+        return new EntrySet<E>(this);
     }
 
     /**

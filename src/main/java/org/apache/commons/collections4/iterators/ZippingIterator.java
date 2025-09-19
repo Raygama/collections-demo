@@ -32,6 +32,7 @@ import org.apache.commons.collections4.FluentIterable;
  * and {@code B.next()} until both iterators are exhausted.
  *
  * @since 4.1
+ * @version $Id$
  */
 public class ZippingIterator<E> implements Iterator<E> {
 
@@ -85,7 +86,7 @@ public class ZippingIterator<E> implements Iterator<E> {
      */
     public ZippingIterator(final Iterator<? extends E>... iterators) {
         // create a mutable list to be able to remove exhausted iterators
-        final List<Iterator<? extends E>> list = new ArrayList<>();
+        final List<Iterator<? extends E>> list = new ArrayList<Iterator<? extends E>>();
         for (final Iterator<? extends E> iterator : iterators) {
             if (iterator == null) {
                 throw new NullPointerException("Iterator must not be null.");
@@ -116,9 +117,10 @@ public class ZippingIterator<E> implements Iterator<E> {
             if (childIterator.hasNext()) {
                 nextIterator = childIterator;
                 return true;
+            } else {
+                // iterator is exhausted, remove it
+                iterators.remove();
             }
-            // iterator is exhausted, remove it
-            iterators.remove();
         }
         return false;
     }

@@ -26,6 +26,7 @@ import java.util.NavigableSet;
  *
  * @param <E> the type of the elements in the navigable set
  * @since 4.1
+ * @version $Id$
  */
 public abstract class AbstractNavigableSetDecorator<E>
         extends AbstractSortedSetDecorator<E>

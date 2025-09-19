@@ -29,6 +29,7 @@ import org.apache.commons.collections4.Unmodifiable;
  * {@link UnmodifiableMultiSet} implementation.
  *
  * @since 4.1
+ * @version $Id$
  */
 public class UnmodifiableMultiSetTest<E> extends AbstractMultiSetTest<E> {
 
@@ -48,7 +49,7 @@ public class UnmodifiableMultiSetTest<E> extends AbstractMultiSetTest<E> {
 
     @Override
     public MultiSet<E> makeFullCollection() {
-        final MultiSet<E> multiset = new HashMultiSet<>();
+        final MultiSet<E> multiset = new HashMultiSet<E>();
         multiset.addAll(Arrays.asList(getFullElements()));
         return UnmodifiableMultiSet.unmodifiableMultiSet(multiset);
     }
@@ -79,7 +80,7 @@ public class UnmodifiableMultiSetTest<E> extends AbstractMultiSetTest<E> {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullCollection() instanceof Unmodifiable);
     }
-
+    
     public void testDecorateFactory() {
         final MultiSet<E> multiset = makeFullCollection();
         assertSame(multiset, UnmodifiableMultiSet.unmodifiableMultiSet(multiset));

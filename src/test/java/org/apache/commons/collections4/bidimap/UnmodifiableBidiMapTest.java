@@ -28,6 +28,7 @@ import org.apache.commons.collections4.Unmodifiable;
 /**
  * JUnit tests.
  *
+ * @version $Id$
  */
 public class UnmodifiableBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
 
@@ -46,14 +47,14 @@ public class UnmodifiableBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
 
     @Override
     public BidiMap<K, V> makeFullMap() {
-        final BidiMap<K, V> bidi = new DualHashBidiMap<>();
+        final BidiMap<K, V> bidi = new DualHashBidiMap<K, V>();
         addSampleMappings(bidi);
         return UnmodifiableBidiMap.unmodifiableBidiMap(bidi);
     }
 
     @Override
     public Map<K, V> makeConfirmedMap() {
-        return new HashMap<>();
+        return new HashMap<K, V>();
     }
 
     /**
@@ -85,7 +86,7 @@ public class UnmodifiableBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
         assertTrue(makeObject() instanceof Unmodifiable);
         assertTrue(makeFullMap() instanceof Unmodifiable);
     }
-
+    
     public void testDecorateFactory() {
         final BidiMap<K, V> map = makeFullMap();
         assertSame(map, UnmodifiableBidiMap.unmodifiableBidiMap(map));
@@ -95,5 +96,5 @@ public class UnmodifiableBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
             fail();
         } catch (final NullPointerException ex) {}
     }
-
+    
 }

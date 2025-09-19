@@ -55,9 +55,10 @@ import java.util.concurrent.TimeUnit;
  * synchronization.
  * </p>
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
+ * @param <K> the type of the keys in the map
+ * @param <V> the type of the values in the map
  * @since 4.0
+ * @version $Id$
  */
 public class PassiveExpiringMap<K, V>
     extends AbstractMapDecorator<K, V>
@@ -71,6 +72,7 @@ public class PassiveExpiringMap<K, V>
      * @param <K> the type of the keys in the map
      * @param <V> the type of the values in the map
      * @since 4.0
+     * @version $Id$
      */
     public static class ConstantTimeToLiveExpirationPolicy<K, V>
         implements ExpirationPolicy<K, V> {
@@ -158,6 +160,7 @@ public class PassiveExpiringMap<K, V>
      * @param <K> the key object type.
      * @param <V> the value object type
      * @since 4.0
+     * @version $Id$
      */
     public static interface ExpirationPolicy<K, V>
         extends Serializable {
@@ -197,7 +200,7 @@ public class PassiveExpiringMap<K, V>
     }
 
     /** map used to manage expiration times for the actual map entries. */
-    private final Map<Object, Long> expirationMap = new HashMap<>();
+    private final Map<Object, Long> expirationMap = new HashMap<Object, Long>();
 
     /** the policy used to determine time-to-live values for map entries. */
     private final ExpirationPolicy<K, V> expiringPolicy;
@@ -501,8 +504,8 @@ public class PassiveExpiringMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")
     // (1) should only fail if input stream is incorrect
@@ -516,7 +519,7 @@ public class PassiveExpiringMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      */
     private void writeObject(final ObjectOutputStream out)
         throws IOException {

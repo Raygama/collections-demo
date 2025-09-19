@@ -23,6 +23,7 @@ import junit.framework.Test;
 /**
  * Tests ArrayStack.
  *
+ * @version $Id$
  */
 @SuppressWarnings("deprecation") // we test a deprecated class
 public class ArrayStackTest<E> extends AbstractArrayListTest<E> {
@@ -37,7 +38,7 @@ public class ArrayStackTest<E> extends AbstractArrayListTest<E> {
 
     @Override
     public ArrayStack<E> makeObject() {
-        return new ArrayStack<>();
+        return new ArrayStack<E>();
     }
 
     //-----------------------------------------------------------------------

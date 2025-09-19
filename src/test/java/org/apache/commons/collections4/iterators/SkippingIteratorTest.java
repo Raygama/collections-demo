@@ -25,6 +25,7 @@ import org.junit.Test;
 /**
  * A unit test to test the basic functions of {@link SkippingIterator}.
  *
+ * @version $Id$
  */
 public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
 
@@ -49,12 +50,12 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
 
     @Override
     public Iterator<E> makeEmptyIterator() {
-        return new SkippingIterator<>(Collections.<E>emptyList().iterator(), 0);
+        return new SkippingIterator<E>(Collections.<E>emptyList().iterator(), 0);
     }
 
     @Override
     public Iterator<E> makeObject() {
-        return new SkippingIterator<>(new ArrayList<>(testList).iterator(), 1);
+        return new SkippingIterator<E>(new ArrayList<E>(testList).iterator(), 1);
     }
 
     // ---------------- Tests ---------------------
@@ -66,7 +67,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testSkipping() {
-        Iterator<E> iter = new SkippingIterator<>(testList.iterator(), 2);
+        Iterator<E> iter = new SkippingIterator<E>(testList.iterator(), 2);
 
         assertTrue(iter.hasNext());
         assertEquals("c", iter.next());
@@ -94,7 +95,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testSameAsDecorated() {
-        Iterator<E> iter = new SkippingIterator<>(testList.iterator(), 0);
+        Iterator<E> iter = new SkippingIterator<E>(testList.iterator(), 0);
 
         assertTrue(iter.hasNext());
         assertEquals("a", iter.next());
@@ -126,7 +127,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testOffsetGreaterThanSize() {
-        Iterator<E> iter = new SkippingIterator<>(testList.iterator(), 10);
+        Iterator<E> iter = new SkippingIterator<E>(testList.iterator(), 10);
         assertFalse(iter.hasNext());
         try {
             iter.next();
@@ -142,7 +143,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
     @Test
     public void testNegativeOffset() {
         try {
-            new SkippingIterator<>(testList.iterator(), -1);
+            new SkippingIterator<E>(testList.iterator(), -1);
             fail("Expected IllegalArgumentException.");
         } catch (IllegalArgumentException iae) { /* Success case */
         }
@@ -154,8 +155,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveWithoutCallingNext() {
-        List<E> testListCopy = new ArrayList<>(testList);
-        Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 1);
+        List<E> testListCopy = new ArrayList<E>(testList);
+        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 1);
 
         try {
             iter.remove();
@@ -170,8 +171,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveCalledTwice() {
-        List<E> testListCopy = new ArrayList<>(testList);
-        Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 1);
+        List<E> testListCopy = new ArrayList<E>(testList);
+        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 1);
 
         assertTrue(iter.hasNext());
         assertEquals("b", iter.next());
@@ -190,8 +191,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveFirst() {
-        List<E> testListCopy = new ArrayList<>(testList);
-        Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 4);
+        List<E> testListCopy = new ArrayList<E>(testList);
+        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 4);
 
         assertTrue(iter.hasNext());
         assertEquals("e", iter.next());
@@ -218,8 +219,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveMiddle() {
-        List<E> testListCopy = new ArrayList<>(testList);
-        Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 3);
+        List<E> testListCopy = new ArrayList<E>(testList);
+        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 3);
 
         assertTrue(iter.hasNext());
         assertEquals("d", iter.next());
@@ -248,8 +249,8 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
      */
     @Test
     public void testRemoveLast() {
-        List<E> testListCopy = new ArrayList<>(testList);
-        Iterator<E> iter = new SkippingIterator<>(testListCopy.iterator(), 5);
+        List<E> testListCopy = new ArrayList<E>(testList);
+        Iterator<E> iter = new SkippingIterator<E>(testListCopy.iterator(), 5);
 
         assertTrue(iter.hasNext());
         assertEquals("f", iter.next());
@@ -287,7 +288,7 @@ public class SkippingIteratorTest<E> extends AbstractIteratorTest<E> {
             }
         };
 
-        Iterator<E> iter = new SkippingIterator<>(mockIterator, 1);
+        Iterator<E> iter = new SkippingIterator<E>(mockIterator, 1);
         assertTrue(iter.hasNext());
         assertEquals("b", iter.next());
         try {

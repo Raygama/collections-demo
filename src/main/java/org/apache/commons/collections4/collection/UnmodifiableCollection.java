@@ -31,6 +31,7 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
  *
  * @param <E> the type of the elements in the collection
  * @since 3.0
+ * @version $Id$
  */
 public final class UnmodifiableCollection<E>
         extends AbstractCollectionDecorator<E>
@@ -56,7 +57,7 @@ public final class UnmodifiableCollection<E>
             final Collection<T> tmpColl = (Collection<T>) coll;
             return tmpColl;
         }
-        return new UnmodifiableCollection<>(coll);
+        return new UnmodifiableCollection<T>(coll);
     }
 
     //-----------------------------------------------------------------------

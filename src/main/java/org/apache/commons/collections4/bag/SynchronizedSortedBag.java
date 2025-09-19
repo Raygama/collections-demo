@@ -30,8 +30,8 @@ import org.apache.commons.collections4.SortedBag;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of elements in this bag
  * @since 3.0
+ * @version $Id$
  */
 public class SynchronizedSortedBag<E> extends SynchronizedBag<E> implements SortedBag<E> {
 
@@ -48,7 +48,7 @@ public class SynchronizedSortedBag<E> extends SynchronizedBag<E> implements Sort
      * @since 4.0
      */
     public static <E> SynchronizedSortedBag<E> synchronizedSortedBag(final SortedBag<E> bag) {
-        return new SynchronizedSortedBag<>(bag);
+        return new SynchronizedSortedBag<E>(bag);
     }
 
     //-----------------------------------------------------------------------

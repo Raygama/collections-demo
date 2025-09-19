@@ -42,6 +42,7 @@ import org.junit.Test;
  * Tests the TransformerUtils class.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class TransformerUtilsTest {
 
@@ -128,7 +129,7 @@ public class TransformerUtilsTest {
     @Test
     @SuppressWarnings("boxing") // OK in test code
     public void testMapTransformer() {
-        final Map<Object, Integer> map = new HashMap<>();
+        final Map<Object, Integer> map = new HashMap<Object, Integer>();
         map.put(null, 0);
         map.put(cObject, 1);
         map.put(cString, 2);
@@ -202,7 +203,7 @@ public class TransformerUtilsTest {
         assertEquals("A", TransformerUtils.chainedTransformer(b, a).transform(null));
         assertEquals("B", TransformerUtils.chainedTransformer(a, b).transform(null));
         assertEquals("A", TransformerUtils.chainedTransformer(new Transformer[] { b, a }).transform(null));
-        Collection<Transformer<Object, Object>> coll = new ArrayList<>();
+        Collection<Transformer<Object, Object>> coll = new ArrayList<Transformer<Object, Object>>();
         coll.add(b);
         coll.add(a);
         assertEquals("A", TransformerUtils.chainedTransformer(coll).transform(null));
@@ -227,7 +228,7 @@ public class TransformerUtilsTest {
             fail();
         } catch (final NullPointerException ex) {}
         try {
-            coll = new ArrayList<>();
+            coll = new ArrayList<Transformer<Object, Object>>();
             coll.add(null);
             coll.add(null);
             TransformerUtils.chainedTransformer(coll);
@@ -256,7 +257,7 @@ public class TransformerUtilsTest {
         // if/else tests
         assertEquals("A", TransformerUtils.<Integer, String>ifTransformer(lessThanFivePredicate, a, b).transform(1));
         assertEquals("B", TransformerUtils.<Integer, String>ifTransformer(lessThanFivePredicate, a, b).transform(5));
-
+        
         // if tests
         Predicate<String> equalsAPredicate = EqualPredicate.equalPredicate("A");
         assertEquals("C", TransformerUtils.<String>ifTransformer(equalsAPredicate, c).transform("A"));
@@ -279,7 +280,7 @@ public class TransformerUtilsTest {
             fail();
         } catch (final NullPointerException ex) {}
     }
-
+    
     // switchTransformer
     //------------------------------------------------------------------
 
@@ -307,7 +308,7 @@ public class TransformerUtilsTest {
             new Predicate[] { EqualPredicate.equalPredicate("HELLO"), EqualPredicate.equalPredicate("THERE") },
             new Transformer[] { a, b }, c).transform("WELL"));
 
-        Map<Predicate<String>, Transformer<String, String>> map = new HashMap<>();
+        Map<Predicate<String>, Transformer<String, String>> map = new HashMap<Predicate<String>, Transformer<String,String>>();
         map.put(EqualPredicate.equalPredicate("HELLO"), a);
         map.put(EqualPredicate.equalPredicate("THERE"), b);
         assertEquals(null, TransformerUtils.switchTransformer(map).transform("WELL"));
@@ -318,7 +319,7 @@ public class TransformerUtilsTest {
 
         assertEquals(ConstantTransformer.NULL_INSTANCE, TransformerUtils.switchTransformer(new Predicate[0], new Transformer[0]));
         assertEquals(ConstantTransformer.NULL_INSTANCE, TransformerUtils.switchTransformer(new HashMap<Predicate<Object>, Transformer<Object, Object>>()));
-        map = new HashMap<>();
+        map = new HashMap<Predicate<String>, Transformer<String, String>>();
         map.put(null, null);
         assertEquals(ConstantTransformer.NULL_INSTANCE, TransformerUtils.switchTransformer(map));
 
@@ -355,7 +356,7 @@ public class TransformerUtilsTest {
         final Transformer<String, String> b = TransformerUtils.constantTransformer("B");
         final Transformer<String, String> c = TransformerUtils.constantTransformer("C");
 
-        Map<String, Transformer<String, String>> map = new HashMap<>();
+        Map<String, Transformer<String, String>> map = new HashMap<String, Transformer<String,String>>();
         map.put("HELLO", a);
         map.put("THERE", b);
         assertEquals(null, TransformerUtils.switchMapTransformer(map).transform("WELL"));
@@ -365,7 +366,7 @@ public class TransformerUtilsTest {
         assertEquals("C", TransformerUtils.switchMapTransformer(map).transform("WELL"));
 
         assertSame(ConstantTransformer.NULL_INSTANCE, TransformerUtils.switchMapTransformer(new HashMap<Object, Transformer<Object, Object>>()));
-        map = new HashMap<>();
+        map = new HashMap<String, Transformer<String, String>>();
         map.put(null, null);
         assertSame(ConstantTransformer.NULL_INSTANCE, TransformerUtils.switchMapTransformer(map));
 
@@ -380,7 +381,7 @@ public class TransformerUtilsTest {
 
     @Test
     public void testInvokerTransformer() {
-        final List<Object> list = new ArrayList<>();
+        final List<Object> list = new ArrayList<Object>();
         assertEquals(Integer.valueOf(0), TransformerUtils.invokerTransformer("size").transform(list));
         list.add(new Object());
         assertEquals(Integer.valueOf(1), TransformerUtils.invokerTransformer("size").transform(list));
@@ -401,7 +402,7 @@ public class TransformerUtilsTest {
 
     @Test
     public void testInvokerTransformer2() {
-        final List<Object> list = new ArrayList<>();
+        final List<Object> list = new ArrayList<Object>();
         assertEquals(Boolean.FALSE, TransformerUtils.invokerTransformer("contains",
                 new Class[] { Object.class }, new Object[] { cString }).transform(list));
         list.add(cString);

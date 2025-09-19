@@ -26,6 +26,7 @@ import org.apache.commons.collections4.BulkTest;
  * implementation.
  *
  * @since 4.0
+ * @version $Id$
  */
 public class SynchronizedBagTest<T> extends AbstractBagTest<T> {
 

@@ -42,6 +42,7 @@ import org.apache.commons.collections4.iterators.ListIteratorWrapper;
  * @param <K> the type of the keys in the map
  * @param <V> the type of the values in the map
  * @since 3.0
+ * @version $Id$
  */
 public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecorator<K, V> implements
         IterableSortedMap<K, V> {
@@ -123,7 +124,7 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
      */
     @Override
     public OrderedMapIterator<K, V> mapIterator() {
-        return new SortedMapIterator<>(entrySet());
+        return new SortedMapIterator<K, V>(entrySet());
     }
 
     /**
@@ -149,7 +150,7 @@ public abstract class AbstractSortedMapDecorator<K, V> extends AbstractMapDecora
         @Override
         public synchronized void reset() {
             super.reset();
-            iterator = new ListIteratorWrapper<>(iterator);
+            iterator = new ListIteratorWrapper<Map.Entry<K, V>>(iterator);
         }
 
         /**

@@ -24,6 +24,7 @@ import java.util.Iterator;
  * {@link Enumeration Enumeration} instance.
  *
  * @since 1.0
+ * @version $Id$
  */
 public class IteratorEnumeration<E> implements Enumeration<E> {
 

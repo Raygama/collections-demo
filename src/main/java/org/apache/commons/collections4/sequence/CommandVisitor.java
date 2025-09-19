@@ -97,7 +97,7 @@ package org.apache.commons.collections4.sequence;
  *   }
  *
  *   private void display(String commandName, Object object) {
- *     System.out.println(commandName + " " + object + " -&gt;" + this);
+ *     System.out.println(commandName + " " + object + " ->" + this);
  *   }
  *
  *   public String toString() {
@@ -115,6 +115,7 @@ package org.apache.commons.collections4.sequence;
  * </pre>
  *
  * @since 4.0
+ * @version $Id$
  */
 public interface CommandVisitor<T> {
 

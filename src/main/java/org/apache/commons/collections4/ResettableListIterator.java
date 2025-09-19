@@ -25,6 +25,7 @@ import java.util.ListIterator;
  *
  * @param <E> the type to iterate over
  * @since 3.0
+ * @version $Id$
  */
 public interface ResettableListIterator<E> extends ListIterator<E>, ResettableIterator<E>, OrderedIterator<E> {
 

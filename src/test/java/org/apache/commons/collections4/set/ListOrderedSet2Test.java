@@ -25,6 +25,7 @@ import java.util.List;
  * implementation.
  *
  * @since 3.1
+ * @version $Id$
  */
 public class ListOrderedSet2Test<E> extends AbstractSetTest<E> {
 
@@ -39,7 +40,7 @@ public class ListOrderedSet2Test<E> extends AbstractSetTest<E> {
 
     @Override
     public ListOrderedSet<E> makeObject() {
-        return new ListOrderedSet<>();
+        return new ListOrderedSet<E>();
     }
 
     @SuppressWarnings("unchecked")
@@ -133,7 +134,7 @@ public class ListOrderedSet2Test<E> extends AbstractSetTest<E> {
         assertSame(ONE, set.get(1));
         assertSame(TWO, set.get(2));
 
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.add((E) ZERO);
         list.add((E) TWO);
 

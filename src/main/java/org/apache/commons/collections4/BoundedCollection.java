@@ -28,8 +28,8 @@ import java.util.Collection;
  * @see CollectionUtils#isFull
  * @see CollectionUtils#maxSize
  *
- * @param <E> the type of elements in this collection
  * @since 3.0
+ * @version $Id$
  */
 public interface BoundedCollection<E> extends Collection<E> {
 

@@ -38,8 +38,8 @@ import org.apache.commons.collections4.collection.PredicatedCollection;
  *                                            NotNullPredicate.notNullPredicate());
  * </pre>
  *
- * @param <E> the type held in the multiset
  * @since 4.1
+ * @version $Id$
  */
 public class PredicatedMultiSet<E> extends PredicatedCollection<E> implements MultiSet<E> {
 
@@ -61,7 +61,7 @@ public class PredicatedMultiSet<E> extends PredicatedCollection<E> implements Mu
      */
     public static <E> PredicatedMultiSet<E> predicatedMultiSet(final MultiSet<E> multiset,
                                                                final Predicate<? super E> predicate) {
-        return new PredicatedMultiSet<>(multiset, predicate);
+        return new PredicatedMultiSet<E>(multiset, predicate);
     }
 
     //-----------------------------------------------------------------------

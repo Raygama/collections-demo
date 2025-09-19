@@ -27,6 +27,7 @@ import org.apache.commons.collections4.Predicate;
 /**
  * Tests the LazyIteratorChain class.
  *
+ * @version $Id$
  */
 public class LazyIteratorChainTest extends AbstractIteratorTest<String> {
 
@@ -44,13 +45,13 @@ public class LazyIteratorChainTest extends AbstractIteratorTest<String> {
 
     @Override
     public void setUp() {
-        list1 = new ArrayList<>();
+        list1 = new ArrayList<String>();
         list1.add("One");
         list1.add("Two");
         list1.add("Three");
-        list2 = new ArrayList<>();
+        list2 = new ArrayList<String>();
         list2.add("Four");
-        list3 = new ArrayList<>();
+        list3 = new ArrayList<String>();
         list3.add("Five");
         list3.add("Six");
     }
@@ -112,8 +113,8 @@ public class LazyIteratorChainTest extends AbstractIteratorTest<String> {
             }
         };
 
-        final List<Integer> list1 = new ArrayList<>();
-        final List<Integer> list2 = new ArrayList<>();
+        final List<Integer> list1 = new ArrayList<Integer>();
+        final List<Integer> list2 = new ArrayList<Integer>();
 
         list1.add(Integer.valueOf(1));
         list1.add(Integer.valueOf(2));
@@ -159,8 +160,8 @@ public class LazyIteratorChainTest extends AbstractIteratorTest<String> {
     }
 
     public void testFirstIteratorIsEmptyBug() {
-        final List<String> empty = new ArrayList<>();
-        final List<String> notEmpty = new ArrayList<>();
+        final List<String> empty = new ArrayList<String>();
+        final List<String> notEmpty = new ArrayList<String>();
         notEmpty.add("A");
         notEmpty.add("B");
         notEmpty.add("C");

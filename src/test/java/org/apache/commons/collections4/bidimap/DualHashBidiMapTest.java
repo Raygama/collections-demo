@@ -23,6 +23,7 @@ import org.apache.commons.collections4.BulkTest;
 /**
  * JUnit tests.
  *
+ * @version $Id$
  */
 public class DualHashBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
 
@@ -39,7 +40,7 @@ public class DualHashBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
      */
     @Override
     public DualHashBidiMap<K, V> makeObject() {
-        return new DualHashBidiMap<>();
+        return new DualHashBidiMap<K, V>();
     }
 
     /**

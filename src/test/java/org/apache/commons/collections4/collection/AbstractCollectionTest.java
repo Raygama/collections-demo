@@ -90,7 +90,7 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * {@link #confirmed}, the {@link #verify()} method is invoked to compare
  * the results.  You may want to override {@link #verify()} to perform
  * additional verifications.  For instance, when testing the collection
- * views of a map, {@link org.apache.commons.collections4.map.AbstractMapTest AbstractTestMap}
+ * views of a map, {@link org.apache.commons.collections4.map.AbstractMapTest AbstractTestMap} 
  * would override {@link #verify()} to make
  * sure the map is changed after the collection view is changed.
  * <p>
@@ -106,7 +106,7 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * <p>
  * If you're extending {@link org.apache.commons.collections4.list.AbstractListTest AbstractListTest},
  * {@link org.apache.commons.collections4.set.AbstractSetTest AbstractTestSet},
- * or {@link org.apache.commons.collections4.bag.AbstractBagTest AbstractBagTest},
+ * or {@link org.apache.commons.collections4.bag.AbstractBagTest AbstractBagTest}, 
  * you probably don't have to worry about the
  * above methods, because those three classes already override the methods
  * to provide standard JDK confirmed collections.<P>
@@ -117,6 +117,7 @@ import org.apache.commons.collections4.AbstractObjectTest;
  * you may still use this base set of cases.  Simply override the
  * test case (method) your {@link Collection} fails.
  *
+ * @version $Id$
  */
 public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
@@ -371,7 +372,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
      * Creates a new Map Entry that is independent of the first and the map.
      */
     public Map.Entry<E, E> cloneMapEntry(final Map.Entry<E, E> entry) {
-        final HashMap<E, E> map = new HashMap<>();
+        final HashMap<E, E> map = new HashMap<E, E>();
         map.put(entry.getKey(), entry.getValue());
         return map.entrySet().iterator().next();
     }
@@ -390,7 +391,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     @SuppressWarnings("unchecked")
     public E[] getFullElements() {
         if (isNullSupported()) {
-            final ArrayList<E> list = new ArrayList<>();
+            final ArrayList<E> list = new ArrayList<E>();
             list.addAll(Arrays.asList(getFullNonNullElements()));
             list.add(4, null);
             return (E[]) list.toArray();
@@ -682,7 +683,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
      */
     public void testCollectionContainsAll() {
         resetEmpty();
-        Collection<E> col = new HashSet<>();
+        Collection<E> col = new HashSet<E>();
         assertTrue("Every Collection should contain all elements of an " +
                 "empty Collection.", getCollection().containsAll(col));
         col.addAll(Arrays.asList(getOtherElements()));
@@ -712,7 +713,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         // make sure calls to "containsAll" don't change anything
         verify();
 
-        col = new ArrayList<>();
+        col = new ArrayList<E>();
         col.addAll(Arrays.asList(getFullElements()));
         col.addAll(Arrays.asList(getFullElements()));
         assertTrue("Full collection should containAll duplicate full elements",
@@ -762,7 +763,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         }
         assertTrue("Iterator should be finished", !it1.hasNext());
 
-        final ArrayList<E> list = new ArrayList<>();
+        final ArrayList<E> list = new ArrayList<E>();
         it1 = getCollection().iterator();
         for (int i = 0; i < getCollection().size(); i++) {
             final E next = it1.next();
@@ -911,7 +912,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         assertTrue("Empty collection removeAll should return false for nonempty input",
-                   !getCollection().removeAll(new ArrayList<>(getCollection())));
+                   !getCollection().removeAll(new ArrayList<E>(getCollection())));
         verify();
 
         resetFull();
@@ -924,8 +925,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         assertTrue("Full collection removeAll should return true for full elements",
-                getCollection().removeAll(new HashSet<>(getCollection())));
-        getConfirmed().removeAll(new HashSet<>(getConfirmed()));
+                getCollection().removeAll(new HashSet<E>(getCollection())));
+        getConfirmed().removeAll(new HashSet<E>(getConfirmed()));
         verify();
 
         resetFull();
@@ -997,7 +998,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         }
 
         resetFull();
-        final HashSet<E> set = new HashSet<>(elements);
+        final HashSet<E> set = new HashSet<E>(elements);
         size = getCollection().size();
         assertTrue("Collection shouldn't change from retainAll without " +
                    "duplicate elements", !getCollection().retainAll(set));
@@ -1098,7 +1099,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
         // Figure out if they're all the same class
         // TODO: It'd be nicer to detect a common superclass
-        final HashSet<Class<?>> classes = new HashSet<>();
+        final HashSet<Class<?>> classes = new HashSet<Class<?>>();
         for (final Object element : array) {
             classes.add(element == null ? null : element.getClass());
         }

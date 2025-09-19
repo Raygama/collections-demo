@@ -106,10 +106,10 @@ public abstract class AbstractComparatorTest<T> extends AbstractObjectTest {
      */
     @Test
     public void testEmptyListSort() {
-        final List<T> list = new LinkedList<>();
+        final List<T> list = new LinkedList<T>();
         sortObjects(list, makeObject());
 
-        final List<T> list2 = new LinkedList<>();
+        final List<T> list2 = new LinkedList<T>();
 
         assertTrue("Comparator cannot sort empty lists", list2.equals(list));
     }

@@ -25,6 +25,7 @@ import org.apache.commons.collections4.Equator;
  *
  * @param <T>  the types of object this {@link Equator} can evaluate.
  * @since 4.0
+ * @version $Id$
  */
 public class DefaultEquator<T> implements Equator<T>, Serializable {
 
@@ -33,7 +34,7 @@ public class DefaultEquator<T> implements Equator<T>, Serializable {
 
     /** Static instance */
     @SuppressWarnings("rawtypes") // the static instance works for all types
-    public static final DefaultEquator INSTANCE = new DefaultEquator<>();
+    public static final DefaultEquator INSTANCE = new DefaultEquator<Object>();
 
     /**
      * Hashcode used for <code>null</code> objects.
@@ -48,7 +49,7 @@ public class DefaultEquator<T> implements Equator<T>, Serializable {
      */
     @SuppressWarnings("unchecked") // the static instance works for all types
     public static <T> DefaultEquator<T> defaultEquator() {
-        return DefaultEquator.INSTANCE;
+        return (DefaultEquator<T>) DefaultEquator.INSTANCE;
     }
 
     /**

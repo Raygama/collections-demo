@@ -34,5 +34,6 @@
  *   <li>Collection - ensures compliance with the java.util.Collection contract
  * </ul>
  *
+ * @version $Id$
  */
 package org.apache.commons.collections4.bag;

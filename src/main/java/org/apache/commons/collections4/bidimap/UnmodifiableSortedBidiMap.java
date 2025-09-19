@@ -33,9 +33,8 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * <p>
  * Attempts to modify it will result in an {@link UnsupportedOperationException}.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public final class UnmodifiableSortedBidiMap<K, V>
         extends AbstractSortedBidiMapDecorator<K, V> implements Unmodifiable {
@@ -61,7 +60,7 @@ public final class UnmodifiableSortedBidiMap<K, V>
             final SortedBidiMap<K, V> tmpMap = (SortedBidiMap<K, V>) map;
             return tmpMap;
         }
-        return new UnmodifiableSortedBidiMap<>(map);
+        return new UnmodifiableSortedBidiMap<K, V>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -132,7 +131,7 @@ public final class UnmodifiableSortedBidiMap<K, V>
     @Override
     public SortedBidiMap<V, K> inverseBidiMap() {
         if (inverse == null) {
-            inverse = new UnmodifiableSortedBidiMap<>(decorated().inverseBidiMap());
+            inverse = new UnmodifiableSortedBidiMap<V, K>(decorated().inverseBidiMap());
             inverse.inverse = this;
         }
         return inverse;

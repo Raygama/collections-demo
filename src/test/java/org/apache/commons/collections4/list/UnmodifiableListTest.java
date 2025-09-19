@@ -26,6 +26,7 @@ import java.util.List;
  * {@link UnmodifiableList} implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class UnmodifiableListTest<E> extends AbstractListTest<E> {
 
@@ -36,14 +37,14 @@ public class UnmodifiableListTest<E> extends AbstractListTest<E> {
     //-----------------------------------------------------------------------
     @Override
     public UnmodifiableList<E> makeObject() {
-        return new UnmodifiableList<>(new ArrayList<E>());
+        return new UnmodifiableList<E>(new ArrayList<E>());
     }
 
     @Override
     public UnmodifiableList<E> makeFullCollection() {
-        final ArrayList<E> list = new ArrayList<>();
+        final ArrayList<E> list = new ArrayList<E>();
         list.addAll(Arrays.asList(getFullElements()));
-        return new UnmodifiableList<>(list);
+        return new UnmodifiableList<E>(list);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class UnmodifiableListTest<E> extends AbstractListTest<E> {
     @SuppressWarnings("unchecked")
     protected void setupList() {
         list = makeFullCollection();
-        array = new ArrayList<>();
+        array = new ArrayList<E>();
         array.add((E) Integer.valueOf(1));
     }
 

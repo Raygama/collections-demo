@@ -42,9 +42,8 @@ import java.util.Set;
  * <code>coll</code> will be a collection containing "A", "B", "C".
  * <p>
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 4.1
+ * @version $Id$
  */
 public interface MultiValuedMap<K, V> {
     // Query operations
@@ -300,7 +299,7 @@ public interface MultiValuedMap<K, V> {
      * Changes to the returned map or the collections that serve as its values
      * will update the underlying multi-valued map, and vice versa. The map does
      * not support {@code put} or {@code putAll}, nor do its entries support
-     * {@link java.util.Map.Entry#setValue(Object) setValue}.
+     * {@link Map.Entry#setValue setValue}.
      *
      * @return a map view of the mappings in this multi-valued map
      */

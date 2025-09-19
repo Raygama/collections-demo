@@ -32,6 +32,7 @@ import org.apache.commons.collections4.BulkTest;
  * {@link UnmodifiableSortedSet} implementation.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class UnmodifiableSortedSetTest<E> extends AbstractSortedSetTest<E> {
     protected UnmodifiableSortedSet<E> set = null;
@@ -53,7 +54,7 @@ public class UnmodifiableSortedSetTest<E> extends AbstractSortedSetTest<E> {
 
     @Override
     public UnmodifiableSortedSet<E> makeFullCollection() {
-        final TreeSet<E> set = new TreeSet<>();
+        final TreeSet<E> set = new TreeSet<E>();
         set.addAll(Arrays.asList(getFullElements()));
         return (UnmodifiableSortedSet<E>) UnmodifiableSortedSet.unmodifiableSortedSet(set);
     }
@@ -72,7 +73,7 @@ public class UnmodifiableSortedSetTest<E> extends AbstractSortedSetTest<E> {
     @SuppressWarnings("unchecked")
     protected void setupSet() {
         set = makeFullCollection();
-        array = new ArrayList<>();
+        array = new ArrayList<E>();
         array.add((E) Integer.valueOf(1));
     }
 

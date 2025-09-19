@@ -34,6 +34,7 @@ import org.apache.commons.collections4.iterators.AbstractOrderedMapIteratorTest;
 /**
  * Abstract test class for {@link OrderedMap} methods and contracts.
  *
+ * @version $Id$
  */
 public abstract class AbstractOrderedMapTest<K, V> extends AbstractIterableMapTest<K, V> {
 
@@ -68,7 +69,7 @@ public abstract class AbstractOrderedMapTest<K, V> extends AbstractIterableMapTe
      */
     @Override
     public Map<K, V> makeConfirmedMap() {
-        return new TreeMap<>(new NullComparator<K>());
+        return new TreeMap<K, V>(new NullComparator<K>());
     }
 
     /**
@@ -78,7 +79,7 @@ public abstract class AbstractOrderedMapTest<K, V> extends AbstractIterableMapTe
     @Override
     @SuppressWarnings("unchecked")
     public K[] getSampleKeys() {
-        final List<K> list = new ArrayList<>(Arrays.asList(super.getSampleKeys()));
+        final List<K> list = new ArrayList<K>(Arrays.asList(super.getSampleKeys()));
         Collections.sort(list, new NullComparator<K>());
         return (K[]) list.toArray();
     }
@@ -163,7 +164,7 @@ public abstract class AbstractOrderedMapTest<K, V> extends AbstractIterableMapTe
 
         resetFull();
         ordered = getMap();
-        final List<K> list = new ArrayList<>(confirmed.keySet());
+        final List<K> list = new ArrayList<K>(confirmed.keySet());
         Collections.reverse(list);
         final Iterator<K> it = list.iterator();
         K confirmedLast = it.next();

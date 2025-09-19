@@ -49,9 +49,8 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public class FixedSizeMap<K, V>
         extends AbstractMapDecorator<K, V>
@@ -71,7 +70,7 @@ public class FixedSizeMap<K, V>
      * @since 4.0
      */
     public static <K, V> FixedSizeMap<K, V> fixedSizeMap(final Map<K, V> map) {
-        return new FixedSizeMap<>(map);
+        return new FixedSizeMap<K, V>(map);
     }
 
     //-----------------------------------------------------------------------
@@ -90,7 +89,7 @@ public class FixedSizeMap<K, V>
      * Write the map out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      * @since 3.1
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -102,8 +101,8 @@ public class FixedSizeMap<K, V>
      * Read the map in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      * @since 3.1
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect

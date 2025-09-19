@@ -29,10 +29,8 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * This class is Serializable from Commons Collections 4.0.
  *
- * @param <I> the input type to the transformer
- * @param <O> the output type from the transformer
- *
  * @since 2.1
+ * @version $Id$
  *
  * @see org.apache.commons.collections4.Transformer
  * @see org.apache.commons.collections4.comparators.ComparableComparator

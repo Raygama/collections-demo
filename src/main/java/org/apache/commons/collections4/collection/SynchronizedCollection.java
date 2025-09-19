@@ -36,6 +36,7 @@ import java.util.Iterator;
  *
  * @param <E> the type of the elements in the collection
  * @since 3.0
+ * @version $Id$
  */
 public class SynchronizedCollection<E> implements Collection<E>, Serializable {
 
@@ -57,7 +58,7 @@ public class SynchronizedCollection<E> implements Collection<E>, Serializable {
      * @since 4.0
      */
     public static <T> SynchronizedCollection<T> synchronizedCollection(final Collection<T> coll) {
-        return new SynchronizedCollection<>(coll);
+        return new SynchronizedCollection<T>(coll);
     }
 
     //-----------------------------------------------------------------------

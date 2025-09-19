@@ -34,8 +34,9 @@ import org.apache.commons.collections4.Bag;
  * The method javadoc highlights the differences compared to the original Bag interface.
  *
  * @see Bag
- * @param <E> the type of elements in this bag
+ * @param <E> the type held in the bag
  * @since 4.0
+ * @version $Id$
  */
 public final class CollectionBag<E> extends AbstractBagDecorator<E> {
 
@@ -51,7 +52,7 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * @throws NullPointerException if bag is null
      */
     public static <E> Bag<E> collectionBag(final Bag<E> bag) {
-        return new CollectionBag<>(bag);
+        return new CollectionBag<E>(bag);
     }
 
     //-----------------------------------------------------------------------
@@ -70,7 +71,7 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * Write the collection out using a custom routine.
      *
      * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -81,8 +82,8 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
      * Read the collection in using a custom routine.
      *
      * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      * @throws ClassCastException if deserialised object has wrong type
      */
     @SuppressWarnings("unchecked") // will throw CCE, see Javadoc
@@ -177,9 +178,10 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
                 result = result || changed;
             }
             return result;
+        } else {
+            // let the decorated bag handle the case of null argument
+            return decorated().removeAll(null);
         }
-        // let the decorated bag handle the case of null argument
-        return decorated().removeAll(null);
     }
 
     /**
@@ -211,9 +213,10 @@ public final class CollectionBag<E> extends AbstractBagDecorator<E> {
                 }
             }
             return modified;
+        } else {
+            // let the decorated bag handle the case of null argument
+            return decorated().retainAll(null);
         }
-        // let the decorated bag handle the case of null argument
-        return decorated().retainAll(null);
     }
 
     //-----------------------------------------------------------------------

@@ -31,6 +31,7 @@ import org.apache.commons.collections4.ResettableIterator;
  *
  * @param <E> the type to iterate over
  * @since 3.0
+ * @version $Id$
  */
 public class ObjectArrayIterator<E> implements ResettableIterator<E> {
 

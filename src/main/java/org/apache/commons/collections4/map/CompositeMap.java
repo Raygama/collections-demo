@@ -39,9 +39,8 @@ import org.apache.commons.collections4.collection.CompositeCollection;
  * using {@link java.util.Collections#synchronizedMap(Map)}. This class may throw
  * exceptions when accessed by concurrent threads without synchronization.
  *
- * @param <K> the type of the keys in this map
- * @param <V> the type of the values in this map
  * @since 3.0
+ * @version $Id$
  */
 public class CompositeMap<K, V> extends AbstractIterableMap<K, V> implements Serializable {
 
@@ -252,7 +251,7 @@ public class CompositeMap<K, V> extends AbstractIterableMap<K, V> implements Ser
      */
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
-        final CompositeSet<Map.Entry<K, V>> entries = new CompositeSet<>();
+        final CompositeSet<Map.Entry<K, V>> entries = new CompositeSet<Map.Entry<K,V>>();
         for (int i = composite.length - 1; i >= 0; --i) {
             entries.addComposited(composite[i].entrySet());
         }
@@ -325,7 +324,7 @@ public class CompositeMap<K, V> extends AbstractIterableMap<K, V> implements Ser
      */
     @Override
     public Set<K> keySet() {
-        final CompositeSet<K> keys = new CompositeSet<>();
+        final CompositeSet<K> keys = new CompositeSet<K>();
         for (int i = this.composite.length - 1; i >= 0; --i) {
             keys.addComposited(this.composite[i].keySet());
         }
@@ -461,7 +460,7 @@ public class CompositeMap<K, V> extends AbstractIterableMap<K, V> implements Ser
      */
     @Override
     public Collection<V> values() {
-        final CompositeCollection<V> values = new CompositeCollection<>();
+        final CompositeCollection<V> values = new CompositeCollection<V>();
         for (int i = composite.length - 1; i >= 0; --i) {
             values.addComposited(composite[i].values());
         }
@@ -500,9 +499,6 @@ public class CompositeMap<K, V> extends AbstractIterableMap<K, V> implements Ser
      * This interface allows definition for all of the indeterminate
      * mutators in a CompositeMap, as well as providing a hook for
      * callbacks on key collisions.
-     *
-     * @param <K> the type of the keys in the map
-     * @param <V> the type of the values in the map
      */
     public static interface MapMutator<K, V> extends Serializable {
         /**

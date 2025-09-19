@@ -74,6 +74,7 @@ import org.apache.commons.collections4.map.UnmodifiableSortedMap;
  *  </ul>
  *
  * @since 1.0
+ * @version $Id$
  */
 @SuppressWarnings("deprecation")
 public class MapUtils {
@@ -84,7 +85,7 @@ public class MapUtils {
      */
     @SuppressWarnings("rawtypes")
     public static final SortedMap EMPTY_SORTED_MAP =
-            UnmodifiableSortedMap.unmodifiableSortedMap(new TreeMap<>());
+            UnmodifiableSortedMap.unmodifiableSortedMap(new TreeMap<Object, Object>());
 
     /**
      * String used to indent the verbose and debug Map prints.
@@ -887,7 +888,7 @@ public class MapUtils {
      */
     public static Map<String, Object> toMap(final ResourceBundle resourceBundle) {
         final Enumeration<String> enumeration = resourceBundle.getKeys();
-        final Map<String, Object> map = new HashMap<>();
+        final Map<String, Object> map = new HashMap<String, Object>();
 
         while (enumeration.hasMoreElements()) {
             final String key = enumeration.nextElement();
@@ -1064,7 +1065,7 @@ public class MapUtils {
      * @throws NullPointerException if the map is null
      */
     public static <K, V> Map<V, K> invertMap(final Map<K, V> map) {
-        final Map<V, K> out = new HashMap<>(map.size());
+        final Map<V, K> out = new HashMap<V, K>(map.size());
         for (final Entry<K, V> entry : map.entrySet()) {
             out.put(entry.getValue(), entry.getKey());
         }
@@ -1764,7 +1765,7 @@ public class MapUtils {
      * @param <K>  the key type
      * @param <V>  the value type
      * @param map to wrap if necessary.
-     * @return IterableMap&lt;K, V&gt;
+     * @return IterableMap<K, V>
      * @throws NullPointerException if map is null
      * @since 4.0
      */
@@ -1781,7 +1782,7 @@ public class MapUtils {
      * @param <K>  the key type
      * @param <V>  the value type
      * @param sortedMap to wrap if necessary
-     * @return {@link IterableSortedMap}&lt;K, V&gt;
+     * @return {@link IterableSortedMap}<K, V>
      * @throws NullPointerException if sortedMap is null
      * @since 4.0
      */

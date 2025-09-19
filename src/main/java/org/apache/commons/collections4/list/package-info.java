@@ -35,5 +35,6 @@
  *   <li>SetUnique - a list that avoids duplicate entries like a Set</li>
  * </ul>
  *
+ * @version $Id$
  */
 package org.apache.commons.collections4.list;

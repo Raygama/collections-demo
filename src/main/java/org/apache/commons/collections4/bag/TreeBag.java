@@ -38,8 +38,8 @@ import org.apache.commons.collections4.SortedBag;
  * copies of an object to be added or removed at once. It is important to read the interface
  * javadoc carefully as several methods violate the {@link Collection} interface specification.
  *
- * @param <E> the type of elements in this bag
  * @since 3.0 (previously in main package v2.0)
+ * @version $Id$
  */
 public class TreeBag<E> extends AbstractMapBag<E> implements SortedBag<E>, Serializable {
 
@@ -120,9 +120,6 @@ public class TreeBag<E> extends AbstractMapBag<E> implements SortedBag<E>, Seria
     //-----------------------------------------------------------------------
     /**
      * Write the bag out using a custom routine.
-     *
-     * @param out  the output stream
-     * @throws IOException if an error occurs while writing to the stream
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -132,10 +129,6 @@ public class TreeBag<E> extends AbstractMapBag<E> implements SortedBag<E>, Seria
 
     /**
      * Read the bag in using a custom routine.
-     *
-     * @param in  the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();

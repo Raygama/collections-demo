@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 /**
  * Tests the LoopingIterator class.
  *
+ * @version $Id$
  */
 public class LoopingIteratorTest extends TestCase {
 
@@ -34,7 +35,7 @@ public class LoopingIteratorTest extends TestCase {
      */
     public void testConstructorEx() throws Exception {
         try {
-            new LoopingIterator<>(null);
+            new LoopingIterator<Object>(null);
             fail();
         } catch (final NullPointerException ex) {
         }
@@ -45,8 +46,8 @@ public class LoopingIteratorTest extends TestCase {
      * @throws Exception  If something unexpected occurs.
      */
     public void testLooping0() throws Exception {
-        final List<Object> list = new ArrayList<>();
-        final LoopingIterator<Object> loop = new LoopingIterator<>(list);
+        final List<Object> list = new ArrayList<Object>();
+        final LoopingIterator<Object> loop = new LoopingIterator<Object>(list);
         assertTrue("hasNext should return false", !loop.hasNext());
 
         try {
@@ -62,7 +63,7 @@ public class LoopingIteratorTest extends TestCase {
      */
     public void testLooping1() throws Exception {
         final List<String> list = Arrays.asList("a");
-        final LoopingIterator<String> loop = new LoopingIterator<>(list);
+        final LoopingIterator<String> loop = new LoopingIterator<String>(list);
 
         assertTrue("1st hasNext should return true", loop.hasNext());
         assertEquals("a", loop.next());
@@ -81,7 +82,7 @@ public class LoopingIteratorTest extends TestCase {
      */
     public void testLooping2() throws Exception {
         final List<String> list = Arrays.asList("a", "b");
-        final LoopingIterator<String> loop = new LoopingIterator<>(list);
+        final LoopingIterator<String> loop = new LoopingIterator<String>(list);
 
         assertTrue("1st hasNext should return true", loop.hasNext());
         assertEquals("a", loop.next());
@@ -100,7 +101,7 @@ public class LoopingIteratorTest extends TestCase {
      */
     public void testLooping3() throws Exception {
         final List<String> list = Arrays.asList("a", "b", "c");
-        final LoopingIterator<String> loop = new LoopingIterator<>(list);
+        final LoopingIterator<String> loop = new LoopingIterator<String>(list);
 
         assertTrue("1st hasNext should return true", loop.hasNext());
         assertEquals("a", loop.next());
@@ -121,8 +122,8 @@ public class LoopingIteratorTest extends TestCase {
      * @throws Exception  If something unexpected occurs.
      */
     public void testRemoving1() throws Exception {
-        final List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
-        final LoopingIterator<String> loop = new LoopingIterator<>(list);
+        final List<String> list = new ArrayList<String>(Arrays.asList("a", "b", "c"));
+        final LoopingIterator<String> loop = new LoopingIterator<String>(list);
         assertEquals("list should have 3 elements.", 3, list.size());
 
         assertTrue("1st hasNext should return true", loop.hasNext());
@@ -154,7 +155,7 @@ public class LoopingIteratorTest extends TestCase {
      */
     public void testReset() throws Exception {
         final List<String> list = Arrays.asList("a", "b", "c");
-        final LoopingIterator<String> loop = new LoopingIterator<>(list);
+        final LoopingIterator<String> loop = new LoopingIterator<String>(list);
 
         assertEquals("a", loop.next());
         assertEquals("b", loop.next());
@@ -175,8 +176,8 @@ public class LoopingIteratorTest extends TestCase {
      * @throws Exception  If something unexpected occurs.
      */
     public void testSize() throws Exception {
-        final List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
-        final LoopingIterator<String> loop = new LoopingIterator<>(list);
+        final List<String> list = new ArrayList<String>(Arrays.asList("a", "b", "c"));
+        final LoopingIterator<String> loop = new LoopingIterator<String>(list);
 
         assertEquals(3, loop.size());
         loop.next();

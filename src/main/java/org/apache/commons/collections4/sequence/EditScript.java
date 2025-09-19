@@ -41,6 +41,7 @@ import java.util.List;
  * @see ReplacementsHandler
  *
  * @since 4.0
+ * @version $Id$
  */
 public class EditScript<T> {
 
@@ -57,7 +58,7 @@ public class EditScript<T> {
      * Simple constructor. Creates a new empty script.
      */
     public EditScript() {
-        commands = new ArrayList<>();
+        commands = new ArrayList<EditCommand<T>>();
         lcsLength = 0;
         modifications = 0;
     }

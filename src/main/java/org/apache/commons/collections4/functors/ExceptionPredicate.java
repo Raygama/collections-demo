@@ -25,6 +25,7 @@ import org.apache.commons.collections4.Predicate;
  * Predicate implementation that always throws an exception.
  *
  * @since 3.0
+ * @version $Id$
  */
 public final class ExceptionPredicate<T> implements Predicate<T>, Serializable {
 
@@ -33,7 +34,7 @@ public final class ExceptionPredicate<T> implements Predicate<T>, Serializable {
 
     /** Singleton predicate instance */
     @SuppressWarnings("rawtypes") // the static instance works for all types
-    public static final Predicate INSTANCE = new ExceptionPredicate<>();
+    public static final Predicate INSTANCE = new ExceptionPredicate<Object>();
 
     /**
      * Factory returning the singleton instance.
@@ -44,7 +45,7 @@ public final class ExceptionPredicate<T> implements Predicate<T>, Serializable {
      */
     @SuppressWarnings("unchecked") // the static instance works for all types
     public static <T> Predicate<T> exceptionPredicate() {
-        return INSTANCE;
+        return (Predicate<T>) INSTANCE;
     }
 
     /**

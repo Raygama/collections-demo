@@ -36,9 +36,9 @@ import java.util.EmptyStackException;
  * <b>Note:</b> From version 4.0 onwards, this class does not implement the
  * removed {@code Buffer} interface anymore.
  *
- * @param <E> the type of elements in this list
  * @see java.util.Stack
  * @since 1.0
+ * @version $Id$
  * @deprecated use {@link java.util.ArrayDeque} instead (available from Java 1.6)
  */
 @Deprecated
@@ -88,8 +88,9 @@ public class ArrayStack<E> extends ArrayList<E> {
         final int n = size();
         if (n <= 0) {
             throw new EmptyStackException();
+        } else {
+            return get(n - 1);
         }
-        return get(n - 1);
     }
 
     /**
@@ -105,8 +106,9 @@ public class ArrayStack<E> extends ArrayList<E> {
         final int m = (size() - n) - 1;
         if (m < 0) {
             throw new EmptyStackException();
+        } else {
+            return get(m);
         }
-        return get(m);
     }
 
     /**
@@ -119,8 +121,9 @@ public class ArrayStack<E> extends ArrayList<E> {
         final int n = size();
         if (n <= 0) {
             throw new EmptyStackException();
+        } else {
+            return remove(n - 1);
         }
-        return remove(n - 1);
     }
 
     /**

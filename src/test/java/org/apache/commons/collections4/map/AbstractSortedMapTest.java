@@ -29,6 +29,7 @@ import org.apache.commons.collections4.BulkTest;
 /**
  * Abstract test class for {@link java.util.SortedMap} methods and contracts.
  *
+ * @version $Id$
  */
 public abstract class AbstractSortedMapTest<K, V> extends AbstractMapTest<K, V> {
 
@@ -59,7 +60,7 @@ public abstract class AbstractSortedMapTest<K, V> extends AbstractMapTest<K, V> 
      */
     @Override
     public SortedMap<K, V> makeConfirmedMap() {
-        return new TreeMap<>();
+        return new TreeMap<K, V>();
     }
 
     //-----------------------------------------------------------------------
@@ -98,22 +99,22 @@ public abstract class AbstractSortedMapTest<K, V> extends AbstractMapTest<K, V> 
 
     //-----------------------------------------------------------------------
     public BulkTest bulkTestHeadMap() {
-        return new TestHeadMap<>(this);
+        return new TestHeadMap<K, V>(this);
     }
 
     public BulkTest bulkTestTailMap() {
-        return new TestTailMap<>(this);
+        return new TestTailMap<K, V>(this);
     }
 
     public BulkTest bulkTestSubMap() {
-        return new TestSubMap<>(this);
+        return new TestSubMap<K, V>(this);
     }
 
     public static abstract class TestViewMap <K, V> extends AbstractSortedMapTest<K, V> {
         protected final AbstractMapTest<K, V> main;
-        protected final List<K> subSortedKeys = new ArrayList<>();
-        protected final List<V> subSortedValues = new ArrayList<>();
-        protected final List<V> subSortedNewValues = new ArrayList<>();
+        protected final List<K> subSortedKeys = new ArrayList<K>();
+        protected final List<V> subSortedValues = new ArrayList<V>();
+        protected final List<V> subSortedNewValues = new ArrayList<V>();
 
         public TestViewMap(final String name, final AbstractMapTest<K, V> main) {
             super(name);

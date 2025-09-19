@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 /**
  * Test the ArrayListIterator class.
  *
+ * @version $Id$
  */
 public class ArrayListIteratorTest<E> extends ArrayIteratorTest<E> {
 
@@ -32,16 +33,16 @@ public class ArrayListIteratorTest<E> extends ArrayIteratorTest<E> {
 
     @Override
     public ArrayListIterator<E> makeEmptyIterator() {
-        return new ArrayListIterator<>(new Object[0]);
+        return new ArrayListIterator<E>(new Object[0]);
     }
 
     @Override
     public ArrayListIterator<E> makeObject() {
-        return new ArrayListIterator<>(testArray);
+        return new ArrayListIterator<E>(testArray);
     }
 
     public ArrayListIterator<E> makeArrayListIterator(final Object array) {
-        return new ArrayListIterator<>(array);
+        return new ArrayListIterator<E>(array);
     }
 
     @Override

@@ -37,8 +37,8 @@ import org.apache.commons.collections4.collection.PredicatedCollection;
  * <p>
  * This class is Serializable from Commons Collections 3.1.
  *
- * @param <E> the type of elements in this bag
  * @since 3.0
+ * @version $Id$
  */
 public class PredicatedBag<E> extends PredicatedCollection<E> implements Bag<E> {
 
@@ -60,7 +60,7 @@ public class PredicatedBag<E> extends PredicatedCollection<E> implements Bag<E> 
      * @since 4.0
      */
     public static <E> PredicatedBag<E> predicatedBag(final Bag<E> bag, final Predicate<? super E> predicate) {
-        return new PredicatedBag<>(bag, predicate);
+        return new PredicatedBag<E>(bag, predicate);
     }
 
     //-----------------------------------------------------------------------

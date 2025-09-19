@@ -31,6 +31,7 @@ import org.apache.commons.collections4.iterators.AbstractMapIteratorTest;
 /**
  * Abstract test class for {@link OrderedBidiMap} methods and contracts.
  *
+ * @version $Id$
  */
 public abstract class AbstractOrderedBidiMapTest<K, V> extends AbstractBidiMapTest<K, V> {
 
@@ -122,7 +123,7 @@ public abstract class AbstractOrderedBidiMapTest<K, V> extends AbstractBidiMapTe
 
         resetFull();
         bidi = getMap();
-        final List<K> list = new ArrayList<>(confirmed.keySet());
+        final List<K> list = new ArrayList<K>(confirmed.keySet());
         Collections.reverse(list);
         final Iterator<K> it = list.iterator();
         K confirmedLast = it.next();

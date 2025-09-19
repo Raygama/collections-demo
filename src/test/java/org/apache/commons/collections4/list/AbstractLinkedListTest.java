@@ -21,6 +21,7 @@ import java.util.Arrays;
 /**
  * Test case for {@link AbstractLinkedList}.
  *
+ * @version $Id$
  */
 public abstract class AbstractLinkedListTest<E> extends AbstractListTest<E> {
 

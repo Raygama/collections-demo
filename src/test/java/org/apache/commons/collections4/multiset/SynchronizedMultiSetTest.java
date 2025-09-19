@@ -26,6 +26,7 @@ import org.apache.commons.collections4.MultiSet;
  * {@link SynchronizedMultiSet} implementation.
  *
  * @since 4.1
+ * @version $Id$
  */
 public class SynchronizedMultiSetTest<T> extends AbstractMultiSetTest<T> {
 

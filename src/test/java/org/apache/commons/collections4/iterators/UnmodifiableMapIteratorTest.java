@@ -27,6 +27,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 /**
  * Tests the UnmodifiableMapIterator.
  *
+ * @version $Id$
  */
 public class UnmodifiableMapIteratorTest<K, V> extends AbstractMapIteratorTest<K, V> {
 
@@ -47,7 +48,7 @@ public class UnmodifiableMapIteratorTest<K, V> extends AbstractMapIteratorTest<K
     @Override
     @SuppressWarnings("unchecked")
     public IterableMap<K, V> getMap() {
-        final IterableMap<K, V> testMap = new DualHashBidiMap<>();
+        final IterableMap<K, V> testMap = new DualHashBidiMap<K, V>();
         testMap.put((K) "A", (V) "a");
         testMap.put((K) "B", (V)"b");
         testMap.put((K) "C", (V) "c");
@@ -57,7 +58,7 @@ public class UnmodifiableMapIteratorTest<K, V> extends AbstractMapIteratorTest<K
     @Override
     @SuppressWarnings("unchecked")
     public Map<K, V> getConfirmedMap() {
-        final Map<K, V> testMap = new HashMap<>();
+        final Map<K, V> testMap = new HashMap<K, V>();
         testMap.put((K) "A", (V) "a");
         testMap.put((K) "B", (V)"b");
         testMap.put((K) "C", (V) "c");

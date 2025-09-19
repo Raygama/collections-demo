@@ -29,6 +29,7 @@ import java.util.Set;
  * JUnit tests.
  *
  * @since 3.0
+ * @version $Id$
  */
 public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
@@ -39,7 +40,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
     //-----------------------------------------------------------------------
     @Override
     public List<E> makeObject() {
-        return new SetUniqueList<>(new ArrayList<E>(), new HashSet<E>());
+        return new SetUniqueList<E>(new ArrayList<E>(), new HashSet<E>());
     }
 
     //-----------------------------------------------------------------------
@@ -140,7 +141,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
     public void testIntCollectionAddAll() {
       // make a SetUniqueList with one element
-      final List<Integer> list = new SetUniqueList<>(new ArrayList<Integer>(), new HashSet<Integer>());
+      final List<Integer> list = new SetUniqueList<Integer>(new ArrayList<Integer>(), new HashSet<Integer>());
       final Integer existingElement = Integer.valueOf(1);
       list.add(existingElement);
 
@@ -209,7 +210,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
     //-----------------------------------------------------------------------
     public void testFactory() {
         final Integer[] array = new Integer[] { Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(1) };
-        final ArrayList<Integer> list = new ArrayList<>(Arrays.asList(array));
+        final ArrayList<Integer> list = new ArrayList<Integer>(Arrays.asList(array));
         final SetUniqueList<Integer> lset = SetUniqueList.setUniqueList(list);
 
         assertEquals("Duplicate element was added.", 2, lset.size());
@@ -221,7 +222,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
     @SuppressWarnings("unchecked")
     public void testAdd() {
-        final SetUniqueList<E> lset = new SetUniqueList<>(new ArrayList<E>(), new HashSet<E>());
+        final SetUniqueList<E> lset = new SetUniqueList<E>(new ArrayList<E>(), new HashSet<E>());
 
         // Duplicate element
         final E obj = (E) Integer.valueOf(1);
@@ -236,7 +237,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
     @SuppressWarnings("unchecked")
     public void testAddAll() {
-        final SetUniqueList<E> lset = new SetUniqueList<>(new ArrayList<E>(), new HashSet<E>());
+        final SetUniqueList<E> lset = new SetUniqueList<E>(new ArrayList<E>(), new HashSet<E>());
 
         lset.addAll(
             Arrays.asList((E[]) new Integer[] { Integer.valueOf(1), Integer.valueOf(1)}));
@@ -246,7 +247,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
     @SuppressWarnings("unchecked")
     public void testSet() {
-        final SetUniqueList<E> lset = new SetUniqueList<>(new ArrayList<E>(), new HashSet<E>());
+        final SetUniqueList<E> lset = new SetUniqueList<E>(new ArrayList<E>(), new HashSet<E>());
 
         // Duplicate element
         final E obj1 = (E) Integer.valueOf(1);
@@ -285,7 +286,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
     @SuppressWarnings("unchecked")
     public void testListIterator() {
-        final SetUniqueList<E> lset = new SetUniqueList<>(new ArrayList<E>(), new HashSet<E>());
+        final SetUniqueList<E> lset = new SetUniqueList<E>(new ArrayList<E>(), new HashSet<E>());
 
         final E obj1 = (E) Integer.valueOf(1);
         final E obj2 = (E) Integer.valueOf(2);
@@ -345,9 +346,9 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
          * set(0,b): [b]->a
          * So UniqList contains [b] and a is returned
          */
-        final ArrayList<E> l = new ArrayList<>();
-        final HashSet<E> s = new HashSet<>();
-        final SetUniqueList<E> ul = new SetUniqueList<>(l, s);
+        final ArrayList<E> l = new ArrayList<E>();
+        final HashSet<E> s = new HashSet<E>();
+        final SetUniqueList<E> ul = new SetUniqueList<E>(l, s);
 
         final E a = (E) new Object();
         final E b = (E) new Object();
@@ -374,9 +375,9 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
          * set(0,b): [b,c]->a
          * So UniqList contains [b,c] and a is returned
          */
-        final ArrayList<E> l = new ArrayList<>();
-        final HashSet<E> s = new HashSet<>();
-        final SetUniqueList<E> ul = new SetUniqueList<>(l, s);
+        final ArrayList<E> l = new ArrayList<E>();
+        final HashSet<E> s = new HashSet<E>();
+        final SetUniqueList<E> ul = new SetUniqueList<E>(l, s);
 
         final E a = (E) new Object();
         final E b = (E) new Object();
@@ -410,9 +411,9 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
          * set(1,a): [a,c]->b
          * So UniqList contains [a,c] and b is returned
          */
-        final ArrayList<E> l = new ArrayList<>();
-        final HashSet<E> s = new HashSet<>();
-        final SetUniqueList<E> ul = new SetUniqueList<>(l, s);
+        final ArrayList<E> l = new ArrayList<E>();
+        final HashSet<E> s = new HashSet<E>();
+        final SetUniqueList<E> ul = new SetUniqueList<E>(l, s);
 
         final E a = (E) new String("A");
         final E b = (E) new String("B");
@@ -439,7 +440,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
     }
 
     public void testCollections304() {
-        final List<String> list = new LinkedList<>();
+        final List<String> list = new LinkedList<String>();
         final SetUniqueList<String> decoratedList = SetUniqueList.setUniqueList(list);
         final String s1 = "Apple";
         final String s2 = "Lemon";
@@ -473,7 +474,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
     }
     @SuppressWarnings("unchecked")
     public void testCollections307() {
-        List<E> list = new ArrayList<>();
+        List<E> list = new ArrayList<E>();
         List<E> uniqueList = SetUniqueList.setUniqueList(list);
 
         final String hello = "Hello";
@@ -487,14 +488,14 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
         assertFalse(subList.contains(world)); // passes
         assertFalse(subUniqueList.contains(world)); // fails
 
-        List<E> worldList = new ArrayList<>();
+        List<E> worldList = new ArrayList<E>();
         worldList.add((E) world);
         assertFalse(subList.contains("World")); // passes
         assertFalse(subUniqueList.contains("World")); // fails
 
         // repeat the test with a different class than HashSet;
         // which means subclassing SetUniqueList below
-        list = new ArrayList<>();
+        list = new ArrayList<E>();
         uniqueList = new SetUniqueList307(list, new java.util.TreeSet<E>());
 
         uniqueList.add((E) hello);
@@ -506,7 +507,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
         assertFalse(subList.contains(world)); // passes
         assertFalse(subUniqueList.contains(world)); // fails
 
-        worldList = new ArrayList<>();
+        worldList = new ArrayList<E>();
         worldList.add((E) world);
         assertFalse(subList.contains("World")); // passes
         assertFalse(subUniqueList.contains("World")); // fails
@@ -514,13 +515,13 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
 
     @SuppressWarnings("unchecked")
     public void testRetainAll() {
-        final List<E> list = new ArrayList<>(10);
+        final List<E> list = new ArrayList<E>(10);
         final SetUniqueList<E> uniqueList = SetUniqueList.setUniqueList(list);
         for (int i = 0; i < 10; ++i) {
             uniqueList.add((E)Integer.valueOf(i));
         }
 
-        final Collection<E> retained = new ArrayList<>(5);
+        final Collection<E> retained = new ArrayList<E>(5);
         for (int i = 0; i < 5; ++i) {
             retained.add((E)Integer.valueOf(i * 2));
         }
@@ -537,7 +538,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
     @SuppressWarnings("unchecked")
     public void testRetainAllWithInitialList() {
         // initialized with empty list
-        final List<E> list = new ArrayList<>(10);
+        final List<E> list = new ArrayList<E>(10);
         for (int i = 0; i < 5; ++i) {
             list.add((E)Integer.valueOf(i));
         }
@@ -546,7 +547,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
             uniqueList.add((E)Integer.valueOf(i));
         }
 
-        final Collection<E> retained = new ArrayList<>(5);
+        final Collection<E> retained = new ArrayList<E>(5);
         for (int i = 0; i < 5; ++i) {
             retained.add((E)Integer.valueOf(i * 2));
         }
@@ -561,7 +562,7 @@ public class SetUniqueListTest<E> extends AbstractListTest<E> {
     }
 
     public void testSetCollections444() {
-        final SetUniqueList<Integer> lset = new SetUniqueList<>(new ArrayList<Integer>(), new HashSet<Integer>());
+        final SetUniqueList<Integer> lset = new SetUniqueList<Integer>(new ArrayList<Integer>(), new HashSet<Integer>());
 
         // Duplicate element
         final Integer obj1 = Integer.valueOf(1);

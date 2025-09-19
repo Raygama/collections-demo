@@ -32,22 +32,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Vector;
 
 import org.apache.commons.collections4.iterators.EmptyIterator;
 import org.apache.commons.collections4.iterators.EmptyListIterator;
 import org.apache.commons.collections4.iterators.EmptyMapIterator;
 import org.apache.commons.collections4.iterators.EmptyOrderedIterator;
 import org.apache.commons.collections4.iterators.EmptyOrderedMapIterator;
-import org.apache.commons.collections4.iterators.EnumerationIterator;
-import org.apache.commons.collections4.iterators.NodeListIterator;
-import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Node;
@@ -56,6 +50,7 @@ import org.w3c.dom.NodeList;
 /**
  * Tests for IteratorUtils.
  *
+ * @version $Id$
  */
 public class IteratorUtilsTest {
 
@@ -76,11 +71,11 @@ public class IteratorUtilsTest {
 
     private Iterable<Integer> iterableA = null;
 
-    private final Collection<Integer> emptyCollection = new ArrayList<>(1);
+    private final Collection<Integer> emptyCollection = new ArrayList<Integer>(1);
 
     @Before
     public void setUp() {
-        collectionA = new ArrayList<>();
+        collectionA = new ArrayList<Integer>();
         collectionA.add(1);
         collectionA.add(2);
         collectionA.add(2);
@@ -100,7 +95,7 @@ public class IteratorUtilsTest {
 
     @Test
     public void testAsIterable() {
-        final List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<Integer>();
         list.add(Integer.valueOf(0));
         list.add(Integer.valueOf(1));
         list.add(Integer.valueOf(2));
@@ -131,7 +126,7 @@ public class IteratorUtilsTest {
 
     @Test
     public void testAsMultipleIterable() {
-        final List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<Integer>();
         list.add(Integer.valueOf(0));
         list.add(Integer.valueOf(1));
         list.add(Integer.valueOf(2));
@@ -168,7 +163,7 @@ public class IteratorUtilsTest {
 
     @Test
     public void testToList() {
-        final List<Object> list = new ArrayList<>();
+        final List<Object> list = new ArrayList<Object>();
         list.add(Integer.valueOf(1));
         list.add("Two");
         list.add(null);
@@ -178,43 +173,22 @@ public class IteratorUtilsTest {
 
     @Test
     public void testToArray() {
-        final List<Object> list = new ArrayList<>();
+        final List<Object> list = new ArrayList<Object>();
         list.add(Integer.valueOf(1));
         list.add("Two");
         list.add(null);
         final Object[] result = IteratorUtils.toArray(list.iterator());
         assertEquals(list, Arrays.asList(result));
-
-        try {
-        	IteratorUtils.toArray(null);
-            fail("Expecting NullPointerException");
-        } catch (final NullPointerException ex) {
-            // success
-        }
     }
 
     @Test
     public void testToArray2() {
-        final List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<String>();
         list.add("One");
         list.add("Two");
         list.add(null);
         final String[] result = IteratorUtils.toArray(list.iterator(), String.class);
         assertEquals(list, Arrays.asList(result));
-
-        try {
-        	IteratorUtils.toArray(list.iterator(), null);
-            fail("Expecting NullPointerException");
-        } catch (final NullPointerException ex) {
-            // success
-        }
-
-        try {
-        	IteratorUtils.toArray(null, String.class);
-            fail("Expecting NullPointerException");
-        } catch (final NullPointerException ex) {
-            // success
-        }
     }
 
     @Test
@@ -506,7 +480,7 @@ public class IteratorUtilsTest {
      * Gets an immutable Iterator operating on the elements ["a", "b", "c", "d"].
      */
     private Iterator<String> getImmutableIterator() {
-        final List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<String>();
         list.add("a");
         list.add("b");
         list.add("c");
@@ -518,7 +492,7 @@ public class IteratorUtilsTest {
      * Gets an immutable ListIterator operating on the elements ["a", "b", "c", "d"].
      */
     private ListIterator<String> getImmutableListIterator() {
-        final List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<String>();
         list.add("a");
         list.add("b");
         list.add("c");
@@ -972,13 +946,13 @@ public class IteratorUtilsTest {
         }
 
         // natural ordering
-        Iterator<Integer> it =
+        Iterator<Integer> it = 
                 IteratorUtils.collatedIterator(null, collectionOdd.iterator(), collectionEven.iterator());
 
         List<Integer> result = IteratorUtils.toList(it);
         assertEquals(12, result.size());
 
-        List<Integer> combinedList = new ArrayList<>();
+        List<Integer> combinedList = new ArrayList<Integer>();
         combinedList.addAll(collectionOdd);
         combinedList.addAll(collectionEven);
         Collections.sort(combinedList);
@@ -1006,14 +980,14 @@ public class IteratorUtilsTest {
     // -----------------------------------------------------------------------
     @Test
     public void forEach() {
-        final List<Integer> listA = new ArrayList<>();
+        final List<Integer> listA = new ArrayList<Integer>();
         listA.add(1);
 
-        final List<Integer> listB = new ArrayList<>();
+        final List<Integer> listB = new ArrayList<Integer>();
         listB.add(2);
 
         final Closure<List<Integer>> testClosure = ClosureUtils.invokerClosure("clear");
-        final Collection<List<Integer>> col = new ArrayList<>();
+        final Collection<List<Integer>> col = new ArrayList<List<Integer>>();
         col.add(listA);
         col.add(listB);
         IteratorUtils.forEach(col.iterator(), testClosure);
@@ -1034,14 +1008,14 @@ public class IteratorUtilsTest {
 
     @Test
     public void forEachButLast() {
-        final List<Integer> listA = new ArrayList<>();
+        final List<Integer> listA = new ArrayList<Integer>();
         listA.add(1);
 
-        final List<Integer> listB = new ArrayList<>();
+        final List<Integer> listB = new ArrayList<Integer>();
         listB.add(2);
 
         final Closure<List<Integer>> testClosure = ClosureUtils.invokerClosure("clear");
-        final Collection<List<Integer>> col = new ArrayList<>();
+        final Collection<List<Integer>> col = new ArrayList<List<Integer>>();
         col.add(listA);
         col.add(listB);
         List<Integer> last = IteratorUtils.forEachButLast(col.iterator(), testClosure);
@@ -1091,7 +1065,7 @@ public class IteratorUtilsTest {
         assertEquals(-1, index);
         assertEquals(-1, IteratorUtils.indexOf(null, testPredicate));
         try {
-            IteratorUtils.indexOf(iterableA.iterator(), null);
+            assertNull(IteratorUtils.indexOf(iterableA.iterator(), null));
             fail("expecting NullPointerException");
         } catch (final NullPointerException npe) {
             // expected
@@ -1114,49 +1088,6 @@ public class IteratorUtilsTest {
             // expected
         }
         assertTrue(!iterator.hasNext());
-    }
-
-    @Test
-    public void testGetIterator() {
-    	final Object[] objArray = {"a", "b", "c"};
-        final Map<String, String> inMap = new HashMap<>();
-        final Node[] nodes = createNodes();
-        final NodeList nodeList = createNodeList(nodes);
-
-        assertTrue("returns empty iterator when null passed", IteratorUtils.getIterator(null) instanceof EmptyIterator);
-        assertTrue("returns Iterator when Iterator directly ", IteratorUtils.getIterator(iterableA.iterator()) instanceof Iterator);
-        assertTrue("returns Iterator when iterable passed", IteratorUtils.getIterator(iterableA) instanceof Iterator);
-        assertTrue("returns ObjectArrayIterator when Object array passed", IteratorUtils.getIterator(objArray) instanceof ObjectArrayIterator);
-        assertTrue("returns Iterator when Map passed", IteratorUtils.getIterator(inMap) instanceof Iterator);
-        assertTrue("returns NodeListIterator when nodeList passed", IteratorUtils.getIterator(nodeList) instanceof NodeListIterator);
-        assertTrue("returns EnumerationIterator when Enumeration passed", IteratorUtils.getIterator(new Vector().elements()) instanceof EnumerationIterator);
-
-    }
-
-    @Test
-    public void testToListIterator() {
-        final List<Integer> list = new ArrayList<>();
-        list.add(Integer.valueOf(0));
-        list.add(Integer.valueOf(1));
-        list.add(Integer.valueOf(2));
-        final Iterator<Integer> iterator = list.iterator();
-
-        final ListIterator<Integer> liItr = IteratorUtils.toListIterator(iterator);
-        int expected = 0;
-        while(liItr.hasNext()){
-        	assertEquals(expected, liItr.next().intValue());
-        	++expected;
-        }
-    }
-
-    @Test
-    public void testToListIteratorNull() {
-        try {
-            IteratorUtils.toListIterator(null);
-            fail("Expecting NullPointerException");
-        } catch (final NullPointerException ex) {
-            // success
-        }
     }
 
 }

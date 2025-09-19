@@ -29,6 +29,7 @@ import org.apache.commons.collections4.Predicate;
  * threw an exception.
  *
  * @since 3.0
+ * @version $Id$
  */
 public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
 
@@ -56,7 +57,7 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
         if (predicates.length == 1) {
             return (Predicate<T>) predicates[0];
         }
-        return new AnyPredicate<>(FunctorUtils.copy(predicates));
+        return new AnyPredicate<T>(FunctorUtils.copy(predicates));
     }
 
     /**
@@ -80,7 +81,7 @@ public final class AnyPredicate<T> extends AbstractQuantifierPredicate<T> {
         if (preds.length == 1) {
             return (Predicate<T>) preds[0];
         }
-        return new AnyPredicate<>(preds);
+        return new AnyPredicate<T>(preds);
     }
 
     /**

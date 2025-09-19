@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 /**
  * Tests the ObjectArrayIterator.
  *
+ * @version $Id$
  */
 public class ObjectArrayIteratorTest<E> extends AbstractIteratorTest<E> {
 
@@ -34,30 +35,30 @@ public class ObjectArrayIteratorTest<E> extends AbstractIteratorTest<E> {
     @Override
     @SuppressWarnings("unchecked")
     public ObjectArrayIterator<E> makeEmptyIterator() {
-        return new ObjectArrayIterator<>((E[]) new Object[0]);
+        return new ObjectArrayIterator<E>((E[]) new Object[0]);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public ObjectArrayIterator<E> makeObject() {
-        return new ObjectArrayIterator<>((E[]) testArray);
+        return new ObjectArrayIterator<E>((E[]) testArray);
     }
 
     @SuppressWarnings("unchecked")
     public ObjectArrayIterator<E> makeArrayIterator() {
-        return new ObjectArrayIterator<>();
+        return new ObjectArrayIterator<E>();
     }
 
     public ObjectArrayIterator<E> makeArrayIterator(final E[] array) {
-        return new ObjectArrayIterator<>(array);
+        return new ObjectArrayIterator<E>(array);
     }
 
     public ObjectArrayIterator<E> makeArrayIterator(final E[] array, final int index) {
-        return new ObjectArrayIterator<>(array, index);
+        return new ObjectArrayIterator<E>(array, index);
     }
 
     public ObjectArrayIterator<E> makeArrayIterator(final E[] array, final int start, final int end) {
-        return new ObjectArrayIterator<>(array, start, end);
+        return new ObjectArrayIterator<E>(array, start, end);
     }
 
     @Override

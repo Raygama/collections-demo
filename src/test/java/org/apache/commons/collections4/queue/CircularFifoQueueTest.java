@@ -31,6 +31,7 @@ import java.util.Queue;
  * Test cases for CircularFifoQueue.
  *
  * @since 4.0
+ * @version $Id$
  */
 public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
 
@@ -83,7 +84,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
      */
     @Override
     public Collection<E> makeConfirmedCollection() {
-        return new ArrayList<>();
+        return new ArrayList<E>();
     }
 
     /**
@@ -105,7 +106,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
      */
     @Override
     public Queue<E> makeObject() {
-        return new CircularFifoQueue<>(100);
+        return new CircularFifoQueue<E>(100);
     }
 
     //-----------------------------------------------------------------------
@@ -114,11 +115,11 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
      */
     @SuppressWarnings("unchecked")
     public void testCircularFifoQueueCircular() {
-        final List<E> list = new ArrayList<>();
+        final List<E> list = new ArrayList<E>();
         list.add((E) "A");
         list.add((E) "B");
         list.add((E) "C");
-        final Queue<E> queue = new CircularFifoQueue<>(list);
+        final Queue<E> queue = new CircularFifoQueue<E>(list);
 
         assertEquals(true, queue.contains("A"));
         assertEquals(true, queue.contains("B"));
@@ -197,7 +198,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError1() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -216,7 +217,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError2() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -237,7 +238,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError3() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -260,7 +261,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError4() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -278,7 +279,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError5() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -296,7 +297,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError6() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -314,7 +315,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError7() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -332,7 +333,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError8() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -351,7 +352,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRemoveError9() throws Exception {
         // based on bug 33071
-        final CircularFifoQueue<E> fifo = new CircularFifoQueue<>(5);
+        final CircularFifoQueue<E> fifo = new CircularFifoQueue<E>(5);
         fifo.add((E) "1");
         fifo.add((E) "2");
         fifo.add((E) "3");
@@ -371,7 +372,7 @@ public class CircularFifoQueueTest<E> extends AbstractQueueTest<E> {
     @SuppressWarnings("unchecked")
     public void testRepeatedSerialization() throws Exception {
         // bug 31433
-        final CircularFifoQueue<E> b = new CircularFifoQueue<>(2);
+        final CircularFifoQueue<E> b = new CircularFifoQueue<E>(2);
         b.add((E) "a");
         assertEquals(1, b.size());
         assertEquals(true, b.contains("a"));

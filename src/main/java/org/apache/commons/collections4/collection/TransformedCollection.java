@@ -34,6 +34,7 @@ import org.apache.commons.collections4.Transformer;
  *
  * @param <E> the type of the elements in the collection
  * @since 3.0
+ * @version $Id$
  */
 public class TransformedCollection<E> extends AbstractCollectionDecorator<E> {
 
@@ -59,7 +60,7 @@ public class TransformedCollection<E> extends AbstractCollectionDecorator<E> {
      */
     public static <E> TransformedCollection<E> transformingCollection(final Collection<E> coll,
             final Transformer<? super E, ? extends E> transformer) {
-        return new TransformedCollection<>(coll, transformer);
+        return new TransformedCollection<E>(coll, transformer);
     }
 
     /**
@@ -80,7 +81,7 @@ public class TransformedCollection<E> extends AbstractCollectionDecorator<E> {
     public static <E> TransformedCollection<E> transformedCollection(final Collection<E> collection,
             final Transformer<? super E, ? extends E> transformer) {
 
-        final TransformedCollection<E> decorated = new TransformedCollection<>(collection, transformer);
+        final TransformedCollection<E> decorated = new TransformedCollection<E>(collection, transformer);
         // null collection & transformer are disallowed by the constructor call above
         if (collection.size() > 0) {
             @SuppressWarnings("unchecked") // collection is of type E
@@ -133,7 +134,7 @@ public class TransformedCollection<E> extends AbstractCollectionDecorator<E> {
      * @return a transformed object
      */
     protected Collection<E> transform(final Collection<? extends E> coll) {
-        final List<E> list = new ArrayList<>(coll.size());
+        final List<E> list = new ArrayList<E>(coll.size());
         for (final E item : coll) {
             list.add(transform(item));
         }

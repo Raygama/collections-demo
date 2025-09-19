@@ -52,11 +52,8 @@ import org.apache.commons.collections4.map.LinkedMap;
  * but is intended to be worked with either directly or by {@link Put} and
  * {@link org.apache.commons.collections4.Get Get} generalizations.
  *
- * @param <J> the type of the keys to put in this map
- * @param <K> the type of the keys to get in this map
- * @param <U> the type of the values to put in this map
- * @param <V> the type of the values to get in this map
  * @since 4.0
+ * @version $Id$
  *
  * @see org.apache.commons.collections4.SplitMapUtils#readableMap(org.apache.commons.collections4.Get)
  * @see org.apache.commons.collections4.SplitMapUtils#writableMap(Put)
@@ -91,7 +88,7 @@ public class TransformedSplitMap<J, K, U, V> extends AbstractIterableGetMapDecor
     public static <J, K, U, V> TransformedSplitMap<J, K, U, V> transformingMap(final Map<K, V> map,
             final Transformer<? super J, ? extends K> keyTransformer,
             final Transformer<? super U, ? extends V> valueTransformer) {
-        return new TransformedSplitMap<>(map, keyTransformer, valueTransformer);
+        return new TransformedSplitMap<J, K, U, V>(map, keyTransformer, valueTransformer);
     }
 
     //-----------------------------------------------------------------------
@@ -124,7 +121,7 @@ public class TransformedSplitMap<J, K, U, V> extends AbstractIterableGetMapDecor
      * Write the map out using a custom routine.
      *
      * @param out the output stream
-     * @throws IOException if an error occurs while writing to the stream
+     * @throws IOException
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -135,8 +132,8 @@ public class TransformedSplitMap<J, K, U, V> extends AbstractIterableGetMapDecor
      * Read the map in using a custom routine.
      *
      * @param in the input stream
-     * @throws IOException if an error occurs while reading from the stream
-     * @throws ClassNotFoundException if an object read from the stream can not be loaded
+     * @throws IOException
+     * @throws ClassNotFoundException
      * @since 3.1
      */
     @SuppressWarnings("unchecked") // (1) should only fail if input stream is incorrect
@@ -183,7 +180,7 @@ public class TransformedSplitMap<J, K, U, V> extends AbstractIterableGetMapDecor
         if (map.isEmpty()) {
             return (Map<K, V>) map;
         }
-        final Map<K, V> result = new LinkedMap<>(map.size());
+        final Map<K, V> result = new LinkedMap<K, V>(map.size());
 
         for (final Map.Entry<? extends J, ? extends U> entry : map.entrySet()) {
             result.put(transformKey(entry.getKey()), transformValue(entry.getValue()));
