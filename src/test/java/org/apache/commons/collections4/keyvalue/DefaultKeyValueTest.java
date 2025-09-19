@@ -16,19 +16,17 @@
  */
 package org.apache.commons.collections4.keyvalue;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
 /**
  * Test the DefaultKeyValue class.
  *
  * @since 3.0
  */
-public class DefaultKeyValueTest<K, V> {
+public class DefaultKeyValueTest<K, V> extends TestCase {
 
     private final String key = "name";
     private final String value = "duke";
@@ -54,7 +52,6 @@ public class DefaultKeyValueTest<K, V> {
 
     //-----------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    @Test
     public void testAccessorsAndMutators() {
         final DefaultKeyValue<K, V> kv = makeDefaultKeyValue();
 
@@ -74,7 +71,6 @@ public class DefaultKeyValueTest<K, V> {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testSelfReferenceHandling() {
         // test that #setKey and #setValue do not permit
         //  the KVP to contain itself (and thus cause infinite recursion
@@ -107,7 +103,6 @@ public class DefaultKeyValueTest<K, V> {
      * Subclasses should override this method to test their own constructors.
      */
     @SuppressWarnings("unchecked")
-    @Test
     public void testConstructors() {
         // 1. test default constructor
         DefaultKeyValue<K, V> kv = new DefaultKeyValue<>();
@@ -142,7 +137,6 @@ public class DefaultKeyValueTest<K, V> {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testEqualsAndHashCode() {
         // 1. test with object data
         DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
@@ -162,7 +156,6 @@ public class DefaultKeyValueTest<K, V> {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testToString() {
         DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
         assertTrue(kv.toString().equals(kv.getKey() + "=" + kv.getValue()));
@@ -173,7 +166,6 @@ public class DefaultKeyValueTest<K, V> {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testToMapEntry() {
         final DefaultKeyValue<K, V> kv = makeDefaultKeyValue((K) key, (V) value);
 

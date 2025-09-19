@@ -20,9 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.collections4.Unmodifiable;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Test the UnmodifiableMapEntry class.
@@ -59,7 +56,6 @@ public class UnmodifiableMapEntryTest<K, V> extends AbstractMapEntryTest<K, V> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    @Test
     public void testConstructors() {
         // 1. test key-value constructor
         Map.Entry<K, V> entry = new UnmodifiableMapEntry<>((K) key, (V) value);
@@ -95,12 +91,10 @@ public class UnmodifiableMapEntryTest<K, V> extends AbstractMapEntryTest<K, V> {
     }
 
     @Override
-    @Test
     public void testSelfReferenceHandling() {
         // block
     }
 
-    @Test
     public void testUnmodifiable() {
         final Map.Entry<K, V> entry = makeMapEntry();
         try {
