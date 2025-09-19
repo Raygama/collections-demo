@@ -111,7 +111,7 @@ public abstract class AbstractReferenceMap<K, V> extends AbstractHashedMap<K, V>
             }
         }
 
-        ReferenceStrength(final int value) {
+        private ReferenceStrength(final int value) {
             this.value = value;
         }
 
